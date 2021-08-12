@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Orderly</string>
+
+    <!--updated on 22/06/2021-->
+    <string name="facebook_app_id">527429105172207</string>
+    <string name="fb_login_protocol_scheme">fb527429105172207</string>
+
+
+    <string name="android__admob_ads_id_key">ca-app-pub-8907881762519005~5311635571</string>
+    <!-- <string name="android__admob_ads_id_key">ca-app-pub-0000000000000000~0000000000</string> -->
+
+    <!--added on 5/11/2020-->
+<!--    <string name="google_map_api_key">AIzaSyBRE59wM9vV9U_iRpnkRO3ZU1COvhw7MoA</string>-->
+    <string name="google_map_api_key">AIzaSyCzC3S_bKGmuDIsamaZhbqs0UTCghFk2JM</string>
+
+
+</resources>
