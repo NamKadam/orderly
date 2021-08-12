@@ -236,7 +236,7 @@ class _OtpScreenState extends State<OtpScreen>{
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
-            "Otp Verification",
+            "OTP Verification",
             style:TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w400,

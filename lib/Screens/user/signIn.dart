@@ -14,6 +14,7 @@ import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/signup_navigateFields.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
+import 'package:orderly/Screens/user/signup.dart';
 import 'package:orderly/Screens/user/verify_phone.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/fcmNotify.dart';
@@ -21,7 +22,6 @@ import 'package:orderly/Utils/preferences.dart';
 import 'package:orderly/Utils/progressDialog.dart';
 import 'package:orderly/Utils/util_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'signup.dart';
 import 'package:orderly/Utils/authentication.dart';
 import 'package:orderly/Utils/routes.dart';
 import 'package:orderly/Utils/translate.dart';
@@ -646,11 +646,11 @@ class _LoginWithFBState extends State<LoginWithFB>{
                     //   ),
                     // );
                     // await PsProgressDialog.showProgressWithoutMsg(context);
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                          builder: (context) => SignUp()
-                      ),
-                    );
+                    // Navigator.of(context).pushReplacement(
+                    //   MaterialPageRoute(
+                    //       builder: (context) => SignUp()
+                    //   ),
+                    // );
                     // print(user);
                   }
 

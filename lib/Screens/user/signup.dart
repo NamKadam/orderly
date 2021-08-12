@@ -63,7 +63,8 @@ class _SignUpState extends State<SignUp>{
   UserRegBloc _userRegBloc;
   String _validFirstName="",_validLastName="",_validEmail="",_validMobile="",_validZip="";
   var address;
-  bool flagEnabled;
+  bool flagEmailEnabled;
+  bool flagPhoneEnabled;
 
   @override
   void initState() {
@@ -73,31 +74,38 @@ class _SignUpState extends State<SignUp>{
   }
 
   void getUserData(){
-    if(widget.user.displayName!=null)
-      {
-        var fullname = widget.user.displayName.toString().split(" ");
-        var firstName=fullname[0];
-        var lastName=fullname[1];
+    _validFirstName=null;
+    _validLastName=null;
+    _validZip=null;
+    _validEmail=null;
+    _validMobile=null;
+    if(widget.user.displayName!=null) {
+      var fullname = widget.user.displayName.toString().split(" ");
+      var firstName = fullname[0];
+      var lastName = fullname[1];
 
-        _textFirstNameController.text=firstName.toString();
-        _textLastNameController.text=lastName.toString();
-
-      }else{
+      _textFirstNameController.text = firstName.toString();
+      _textLastNameController.text = lastName.toString();
+    }
+        else{
       _textFirstNameController.text="";
       _textLastNameController.text="";
 
     }
 
+    print(widget.user.email);
+
     if(widget.user.email==null){
-      flagEnabled=true;
+      flagEmailEnabled=true;
     }else{
-      flagEnabled=false;
+      flagEmailEnabled=false;
       _textEmailController.text=widget.user.email.toString();
+
     }
     if(widget.phone==null){
-      flagEnabled=true;
+      flagPhoneEnabled=true;
     }else{
-      flagEnabled=false;
+      flagPhoneEnabled=false;
       _textMobileController.text=widget.phone.toString();
 
     }
@@ -516,7 +524,7 @@ class _SignUpState extends State<SignUp>{
               )),
 
               //lastName
-             Container(margin: EdgeInsets.only(top:10.0,left:20.0,right:20.0),
+             Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
               child:AppTextInput(
                 enabled: true,
                 hintText: Translate.of(context).translate('input_last_name'),
@@ -542,7 +550,7 @@ class _SignUpState extends State<SignUp>{
               )),
 
               //zip
-              Container(margin: EdgeInsets.only(top:10.0,left:20.0,right:20.0,bottom:10.0),
+              Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
               child:
               AppTextInput(
                 enabled: true,
@@ -552,10 +560,10 @@ class _SignUpState extends State<SignUp>{
                 controller: _textZipController,
                 focusNode: _focusZip,
                 maxLength: 5,
-                // keyboardType: TextInputType.number,
-                // inputFormatters: <TextInputFormatter>[
-                //   FilteringTextInputFormatter.digitsOnly
-                // ],
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly
+                ],
                 textInputAction: TextInputAction.next,
                 onChanged: (text) {
                   if(text.length>=5){
@@ -592,7 +600,7 @@ class _SignUpState extends State<SignUp>{
               if(postResultList.length>0)
 
               Padding(
-                  padding:EdgeInsets.only(left:20.0,right: 20.0,bottom:10.0),
+                  padding:EdgeInsets.only(top:10,left:20.0,right: 20.0,),
                   child:
 
                   Container(
@@ -607,7 +615,9 @@ class _SignUpState extends State<SignUp>{
                       alignment: Alignment.centerLeft,
                       child:
                     Text(
+
                       '   ${postResultList[0].postalCode}, ${postResultList[0].state},${postResultList[0].country}, ${postResultList[0].postalLocation}',
+
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,),
                   ))),
@@ -626,22 +636,24 @@ class _SignUpState extends State<SignUp>{
           //     )
           // ),
 
-
-    //email
-              Container(margin: EdgeInsets.only(top:10.0,left:20.0,right:20.0),
+              //email
+              Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
                   child:
                   AppTextInput(
-                    enabled: flagEnabled,
+                    enabled: flagEmailEnabled,
                     hintText: Translate.of(context).translate('input_email'),
                     errorText: Translate.of(context).translate(_validEmail),
                     icon: Icon(Icons.clear),
+                    keyboardType: TextInputType.emailAddress,
                     controller: _textEmailController,
                     focusNode: _focusEmail,
+
                     textInputAction: TextInputAction.next,
                     onChanged: (text) {
                       setState(() {
                         _validEmail = UtilValidator.validate(
                           data: _textEmailController.text,
+                          type: ValidateType.email
                         );
                       });
                     },
@@ -658,7 +670,7 @@ class _SignUpState extends State<SignUp>{
               Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
                   child:
                   AppTextInput(
-                    enabled: flagEnabled,
+                    enabled: flagPhoneEnabled,
                     hintText: Translate.of(context).translate('input_mobile'),
                     errorText: Translate.of(context).translate(_validMobile),
                     icon: Icon(Icons.clear),

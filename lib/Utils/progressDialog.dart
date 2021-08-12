@@ -11,8 +11,8 @@ class PsProgressDialog {
 
   static Future getFuture() {
     return Future(() async {
-      await Future.delayed(Duration(seconds: 15));
-      return 'Loading..., Please Wait';
+      await Future.delayed(Duration(seconds: 5));
+      return 'Please Wait...';
     });
   }
 
@@ -20,7 +20,7 @@ class PsProgressDialog {
     var result = await showDialog(
         context: context,
         builder: (context) => FutureProgressDialog(getFuture()));
-    showResultDialog(context, result);
+    // showResultDialog(context, result);
   }
 
 
