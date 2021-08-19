@@ -1,26 +1,47 @@
 import 'package:orderly/Models/model_user.dart';
 class ResultApiModel {
-  int status;
-  UserModel user;
-  String msg;
+  dynamic status;
+  dynamic user;
+  dynamic msg;
 
   ResultApiModel({this.status, this.user, this.msg});
 
-  ResultApiModel.fromJson(Map<String, dynamic> json) {
-    status = json['status'];
-    user = json['user'] != null ? new UserModel.fromJson(json['user']) : null;
-    msg = json['msg'];
+  // ResultApiModel.fromJson(Map<String, dynamic> json) {
+  //   status = json['status'];
+  //   user = json['user'] != null ? new UserModel.fromJson(json['user']) : null;
+  //   msg = json['msg'];
+  // }
+  //
+  // Map<String, dynamic> toJson() {
+  //   final Map<String, dynamic> data = new Map<String, dynamic>();
+  //   data['status'] = this.status;
+  //   if (this.user != null) {
+  //     data['user'] = this.user.toJson();
+  //   }
+  //   data['msg'] = this.msg;
+  //   return data;
+  // }
+
+  factory ResultApiModel.fromJson(Map<dynamic, dynamic> json) {
+    try {
+      return ResultApiModel(
+        msg: json['msg'],
+        // message: json['message'] ,
+        user: json['user'],
+        // pagination: json['data']['pagination'],
+        // pagination: json['pagination'], //updated on 4/12/2020
+        // attr: json['attr'],
+        status: json['status'].toString(),
+      );
+    } catch (error) {
+      return ResultApiModel(
+        msg: false,
+        user: null,
+         status: '',
+      );
+    }
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    if (this.user != null) {
-      data['user'] = this.user.toJson();
-    }
-    data['msg'] = this.msg;
-    return data;
-  }
 }
 
 

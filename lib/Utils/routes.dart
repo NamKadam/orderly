@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:orderly/Screens/Customer/cart/addTime.dart';
 import 'package:orderly/Screens/Customer/cart/shopping_cart.dart';
 import 'package:orderly/Screens/Customer/profile/edit_profile.dart';
-import 'package:orderly/Screens/Customer/profile/prof_address.dart';
+import '../Screens/Customer/profile/profAddress/prof_address.dart';
 import 'package:orderly/Screens/user/OtpScreen.dart';
 
 import 'package:orderly/Screens/user/choiceScreen.dart';
@@ -25,6 +26,7 @@ class Routes {
   static const String address = "/address";
   static const String cart = "/cart";
   static const String roleType='/roleType';
+  static const String addTime='/addTime';
 
   Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -60,6 +62,14 @@ class Routes {
        },
        fullscreenDialog: false,
      );
+
+      case addTime:
+        return MaterialPageRoute(
+          builder: (context) {
+            return AddTime();
+          },
+          fullscreenDialog: false,
+        );
 
       case address:
         return MaterialPageRoute(

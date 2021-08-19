@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:orderly/Configs/theme.dart';
+import 'package:orderly/Screens/Customer/profile/profAddress/addEditAddress.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Widgets/app_button.dart';
 import 'package:orderly/Widgets/app_text_input.dart';
@@ -10,18 +11,34 @@ class ProfAddress extends StatefulWidget{
 }
 
 class _ProfAddressState extends State<ProfAddress>{
+  String flagAddEdit="";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print("called initState");
+  }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-
-      appBar: AppBar(
+        appBar: AppBar(
         title: Text(Translate.of(context).translate('address')
           ,style: TextStyle(
             fontFamily: 'Poppins',
             fontWeight: FontWeight.w600,
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+          elevation: 0.0,
+          child: new Icon(Icons.add,color: Colors.white,size: 20.0,),
+          backgroundColor:Theme.of(context).primaryColor,
+          onPressed: (){
+            flagAddEdit="0";//for add
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>AddEditAddress(flagAddEdit:flagAddEdit)));
+          }
       ),
       body:
       Container(
@@ -65,7 +82,8 @@ class _ProfAddressState extends State<ProfAddress>{
                   children: [
                     //cancel
                     Expanded(
-                        child:Padding(padding: EdgeInsets.only(left:20.0,right:20.0,top:30.0),
+                        child:
+                        Padding(padding: EdgeInsets.only(left:20.0,right:20.0,top:30.0),
 
                             child:ElevatedButton(
                               style: ElevatedButton.styleFrom(
@@ -76,7 +94,10 @@ class _ProfAddressState extends State<ProfAddress>{
                                   )
                               ),
                               // shape: shape,
-                              onPressed: (){},
+                              onPressed: (){
+                                flagAddEdit="1";//for add
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>AddEditAddress(flagAddEdit:flagAddEdit)));
+                              },
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -95,7 +116,8 @@ class _ProfAddressState extends State<ProfAddress>{
                         )),
                     //save
                     Expanded(
-                        child:Padding(padding: EdgeInsets.only(left:20.0,right:20.0,top:30.0),
+                        child:
+                        Padding(padding: EdgeInsets.only(left:20.0,right:20.0,top:30.0),
                             child:
                             AppButton(
                               onPressed: (){

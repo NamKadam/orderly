@@ -128,9 +128,10 @@ class _SignUpState extends State<SignUp>{
 
             }else{
               _validZip="";
+              address='${postResultList[0].postalCode}, ${postResultList[0].state},${postResultList[0].country}, ${postResultList[0].postalLocation}';
+
             }
             print(value.result);
-            address='${postResultList[0].postalCode}, ${postResultList[0].state},${postResultList[0].country}, ${postResultList[0].postalLocation}';
 
           })
         }, onError: (error) {
@@ -385,6 +386,7 @@ class _SignUpState extends State<SignUp>{
       );
       _validEmail = UtilValidator.validate(
         data: _textEmailController.text,
+        type:ValidateType.email
       );
       _validMobile = UtilValidator.validate(
         data: _textMobileController.text,
@@ -421,7 +423,7 @@ class _SignUpState extends State<SignUp>{
   }
 
   ///On show message fail
-  Future<void> _showMessage(String message) async {
+  Future<void> _showMessage(String message,String flag) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -443,10 +445,16 @@ class _SignUpState extends State<SignUp>{
           actions: <Widget>[
             FlatButton(
               child: Text(
-                Translate.of(context).translate('close'),
+                "OK",
               ),
               onPressed: () {
-                Navigator.of(context).pop();
+                if(flag=="0"){
+                  Navigator.of(context).pop();
+
+                }else{
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigation()));
+
+                }
               },
             ),
           ],
@@ -458,261 +466,277 @@ class _SignUpState extends State<SignUp>{
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text('Sign Up'
-        ,style: TextStyle(
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w600,
+    return BlocListener<UserRegBloc,UserRegState>(listener: (context,listen){
+      if(listen is RegisterUserFail){
+        _showMessage(
+          Translate.of(context).translate(listen.msg),
+          "0"//for fail
+        );
+      }
+
+      if(listen is RegisterUserSuccess){
+        // Scaffold.of(context).showSnackBar(SnackBar(content:Text('User Registered Successfully')));
+        _showMessage(
+          "User Registered Successfully","1" //for success
+        );
+      }
+
+
+    },
+      child:Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text('Sign Up'
+            ,style: TextStyle(
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
-      ),
-      body: Container(
-          padding: EdgeInsets.only(left: 20, right: 20),
-          child: SingleChildScrollView(
-          child:Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              //image
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child:
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Stack(
-                      alignment: Alignment.bottomRight,
+        body: Container(
+            padding: EdgeInsets.only(left: 20, right: 20),
+            child: SingleChildScrollView(
+              child:Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  //image
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child:
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        _buildAvatar(),
-                        IconButton(
-                          icon:
-                          Image.asset(Images.camera,height: 40.0,width:35.0),
-                          onPressed:(){
-                            customCameraGalleryDialog(context);
-                            },
+                        Stack(
+                          alignment: Alignment.bottomRight,
+                          children: <Widget>[
+                            _buildAvatar(),
+                            IconButton(
+                              icon:
+                              Image.asset(Images.camera,height: 40.0,width:35.0),
+                              onPressed:(){
+                                customCameraGalleryDialog(context);
+                              },
+                            )
+                          ],
                         )
                       ],
-                    )
-                  ],
-                ),
-              ),
-            //first name
-            Container(margin: EdgeInsets.only(top:25.0,left:20.0,right:20.0),
-              child:AppTextInput(
-                enabled: true,
-                hintText: Translate.of(context).translate('input_first_name'),
-                errorText: Translate.of(context).translate(_validFirstName),
-                icon: Icon(Icons.clear),
-                controller: _textFirstNameController,
-                focusNode: _focusName,
-                textInputAction: TextInputAction.next,
-                onChanged: (text) {
-                  setState(() {
-                    _validFirstName = UtilValidator.validate(
-                      data: _textFirstNameController.text,
-                    );
-                  });
-                },
-                onSubmitted: (text) {
-                  UtilOther.fieldFocusChange(context, _focusName, _focusLastName);
-                },
-                onTapIcon: () async {
-                  await Future.delayed(Duration(milliseconds: 100));
-                  _textFirstNameController.clear();
-                },
-              )),
-
-              //lastName
-             Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
-              child:AppTextInput(
-                enabled: true,
-                hintText: Translate.of(context).translate('input_last_name'),
-                errorText: Translate.of(context).translate(_validLastName),
-                icon: Icon(Icons.clear),
-                controller: _textLastNameController,
-                focusNode: _focusLastName,
-                textInputAction: TextInputAction.next,
-                onChanged: (text) {
-                  setState(() {
-                    _validLastName = UtilValidator.validate(
-                      data: _textLastNameController.text,
-                    );
-                  });
-                },
-                onSubmitted: (text) {
-                  UtilOther.fieldFocusChange(context, _focusLastName, _focusZip);
-                },
-                onTapIcon: () async {
-                  await Future.delayed(Duration(milliseconds: 100));
-                  _textLastNameController.clear();
-                },
-              )),
-
-              //zip
-              Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
-              child:
-              AppTextInput(
-                enabled: true,
-                hintText: Translate.of(context).translate('input_zipcode'),
-                errorText: Translate.of(context).translate(_validZip),
-                icon: Icon(Icons.clear),
-                controller: _textZipController,
-                focusNode: _focusZip,
-                maxLength: 5,
-                keyboardType: TextInputType.number,
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.digitsOnly
-                ],
-                textInputAction: TextInputAction.next,
-                onChanged: (text) {
-                  if(text.length>=5){
-                    _apiCall=true;
-                    _callAPIForPincode();
-                  }
-
-                  setState(() {
-                    _validZip = UtilValidator.validate(
-                      data: _textZipController.text,
-                    );
-
-                  });
-
-                },
-
-                onSubmitted: (text) {
-                  UtilOther.fieldFocusChange(context, _focusZip, _focusEmail);
-                  print('submitted zip');
-                },
-                onTapIcon: () async {
-                  await Future.delayed(Duration(milliseconds: 100));
-                  _textZipController.clear();
-                  setState(() {
-                    _apiCall=false;
-                    postResultList=[];
-                  });
-
-                },
-              )),
-
-              //address from zipcode
-
-              if(postResultList.length>0)
-
-              Padding(
-                  padding:EdgeInsets.only(top:10,left:20.0,right: 20.0,),
-                  child:
-
-                  Container(
-                    height: 50.0,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Theme.of(context).primaryColor),
-                      color: AppTheme.verifyPhone.withOpacity(0.4),
-                      borderRadius: BorderRadius.circular(10),
                     ),
-                    child:Align(
-                      alignment: Alignment.centerLeft,
+                  ),
+                  //first name
+                  Container(margin: EdgeInsets.only(top:25.0,left:20.0,right:20.0),
+                      child:AppTextInput(
+                        enabled: true,
+                        hintText: Translate.of(context).translate('input_first_name'),
+                        errorText: Translate.of(context).translate(_validFirstName),
+                        icon: Icon(Icons.clear),
+                        controller: _textFirstNameController,
+                        focusNode: _focusName,
+                        textInputAction: TextInputAction.next,
+                        onChanged: (text) {
+                          setState(() {
+                            _validFirstName = UtilValidator.validate(
+                              data: _textFirstNameController.text,
+                            );
+                          });
+                        },
+                        onSubmitted: (text) {
+                          UtilOther.fieldFocusChange(context, _focusName, _focusLastName);
+                        },
+                        onTapIcon: () async {
+                          await Future.delayed(Duration(milliseconds: 100));
+                          _textFirstNameController.clear();
+                        },
+                      )),
+                  //lastName
+                  Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
+                      child:AppTextInput(
+                        enabled: true,
+                        hintText: Translate.of(context).translate('input_last_name'),
+                        errorText: Translate.of(context).translate(_validLastName),
+                        icon: Icon(Icons.clear),
+                        controller: _textLastNameController,
+                        focusNode: _focusLastName,
+                        textInputAction: TextInputAction.next,
+                        onChanged: (text) {
+                          setState(() {
+                            _validLastName = UtilValidator.validate(
+                              data: _textLastNameController.text,
+                            );
+                          });
+                        },
+                        onSubmitted: (text) {
+                          UtilOther.fieldFocusChange(context, _focusLastName, _focusZip);
+                        },
+                        onTapIcon: () async {
+                          await Future.delayed(Duration(milliseconds: 100));
+                          _textLastNameController.clear();
+                        },
+                      )),
+                  //zip
+                  Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
                       child:
-                    Text(
+                      AppTextInput(
+                        enabled: true,
+                        hintText: Translate.of(context).translate('input_zipcode'),
+                        errorText: Translate.of(context).translate(_validZip),
+                        icon: Icon(Icons.clear),
+                        controller: _textZipController,
+                        focusNode: _focusZip,
+                        maxLength: 5,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        textInputAction: TextInputAction.next,
+                        onChanged: (text) {
+                          if(text.length>=5){
+                            _apiCall=true;
+                            _callAPIForPincode();
+                          }
 
-                      '   ${postResultList[0].postalCode}, ${postResultList[0].state},${postResultList[0].country}, ${postResultList[0].postalLocation}',
+                          // setState(() {
+                            _validZip = UtilValidator.validate(
+                              data: _textZipController.text,
+                            );
+                          //
+                          // });
 
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,),
-                  ))),
-          //    :
-          //     Padding(
-          //     padding:EdgeInsets.only(left:20.0,right: 20.0,),
-          //     child:
-          //     Text(
-          //       'Please enter valid Zipcode',
-          //       style: TextStyle(
-          //           fontFamily: 'Poppins',
-          //           fontWeight: FontWeight.w300,
-          //           fontSize: 12.0,
-          //           color: Colors.red
-          //       ),
-          //     )
-          // ),
+                        },
 
-              //email
-              Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
-                  child:
-                  AppTextInput(
-                    enabled: flagEmailEnabled,
-                    hintText: Translate.of(context).translate('input_email'),
-                    errorText: Translate.of(context).translate(_validEmail),
-                    icon: Icon(Icons.clear),
-                    keyboardType: TextInputType.emailAddress,
-                    controller: _textEmailController,
-                    focusNode: _focusEmail,
+                        onSubmitted: (text) {
+                          UtilOther.fieldFocusChange(context, _focusZip, _focusEmail);
+                          print('submitted zip');
+                        },
+                        onTapIcon: () async {
+                          await Future.delayed(Duration(milliseconds: 100));
+                          _textZipController.clear();
+                          setState(() {
+                            _apiCall=false;
+                            postResultList=[];
+                            _validZip = UtilValidator.validate(
+                              data: _textZipController.text,
+                            );
+                          });
 
-                    textInputAction: TextInputAction.next,
-                    onChanged: (text) {
-                      setState(() {
-                        _validEmail = UtilValidator.validate(
-                          data: _textEmailController.text,
-                          type: ValidateType.email
-                        );
-                      });
-                    },
-                    onSubmitted: (text) {
-                      UtilOther.fieldFocusChange(context, _focusEmail, _focusMobile);
-                    },
-                    onTapIcon: () async {
-                      await Future.delayed(Duration(milliseconds: 100));
-                      _textEmailController.clear();
-                    },
-                  )),
+                        },
+                      )),
+                  //address from zipcode
+                  if(postResultList.length>0)
+                    Padding(
+                      padding:EdgeInsets.only(top:postResultList.length>0?0:10
+                        ,left:20.0,right: 20.0,),
+                      child:
 
-              //mobile
-              Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
-                  child:
-                  AppTextInput(
-                    enabled: flagPhoneEnabled,
-                    hintText: Translate.of(context).translate('input_mobile'),
-                    errorText: Translate.of(context).translate(_validMobile),
-                    icon: Icon(Icons.clear),
-                    controller: _textMobileController,
-                    focusNode: _focusMobile,
-                    maxLength: 10,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly
-                    ],
-                    keyboardType: TextInputType.phone,
-                    textInputAction: TextInputAction.next,
-                    onChanged: (text) {
-                      setState(() {
-                        _validMobile = UtilValidator.validate(
-                          data: _textMobileController.text,
-                        );
-                      });
-                    },
+                      Container(
+                          height: 50.0,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Theme.of(context).primaryColor),
+                            color: AppTheme.verifyPhone.withOpacity(0.4),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child:Align(
+                            alignment: Alignment.centerLeft,
+                            child:
+                            Text(
 
-                    onTapIcon: () async {
-                      await Future.delayed(Duration(milliseconds: 100));
-                      _textMobileController.clear();
-                    },
-                  )),
+                              '   ${postResultList[0].postalCode}, ${postResultList[0].state},${postResultList[0].country}, ${postResultList[0].postalLocation}'
+                                  ,
 
-             //api for registration of User
-              BlocBuilder<UserRegBloc,UserRegState>(builder: (context,register){
-                return BlocListener<UserRegBloc,UserRegState>(listener: (context,state){
-                  if (state is RegisterUserFail) {
-                    _showMessage(
-                      Translate.of(context).translate(state.msg),
-                    );
-                  }
-                  if (state is RegisterUserSuccess) {
-                    Scaffold.of(context).showSnackBar(SnackBar(content:Text('User Registered Successfully')));
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigation()));
-                  }
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontWeight: FontWeight.w400,fontSize: 14.0,),),
+                          ))),
+                  //    :
+                  //     Padding(
+                  //     padding:EdgeInsets.only(left:20.0,right: 20.0,),
+                  //     child:
+                  //     Text(
+                  //       'Please enter valid Zipcode',
+                  //       style: TextStyle(
+                  //           fontFamily: 'Poppins',
+                  //           fontWeight: FontWeight.w300,
+                  //           fontSize: 12.0,
+                  //           color: Colors.red
+                  //       ),
+                  //     )
+                  // ),
 
+                  //email
+                  Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
+                      child:
+                      AppTextInput(
+                        enabled: flagEmailEnabled,
+                        hintText: Translate.of(context).translate('input_email'),
+                        errorText: Translate.of(context).translate(_validEmail),
+                        icon: Icon(Icons.clear),
+                        keyboardType: TextInputType.emailAddress,
+                        controller: _textEmailController,
+                        focusNode: _focusEmail,
 
-                }, child:Padding(padding: EdgeInsets.all(40.0),
+                        textInputAction: TextInputAction.next,
+                        onChanged: (text) {
+                          setState(() {
+                            _validEmail = UtilValidator.validate(
+                                data: _textEmailController.text,
+                                type: ValidateType.email
+                            );
+                          });
+                        },
+                        onSubmitted: (text) {
+                          UtilOther.fieldFocusChange(context, _focusEmail, _focusMobile);
+                        },
+                        onTapIcon: () async {
+                          await Future.delayed(Duration(milliseconds: 100));
+                          _textEmailController.clear();
+                        },
+                      )),
+
+                  //mobile
+                  Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
+                      child:
+                      AppTextInput(
+                        enabled: flagPhoneEnabled,
+                        hintText: Translate.of(context).translate('input_mobile'),
+                        errorText: Translate.of(context).translate(_validMobile),
+                        icon: Icon(Icons.clear),
+                        controller: _textMobileController,
+                        focusNode: _focusMobile,
+                        maxLength: 10,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        keyboardType: TextInputType.phone,
+                        textInputAction: TextInputAction.next,
+                        onChanged: (text) {
+                          setState(() {
+                            _validMobile = UtilValidator.validate(
+                              data: _textMobileController.text,
+                            );
+                          });
+                        },
+
+                        onTapIcon: () async {
+                          await Future.delayed(Duration(milliseconds: 100));
+                          _textMobileController.clear();
+                        },
+                      )),
+
+                  //api for registration of User
+                  BlocBuilder<UserRegBloc,UserRegState>(builder: (context,register){
+                    // return BlocListener<UserRegBloc,UserRegState>(listener: (context,state){
+                    //   if (state is RegisterUserFail) {
+                    //     _showMessage(
+                    //       Translate.of(context).translate(state.msg),
+                    //     );
+                    //   }
+                    //   if (state is RegisterUserSuccess) {
+                    //     Scaffold.of(context).showSnackBar(SnackBar(content:Text('User Registered Successfully')));
+                    //     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigation()));
+                    //   }
+
+                    return Padding(padding: EdgeInsets.all(40.0),
                         child:
-
                         AppButton(
                           onPressed: (){
                             _signUp();
@@ -723,29 +747,32 @@ class _SignUpState extends State<SignUp>{
                           loading: register is FetchingUserRegister,
                           disableTouchWhenLoading: true,
                         )
-                    )
-                );
-              })
+                    );
 
-            //   Padding(padding: EdgeInsets.all(40.0),
-            //     child:
-            //     AppButton(
-            //       onPressed: (){
-            //         _signUp();
-            //         // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigation()));
-            //         },
-            //       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),
-            //       text: 'Register',
-            //       // loading: login is LoginLoading,
-            //       // disableTouchWhenLoading: true,
-            //     )
-            // )
 
-          ],
-        ),
+                  })
 
-      )),
+                  //   Padding(padding: EdgeInsets.all(40.0),
+                  //     child:
+                  //     AppButton(
+                  //       onPressed: (){
+                  //         _signUp();
+                  //         // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigation()));
+                  //         },
+                  //       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),
+                  //       text: 'Register',
+                  //       // loading: login is LoginLoading,
+                  //       // disableTouchWhenLoading: true,
+                  //     )
+                  // )
+
+                ],
+              ),
+
+            )),
+      )
     );
+
   }
 
 }

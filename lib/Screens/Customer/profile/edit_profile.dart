@@ -9,6 +9,7 @@ import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/imageFile.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
+import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Utils/utilOther.dart';
 import 'package:orderly/Utils/validate.dart';
@@ -36,6 +37,22 @@ class _EditProfileState extends State<EditProfile>{
   final _focusZip = FocusNode();
 
   var _validFirstName,_validLastName,_validEmail,_validMobile,_validZip;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getUserData();
+  }
+
+  void getUserData(){
+    _textFirstNameController.text=Application.user.firstName.toString();
+    _textLastNameController.text=Application.user.lastName.toString();
+    _textEmailController.text=Application.user.emailId.toString();
+    _textMobileController.text=Application.user.mobile.toString();
+    // _textFirstNameController.text=Application.user.firstName.toString();
+
+  }
 
 
   ///Build Avatar image

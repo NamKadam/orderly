@@ -29,6 +29,7 @@ class Images {
   static const String delete = "assets/images/delete.png";
   static const String filter = "assets/images/filter.png";
   static const String profile_pic='assets/images/profile-male.png';
+  static const String calender='assets/images/calender.png';
 
 
 

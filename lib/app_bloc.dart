@@ -1,3 +1,4 @@
+import 'package:orderly/Blocs/home/bloc.dart';
 import 'package:orderly/Blocs/login/login_bloc.dart';
 import 'package:orderly/Blocs/theme/theme_bloc.dart';
 import 'package:orderly/Blocs/user_reg/userReg_bloc.dart';
@@ -15,6 +16,7 @@ class AppBloc {
   static final authBloc = AuthBloc(userRepository: userRepository);
   static final loginBloc = LoginBloc(userRepository: userRepository);
   static final userRegBloc = UserRegBloc(userRepository: userRepository);
+  static final homeBloc = HomeBloc(homeRepository: userRepository);
 
 
 
@@ -37,6 +39,9 @@ class AppBloc {
     BlocProvider<UserRegBloc>(
       create: (context) => userRegBloc,
     ),
+    BlocProvider<HomeBloc>(
+      create: (context) => homeBloc,
+    ),
 
 
   ];
@@ -48,7 +53,7 @@ class AppBloc {
     authBloc.close();
     loginBloc.close();
     userRegBloc.close();
-
+    homeBloc.close();
 
   }
 

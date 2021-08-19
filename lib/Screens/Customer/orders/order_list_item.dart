@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
+import 'package:orderly/Screens/Customer/orders/product_review.dart';
+import 'package:orderly/Screens/Customer/orders/track_order.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -183,7 +185,12 @@ class _OrderListItemState extends State<OrderListItem>{
                           color: Colors.grey,
                         ),
                         //product review
-                        Row(
+
+                        GestureDetector(
+                          onTap: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductReview()));
+                          },
+                            child:Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Padding(
@@ -192,18 +199,22 @@ class _OrderListItemState extends State<OrderListItem>{
                                     fontFamily: 'Poppins',color: AppTheme.textColor),
                                 )),
 
-                            IconButton(onPressed: (){},
+                            IconButton(
                                 icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
 
                             )
                           ],
-                        ),
+                        )),
                         Divider(
                           height: 1.0,
                           color: Colors.grey,
                         ),
                         //track order
-                        Row(
+                        GestureDetector(
+                          onTap: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>TrackOrder()));
+                          },
+                            child:Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Padding(
@@ -212,12 +223,12 @@ class _OrderListItemState extends State<OrderListItem>{
                                     fontFamily: 'Poppins',color: AppTheme.textColor),
                                 )),
 
-                            IconButton(onPressed: (){},
+                            IconButton(
                                 icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
 
                             )
                           ],
-                        ),
+                        )),
                         Divider(
                           height: 1.0,
                           color: Colors.grey,

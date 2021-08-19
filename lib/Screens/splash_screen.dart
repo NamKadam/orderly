@@ -51,8 +51,6 @@ class _SplashScreenState extends State<SplashScreen> {
          await Duration(seconds: splashDuration),
              () {
            SystemChannels.textInput.invokeMethod('TextInput.hide');
-
-
            authBloc = BlocProvider.of<AuthBloc>(context);
            authBloc.add(OnAuthCheck());
            // preferences.clear();

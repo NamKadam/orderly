@@ -8,8 +8,8 @@ import 'package:orderly/Utils/util_preferences.dart';
 class UserRepository {
 
   ///Fetch api login
-  Future<dynamic> login({String api_token,String mobile, String otp}) async {
-    final params = {"api_token":api_token,"mobile": mobile, "otp": otp};
+  Future<dynamic> login({String fbId}) async {
+    final params = {"fb_id":fbId};
     return await Api.login(params);
   }
 
@@ -25,6 +25,10 @@ class UserRepository {
       jsonEncode(user.toJson()),
     );
   }
+  // //category producer
+  // Future<dynamic> fetchProducerCat() async {
+  //   return await Api.getHome();
+  // }
 
   ///Get from Storage
   dynamic getUser() {

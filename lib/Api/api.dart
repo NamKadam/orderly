@@ -8,14 +8,26 @@ import 'package:orderly/Models/zipcode/postalcode.dart';
 
 class Api {
 
-  static const String HOST_URL="https://rajputudyog.in/backend/api/";//updated on 23/12/2020
-  static const String CUST_REG="https://rajputudyog.in/backend/api/";//updated on 23/12/2020
-  static const String CUST_LOGIN="https://rajputudyog.in/backend/api/";//updated on 23/12/2020
+  static const String HOST_URL="http://93.188.162.210:3000/";//updated on 23/12/2020
+  static const String CUST_REG="register";//updated on 23/12/2020
+  static const String CUST_LOGIN=HOST_URL+"login";
 
   ///Login api
   static Future<dynamic> login(params) async {
     final response = await http.post(
-      Uri.parse(HOST_URL),
+      Uri.parse(CUST_LOGIN),
+      body: params,
+    );
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+      return ResultApiModel.fromJson(responseJson);
+    }
+  }
+
+  //register api
+  static Future<dynamic> register(params) async {
+    final response = await http.post(
+      Uri.parse(CUST_REG),
       body: params,
     );
     if (response.statusCode == 200) {

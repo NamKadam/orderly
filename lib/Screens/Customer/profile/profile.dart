@@ -8,6 +8,7 @@ import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/imageFile.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
+import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/authentication.dart';
 import 'package:orderly/Utils/routes.dart';
 import 'package:orderly/Utils/translate.dart';
@@ -191,15 +192,15 @@ class HeaderWidget extends StatelessWidget{
             ),
             //name
             Padding(
-                padding:EdgeInsets.all(15.0),child:Text(
-              'Namrata kadam',
+                padding:EdgeInsets.all(10.0),child:Text(
+              Application.user.firstName+" "+Application.user.lastName,
               style: TextStyle(fontFamily: 'Poppins',fontWeight: FontWeight.w600,
                   fontSize: 16.0,
                   color:AppTheme.textColor),
             )),
             //email
             Text(
-              'namrata.kadam@desteksolutions.com',
+              Application.user.emailId,
               style: TextStyle(fontFamily: 'Poppins',fontWeight: FontWeight.w200,
                   fontSize: 12.0,
                   color:AppTheme.textColor),
@@ -207,15 +208,13 @@ class HeaderWidget extends StatelessWidget{
             //mobile
             Padding(
                 padding:EdgeInsets.only(top:2.0,bottom: 15.0),child:Text(
-              '+91 9730259440',
+              "+91 "+Application.user.mobile,
               style: TextStyle(fontFamily: 'Poppins',fontWeight: FontWeight.w400,
                   fontSize: 12.0,
                   color:AppTheme.textColor),
             ))
           ],
         )
-
-
 
     );
   }

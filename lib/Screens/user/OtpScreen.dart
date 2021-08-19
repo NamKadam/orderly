@@ -518,7 +518,7 @@ class _OtpScreenState extends State<OtpScreen>{
       appBar: AppBar(
         centerTitle: true,
 
-              title:Text('Otp Verification',style: TextStyle(
+              title:Text('OTP Verification',style: TextStyle(
               fontFamily: 'Poppins',fontWeight: FontWeight.w600
             ),)
       ),

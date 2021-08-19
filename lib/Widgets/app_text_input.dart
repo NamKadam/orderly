@@ -113,6 +113,7 @@ class AppTextInput extends StatelessWidget {
               :
           TextField(
             onTap: onTap,
+            enabled:enabled,
             textAlignVertical: TextAlignVertical.center,
             onSubmitted: onSubmitted,
             controller: controller,
