@@ -5,6 +5,7 @@ import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Screens/Customer/orders/product_review.dart';
 import 'package:orderly/Screens/Customer/orders/track_order.dart';
+import 'package:orderly/Screens/Customer/payment/payment.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -212,7 +213,8 @@ class _OrderListItemState extends State<OrderListItem>{
                         //track order
                         GestureDetector(
                           onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>TrackOrder()));
+                            // Navigator.push(context, MaterialPageRoute(builder: (context)=>TrackOrder()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>Payment()));
                           },
                             child:Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

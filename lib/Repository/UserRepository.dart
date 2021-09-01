@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:orderly/Api/api.dart';
+import 'package:orderly/Models/cart_model.dart';
 import 'package:orderly/Models/model_user.dart';
+import 'package:orderly/Models/view_cart.dart';
 import 'package:orderly/Utils/preferences.dart';
 import 'package:orderly/Utils/util_preferences.dart';
 
@@ -25,10 +27,26 @@ class UserRepository {
       jsonEncode(user.toJson()),
     );
   }
-  // //category producer
-  // Future<dynamic> fetchProducerCat() async {
-  //   return await Api.getHome();
-  // }
+
+
+  //category producer
+  Future<dynamic> fetchProducerCat() async {
+    return await Api.getProducerList();
+  }
+  //api for product list as per producer
+  Future<dynamic> fetchProduct({String producerId,String type, String offset}) async {
+    final params = {"producer_id":producerId,"type":type,"offset":offset};
+
+    return await Api.getProdList(params);
+  }
+
+  //get cartList
+  //api for product list as per producer
+  Future<dynamic> fetchCartList({String fbId}) async {
+    final params = {"user_id":fbId};
+
+    return await Api.getCartList(params);
+  }
 
   ///Get from Storage
   dynamic getUser() {

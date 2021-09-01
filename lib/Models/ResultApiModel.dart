@@ -26,11 +26,8 @@ class ResultApiModel {
     try {
       return ResultApiModel(
         msg: json['msg'],
-        // message: json['message'] ,
         user: json['user'],
         // pagination: json['data']['pagination'],
-        // pagination: json['pagination'], //updated on 4/12/2020
-        // attr: json['attr'],
         status: json['status'].toString(),
       );
     } catch (error) {

@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:orderly/Models/ResultApiModel.dart';
 import 'package:http/http.dart' as http;
+import 'package:orderly/Models/model_producer_list.dart';
+import 'package:orderly/Models/productList_scopedModel.dart';
+import 'package:orderly/Models/view_cart.dart';
 import 'dart:convert';
-
 import 'package:orderly/Models/zipcode/postalcode.dart';
 
 
@@ -11,6 +13,10 @@ class Api {
   static const String HOST_URL="http://93.188.162.210:3000/";//updated on 23/12/2020
   static const String CUST_REG="register";//updated on 23/12/2020
   static const String CUST_LOGIN=HOST_URL+"login";
+  static const String GET_PRODUCER_LIST=HOST_URL+"producer";
+  static const String GET_PROD_LIST=HOST_URL+"product_list";
+  static const String ADD_TO_CART=HOST_URL+"add_to_cart";
+  static const String GET_CART_LIST=HOST_URL+"view_cart";
 
   ///Login api
   static Future<dynamic> login(params) async {
@@ -33,6 +39,39 @@ class Api {
     if (response.statusCode == 200) {
       final responseJson = json.decode(response.body);
       return ResultApiModel.fromJson(responseJson);
+    }
+  }
+
+  //get prod list api
+  static Future<dynamic> getProducerList() async {
+    final response = await http.get(Uri.parse(GET_PRODUCER_LIST));
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+      return ProducerListResp.fromJson(responseJson);
+    }
+  }
+
+  //get product list as per producer Id
+  static Future<dynamic> getProdList(params) async {
+    final response = await http.post(
+      Uri.parse(GET_PROD_LIST),
+      body: params,
+    );
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+      return ProductListResp.fromJson(responseJson);
+    }
+  }
+
+  //get cart list
+  static Future<dynamic> getCartList(params) async {
+    final response = await http.post(
+      Uri.parse(GET_CART_LIST),
+      body: params,
+    );
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+      return ViewCartResp.fromJson(responseJson);
     }
   }
 

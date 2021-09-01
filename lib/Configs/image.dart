@@ -30,8 +30,8 @@ class Images {
   static const String filter = "assets/images/filter.png";
   static const String profile_pic='assets/images/profile-male.png';
   static const String calender='assets/images/calender.png';
-
-
+  static const String razorpay='assets/images/razor.png';
+  static const String stripe='assets/images/stripe.png';
 
   ///Singleton factory
   static final Images _instance = Images._internal();

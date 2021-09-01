@@ -21,45 +21,45 @@ class _ProducersState extends State<Producers>{
 
   //updated on 10/08/2021 for cart incr and decr
   List<int> selectedIndexList = []; //for selected index
-  List<Product> productLists = [];
-  List<Product> cartList = []; //added as per total calculate count
+  List<Products> productLists = [];
+  List<Products> cartList = []; //added as per total calculate count
   double totalCartValue = 0;
   int quantity=0;
 
-  void getProducts() {
-    for (int i = 0; i < 10; i++) {
-      Product product = new Product(
-          id: i,
-          title: "Prime Roof Truck",
-          price: 25,
-          qty: 1,
-          imgUrl: "http://via.placeholder.com/350x150");
-      productLists.add(product);
-    }
-  }
+  // void getProducts() {
+  //   for (int i = 0; i < 10; i++) {
+  //     Products product = new Products(
+  //         id: i,
+  //         title: "Prime Roof Truck",
+  //         price: 25,
+  //         qty: 1,
+  //         imgUrl: "http://via.placeholder.com/350x150");
+  //     productLists.add(product);
+  //   }
+  // }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     isExpand=false;
-    getProducts();
+    // getProducts();
   }
 
-  void calculateTotal(List<Product> cartList) {
-    totalCartValue = 0;
-    quantity=0;
-    cartList.forEach((f) {
-      totalCartValue += f.price * f.qty;
-      quantity+=f.qty;
-      print('total cart value:-'+totalCartValue.toString());
-      print('quantity:-'+quantity.toString());
-    });
-    setState(() {
-
-    });
-
-  }
+  // void calculateTotal(List<Products> cartList) {
+  //   totalCartValue = 0;
+  //   quantity=0;
+  //   cartList.forEach((f) {
+  //     totalCartValue += f.price * f.qty;
+  //     quantity+=f.qty;
+  //     print('total cart value:-'+totalCartValue.toString());
+  //     print('quantity:-'+quantity.toString());
+  //   });
+  //   setState(() {
+  //
+  //   });
+  //
+  // }
 
 
   Widget buildListViewItemProd() {

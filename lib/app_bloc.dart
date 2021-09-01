@@ -1,5 +1,6 @@
 import 'package:orderly/Blocs/home/bloc.dart';
 import 'package:orderly/Blocs/login/login_bloc.dart';
+import 'package:orderly/Blocs/mycart/bloc.dart';
 import 'package:orderly/Blocs/theme/theme_bloc.dart';
 import 'package:orderly/Blocs/user_reg/userReg_bloc.dart';
 import 'package:orderly/Repository/UserRepository.dart';
@@ -11,12 +12,12 @@ class AppBloc {
   static final userRepository = UserRepository();
   static final themeBloc = ThemeBloc();
 
-  //
 
   static final authBloc = AuthBloc(userRepository: userRepository);
   static final loginBloc = LoginBloc(userRepository: userRepository);
   static final userRegBloc = UserRegBloc(userRepository: userRepository);
   static final homeBloc = HomeBloc(homeRepository: userRepository);
+  static final cartBloc = CartBloc(cartRepository: userRepository);
 
 
 
@@ -42,6 +43,9 @@ class AppBloc {
     BlocProvider<HomeBloc>(
       create: (context) => homeBloc,
     ),
+    BlocProvider<CartBloc>(
+      create: (context) => cartBloc,
+    ),
 
 
   ];
@@ -54,7 +58,7 @@ class AppBloc {
     loginBloc.close();
     userRegBloc.close();
     homeBloc.close();
-
+    cartBloc.close();
   }
 
   ///Singleton factory

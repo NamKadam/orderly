@@ -12,6 +12,7 @@ class Preferences {
   static String deviceId='device_id';
 
 
+
   ///Singleton factory
   static final Preferences _instance = Preferences._internal();
 

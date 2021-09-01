@@ -76,6 +76,7 @@ class UtilPreferences {
   }
 
 
+
   ///Singleton factory
   static final UtilPreferences _instance = UtilPreferences._internal();
 

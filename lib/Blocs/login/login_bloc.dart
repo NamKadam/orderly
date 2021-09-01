@@ -81,19 +81,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       final ResultApiModel result = await userRepository.login(
         fbId: event.fbId
       );
-
-
       ///Case API fail but not have token
       if (result.msg=="Success") {
         ///Login API success
-
         final User user = User.fromJson(result.user);
         try {
           ///Begin start AuthBloc Event AuthenticationSave
           AppBloc.authBloc.add(OnSaveUser(user));
           yield LoginSuccess(userModel: user);
-
-
         } catch (error) {
           ///Notify loading to UI
           yield LoginFail(msg: result.msg);
