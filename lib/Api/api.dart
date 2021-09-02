@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:orderly/Models/ResultApiModel.dart';
 import 'package:http/http.dart' as http;
 import 'package:orderly/Models/model_producer_list.dart';
-import 'package:orderly/Models/productList_scopedModel.dart';
-import 'package:orderly/Models/view_cart.dart';
+import 'package:orderly/Models/model_product_List.dart';
+import 'package:orderly/Models/model_view_cart.dart';
 import 'dart:convert';
 import 'package:orderly/Models/zipcode/postalcode.dart';
 

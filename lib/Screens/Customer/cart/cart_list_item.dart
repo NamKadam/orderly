@@ -5,8 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
-import 'package:orderly/Models/cart_model.dart';
-import 'package:orderly/Models/view_cart.dart';
+import 'package:orderly/Models/model_scoped_cart.dart';
+import 'package:orderly/Models/model_view_cart.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shimmer/shimmer.dart';
 

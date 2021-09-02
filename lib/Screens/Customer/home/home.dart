@@ -11,7 +11,7 @@ import 'package:orderly/Blocs/home/home_bloc.dart';
 import 'package:orderly/Blocs/home/home_event.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/model_producer_list.dart';
-import 'package:orderly/Models/productList_scopedModel.dart';
+import 'package:orderly/Models/model_product_List.dart';
 import 'package:orderly/Screens/Customer/cart/shopping_cart.dart';
 import 'package:orderly/Screens/Customer/home/home_item_detail.dart';
 import 'package:orderly/Utils/application.dart';
@@ -1027,7 +1027,7 @@ class _HomeState extends State<Home> {
 // import 'package:flutter/material.dart';
 // import 'package:orderly/Configs/image.dart';
 // import 'package:orderly/Configs/theme.dart';
-// import 'package:orderly/Models/cart_model.dart';
+// import 'package:orderly/Models/model_scoped_cart.dart';
 // import 'package:orderly/Screens/Customer/home/home_item_detail.dart';
 // import 'package:orderly/Utils/translate.dart';
 // import 'package:orderly/Widgets/app_button.dart';

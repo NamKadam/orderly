@@ -7,3 +7,8 @@ class OnLoadingCartList extends CartEvent {
   String fbId;
   OnLoadingCartList({this.fbId});
 }
+
+class OnDeleteCartList extends CartEvent {
+  String fbId;
+  OnDeleteCartList({this.fbId});
+}

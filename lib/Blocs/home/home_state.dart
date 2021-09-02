@@ -1,6 +1,6 @@
 import 'package:meta/meta.dart';
 import 'package:orderly/Models/model_producer_list.dart';
-import 'package:orderly/Models/productList_scopedModel.dart';
+import 'package:orderly/Models/model_product_List.dart';
 
 @immutable
 abstract class HomeState {}

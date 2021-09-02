@@ -82,7 +82,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         fbId: event.fbId
       );
       ///Case API fail but not have token
-      if (result.msg=="Success") {
+      // if (result.msg=="Success") {
         ///Login API success
         final User user = User.fromJson(result.user);
         try {
@@ -93,10 +93,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           ///Notify loading to UI
           yield LoginFail(msg: result.msg);
         }
-      } else {
-        ///Notify loading to UI
-        yield LoginFail(msg:result.msg);
-      }
+      // } else {
+      //   ///Notify loading to UI
+      //   yield LoginFail(msg:result.msg);
+      // }
     }
 
 

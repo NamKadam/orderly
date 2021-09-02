@@ -12,9 +12,9 @@ import 'package:orderly/Blocs/mycart/bloc.dart';
 import 'package:orderly/Blocs/mycart/cart_bloc.dart';
 import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
-import 'package:orderly/Models/cart_model.dart';
-import 'package:orderly/Models/productList_scopedModel.dart';
-import 'package:orderly/Models/view_cart.dart';
+import 'package:orderly/Models/model_scoped_cart.dart';
+import 'package:orderly/Models/model_product_List.dart';
+import 'package:orderly/Models/model_view_cart.dart';
 import 'package:orderly/Screens/Customer/cart/cart_list_item.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/connectivity_check.dart';
@@ -57,7 +57,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
   CartBloc cartBloc;
   bool isconnectedToInternet = false;
   bool flagDataNotAvailable = false;
-  List<Cart> _cartList;
+  List<dynamic> _cartList;
   int producerListIndex = 0;
   final _controller = RefreshController(initialRefresh: false);
   String flagRemove="";
@@ -246,7 +246,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
     super.initState();
     cartBloc = BlocProvider.of<CartBloc>(context);
     getCurrentDate();
-    setBlocData();
+    getsharedPrefData();
+
   }
   ///On Refresh List
   Future<void> _onRefresh() async {
@@ -263,10 +264,11 @@ class _ShoppingCartState extends State<ShoppingCart> {
     }
   }
 
-  void calculateTotal(List<Cart> cartList,int index,String flagRemove) {
+  void calculateTotal(List<dynamic> cartList,int index,String flagRemove) {
     totalCartValue = 0;
     quantity = 0;
-    String json = jsonEncode(cartList);
+    String json = jsonEncode(cartList.map((i) => Cart.toJson(i)).toList()).toString();
+
     // var json1 = jsonEncode(cartList.map((e) => e.toJson()).toList());
     print("cartList:-" + json);
     cartList.forEach((f) {
@@ -299,7 +301,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
   // for cartList
   Widget buildCartList(int index, CartModel model) {
-    if (model==null) {
+    if (model.cart.length<=0) {
       return ListView.builder(
         padding: EdgeInsets.all(0),
         shrinkWrap: true,
@@ -600,16 +602,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 ),
 
                 onPressed: () {
-                  // if (_formKey.currentState.validate()) {
-                  // sendMessage();
-                  // }
-                  // Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (context) =>
-                  //         new MemberDetails(userListData:widget.users))
-                  // );
-                },
+                      setState(() {
+                        _cartList.removeAt(index);
+                        model.cart.removeAt(index);
+                      });
+
+                  },
               ),
               // backgroundColor: Colors.black,
               // )
@@ -620,17 +618,39 @@ class _ShoppingCartState extends State<ShoppingCart> {
     );
   }
 
-  // Future<void> getsharedPrefData() async{
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   // Encode and store data in SharedPreferences
-  //   final String encodedData = Cart.encode(cartModel.cart);
-  //
-  //   await prefs.setString('musics_key', encodedData);
-  //   // Fetch and decode data
-  //   final String musicsString = await prefs.getString('musics_key');
-  //   final List<Music> musics = Music.decode(musicsString);
-  //
-  // }
+  Future<void> setsharedPrefData() async{
+    // final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // // Encode and store data in SharedPreferences
+    // String encodedData = jsonEncode(cartModel.cart.map((i) => Cart.toJson(i)).toList()).toString();
+    //
+    // // final String encodedData = Cart.encode(cartModel.cart);
+    // await prefs.setString('cart_key', encodedData);
+    Navigator.pop(context);
+    // // Fetch and decode data
+    // final String cartString = await prefs.getString('cart_key');
+    // final List<Cart> cartList = Cart.decode(cartString);
+
+  }
+
+  //get from sharedpref
+  Future<void> getsharedPrefData() async{
+    // final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // final String cartString = await prefs.getString('cart_key');
+    // // _cartList = Cart.decode(cartString);
+    // _cartList = jsonDecode(cartString).toList();
+    // if(_cartList.length<=0){
+    //   setBlocData();
+    // }
+
+    if(Application.cart==null){
+      setBlocData();
+    }else{
+      _cartList=Application.cart;
+    }
+
+    print(_cartList);
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -648,8 +668,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
           ),
           leading: InkWell(
               onTap: () {
-                // Navigator.pop(context);
+                AppBloc.authBloc.add(OnSaveCart(cartModel));
+                Navigator.pop(context);
                 // showPlaceOrderBottomDialog(context);
+                // setsharedPrefData();
 
               },
               child: Icon(
@@ -662,6 +684,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
         body: BlocListener<CartBloc, CartState>(
           listener: (context, state) {},
           child: BlocBuilder<CartBloc, CartState>(builder: (context, state) {
+
+            if(state is InitialCartListState){
+              cartModel=new CartModel();
+
+            }
+
             if (state is CartListSuccess) {
               cartModel=new CartModel();
 
@@ -672,93 +700,120 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 cartModel.addAllProduct(_cartList);
 
              }
-            return
-              Container(
-                    // height: MediaQuery.of(context).size.height,
-                    child:
-                  Column(
-                    children: [
-                      Expanded(child:
-                    ListView.separated(
-                          controller: _scrollController,
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          separatorBuilder: (context, index) {
-                            return SizedBox(
-                              height: 0.0,
-                            );
-                          },
-                          itemCount: _cartList!=null?_cartList.length:6,
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                                onTap: () {
-                                  // Navigator.push(
-                                  //     context,
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) =>
-                                  //         new MemberDetails(userListData:memberlist[index])));
+            return ScopedModel<CartModel>(
+                model: cartModel,
+                child: ScopedModelDescendant<CartModel>(
+                  builder: (context, child, model) {
+                    // cartModel = model;
+                    // print(cartModel);
+
+                    totalCartValue=cartModel.totalCartValue;
+                    return Container(
+                      // height: MediaQuery.of(context).size.height,
+                        child:
+                        Column(
+                          children: [
+                            Expanded(child:
+                            ListView.separated(
+                                controller: _scrollController,
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                separatorBuilder: (context, index) {
+                                  return SizedBox(
+                                    height: 0.0,
+                                  );
                                 },
-                                child: ScopedModel<CartModel>(
-                                    model: cartModel,
-                                    child: ScopedModelDescendant<CartModel>(
-                                      builder: (context, child, model) {
-                                        cartModel = model;
-                                        print(cartModel);
-                                        totalCartValue=cartModel.totalCartValue;
-                                        return buildCartList(index, model);
+                                itemCount: _cartList!=null?_cartList.length:6,
+                                itemBuilder: (context, index) {
+                                  return GestureDetector(
+                                      onTap: () {
+                                        // Navigator.push(
+                                        //     context,
+                                        //     MaterialPageRoute(
+                                        //         builder: (context) =>
+                                        //         new MemberDetails(userListData:memberlist[index])));
                                       },
-                                    )));
-                          })),
+                                      child: buildCartList(index, model)
+                                      // ScopedModel<CartModel>(
+                                      //     model: cartModel,
+                                      //     child: ScopedModelDescendant<CartModel>(
+                                      //       builder: (context, child, model) {
+                                      //         cartModel = model;
+                                      //         print(cartModel);
+                                      //
+                                      //         totalCartValue=cartModel.totalCartValue;
+                                      //
+                                      //
+                                      //         return buildCartList(index, model);
+                                      //       },
+                                      //     ))
+                                  );
+                                })),
 
-                      //bottom dialog
-                      flagDataNotAvailable==false
-                            ?
-                        Align(
-                            alignment: Alignment.bottomCenter,
-                            child: new ClipRect(
-                              child: new BackdropFilter(
-                                filter: new ImageFilter.blur(
-                                    sigmaX: 10.0, sigmaY: 10.0),
-                                child: new Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    height: 220.0,
-                                    decoration: new BoxDecoration(
-                                        color:
-                                        Colors.grey.shade200.withOpacity(0.5)),
-                                    child: Container(
-                                        margin: EdgeInsets.all(20.0),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: [
-                                            //delivery time
-                                            Row(
+                            //bottom dialog
+                            flagDataNotAvailable==false
+                                ?
+                            Align(
+                                alignment: Alignment.bottomCenter,
+                                child: new ClipRect(
+                                  child: new BackdropFilter(
+                                    filter: new ImageFilter.blur(
+                                        sigmaX: 10.0, sigmaY: 10.0),
+                                    child: new Container(
+                                        width: MediaQuery.of(context).size.width,
+                                        height: 220.0,
+                                        decoration: new BoxDecoration(
+                                            color:
+                                            Colors.grey.shade200.withOpacity(0.5)),
+                                        child: Container(
+                                            margin: EdgeInsets.all(20.0),
+                                            child: Column(
                                               mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                              MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                               children: [
-                                                GestureDetector(
-                                                    onTap: () async {
-                                                      final result =
-                                                      await Navigator.pushNamed(
-                                                          context,
-                                                          Routes.addTime);
-                                                      print("result:-" + result);
-                                                      print("currentDate:-" +
-                                                          currentDate);
+                                                //delivery time
+                                                Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    GestureDetector(
+                                                        onTap: () async {
+                                                          final result =
+                                                          await Navigator.pushNamed(
+                                                              context,
+                                                              Routes.addTime);
+                                                          print("result:-" + result);
+                                                          print("currentDate:-" +
+                                                              currentDate);
 
-                                                      if (result == "") {
-                                                        setState(() {
-                                                          date = currentDate;
-                                                        });
-                                                      } else {
-                                                        setState(() {
-                                                          date = result;
-                                                        });
-                                                      }
-                                                    },
-                                                    child: Text(
-                                                      "Choose Delivery Time",
+                                                          if (result == "") {
+                                                            setState(() {
+                                                              date = currentDate;
+                                                            });
+                                                          } else {
+                                                            setState(() {
+                                                              date = result;
+                                                            });
+                                                          }
+                                                        },
+                                                        child: Text(
+                                                          "Choose Delivery Time",
+                                                          style: Theme.of(context)
+                                                              .textTheme
+                                                              .caption
+                                                              .copyWith(
+                                                              fontSize: 14.0,
+                                                              fontWeight:
+                                                              FontWeight.w600,
+                                                              color:
+                                                              Theme.of(context)
+                                                                  .primaryColor,
+                                                              fontFamily:
+                                                              "Poppins"),
+                                                        )),
+                                                    Text(
+                                                      date,
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .caption
@@ -766,475 +821,465 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                           fontSize: 14.0,
                                                           fontWeight:
                                                           FontWeight.w600,
-                                                          color:
-                                                          Theme.of(context)
-                                                              .primaryColor,
-                                                          fontFamily:
-                                                          "Poppins"),
-                                                    )),
-                                                Text(
-                                                  date,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .caption
-                                                      .copyWith(
-                                                      fontSize: 14.0,
-                                                      fontWeight:
-                                                      FontWeight.w600,
-                                                      color: AppTheme.textColor,
-                                                      fontFamily: "Poppins"),
+                                                          color: AppTheme.textColor,
+                                                          fontFamily: "Poppins"),
+                                                    ),
+                                                  ],
                                                 ),
+                                                // subtotal
+                                                Padding(
+                                                    padding: EdgeInsets.only(top: 5.0),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          "SubTotal",
+                                                          style: Theme.of(context)
+                                                              .textTheme
+                                                              .caption
+                                                              .copyWith(
+                                                              fontSize: 14.0,
+                                                              fontWeight:
+                                                              FontWeight.w600,
+                                                              color: AppTheme
+                                                                  .textColor,
+                                                              fontFamily:
+                                                              "Poppins"),
+                                                        ),
+                                                        Text(
+                                                          "\$" +
+                                                              totalCartValue.toString(),
+                                                          style: Theme.of(context)
+                                                              .textTheme
+                                                              .caption
+                                                              .copyWith(
+                                                              fontSize: 14.0,
+                                                              fontWeight:
+                                                              FontWeight.w600,
+                                                              color: AppTheme
+                                                                  .textColor,
+                                                              fontFamily:
+                                                              "Poppins"),
+                                                        ),
+                                                      ],
+                                                    )),
+                                                //convinience fee
+                                                Padding(
+                                                    padding: EdgeInsets.only(top: 5.0),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          "Convinience Fee",
+                                                          style: Theme.of(context)
+                                                              .textTheme
+                                                              .caption
+                                                              .copyWith(
+                                                              fontSize: 12.0,
+                                                              fontWeight:
+                                                              FontWeight.w400,
+                                                              color: AppTheme
+                                                                  .textColor,
+                                                              fontFamily:
+                                                              "Poppins"),
+                                                        ),
+                                                        Text(
+                                                          "\$ " +
+                                                              conveniencFee.toString(),
+                                                          style: Theme.of(context)
+                                                              .textTheme
+                                                              .caption
+                                                              .copyWith(
+                                                              fontSize: 12.0,
+                                                              fontWeight:
+                                                              FontWeight.w400,
+                                                              color: AppTheme
+                                                                  .textColor,
+                                                              fontFamily:
+                                                              "Poppins"),
+                                                        ),
+                                                      ],
+                                                    )),
+                                                //Total
+                                                Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 5.0, bottom: 15.0),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          "Total",
+                                                          style: Theme.of(context)
+                                                              .textTheme
+                                                              .caption
+                                                              .copyWith(
+                                                              fontSize: 14.0,
+                                                              fontWeight:
+                                                              FontWeight.w600,
+                                                              color: AppTheme
+                                                                  .textColor,
+                                                              fontFamily:
+                                                              "Poppins"),
+                                                        ),
+                                                        Text(
+                                                          OverallTotalVal == 0
+                                                              ? "\$ " +
+                                                              (totalCartValue +
+                                                                  conveniencFee)
+                                                                  .toString()
+                                                              : "\$ " +
+                                                              OverallTotalVal
+                                                                  .toString(),
+                                                          style: Theme.of(context)
+                                                              .textTheme
+                                                              .caption
+                                                              .copyWith(
+                                                              fontSize: 14.0,
+                                                              fontWeight:
+                                                              FontWeight.w600,
+                                                              color: AppTheme
+                                                                  .textColor,
+                                                              fontFamily:
+                                                              "Poppins"),
+                                                        ),
+                                                      ],
+                                                    )),
+                                                Padding(
+                                                    padding: EdgeInsets.only(top: 15.0),
+                                                    child: AppButton(
+                                                      onPressed: () {
+                                                        // if (date == "") {
+                                                        //   _scaffoldKey.currentState
+                                                        //       .showSnackBar(SnackBar(
+                                                        //       content: Text(
+                                                        //           "Please Choose Delivery time")));
+                                                        // }
+                                                        _scaffoldKey.currentState
+                                                            .showSnackBar(SnackBar(
+                                                            content: Text(
+                                                                "Functionality Under Development")));
+                                                      },
+                                                      shape:
+                                                      const RoundedRectangleBorder(
+                                                          borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  50))),
+                                                      text: 'PLACE ORDER',
+                                                      // loading: login is LoginLoading,
+                                                      // disableTouchWhenLoading: true,
+                                                    ))
                                               ],
-                                            ),
-                                            // subtotal
-                                            Padding(
-                                                padding: EdgeInsets.only(top: 5.0),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      "SubTotal",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .caption
-                                                          .copyWith(
-                                                          fontSize: 14.0,
-                                                          fontWeight:
-                                                          FontWeight.w600,
-                                                          color: AppTheme
-                                                              .textColor,
-                                                          fontFamily:
-                                                          "Poppins"),
-                                                    ),
-                                                    Text(
-                                                      "\$" +
-                                                          totalCartValue.toString(),
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .caption
-                                                          .copyWith(
-                                                          fontSize: 14.0,
-                                                          fontWeight:
-                                                          FontWeight.w600,
-                                                          color: AppTheme
-                                                              .textColor,
-                                                          fontFamily:
-                                                          "Poppins"),
-                                                    ),
-                                                  ],
-                                                )),
-                                            //convinience fee
-                                            Padding(
-                                                padding: EdgeInsets.only(top: 5.0),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      "Convinience Fee",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .caption
-                                                          .copyWith(
-                                                          fontSize: 12.0,
-                                                          fontWeight:
-                                                          FontWeight.w400,
-                                                          color: AppTheme
-                                                              .textColor,
-                                                          fontFamily:
-                                                          "Poppins"),
-                                                    ),
-                                                    Text(
-                                                      "\$ " +
-                                                          conveniencFee.toString(),
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .caption
-                                                          .copyWith(
-                                                          fontSize: 12.0,
-                                                          fontWeight:
-                                                          FontWeight.w400,
-                                                          color: AppTheme
-                                                              .textColor,
-                                                          fontFamily:
-                                                          "Poppins"),
-                                                    ),
-                                                  ],
-                                                )),
-                                            //Total
-                                            Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 5.0, bottom: 15.0),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      "Total",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .caption
-                                                          .copyWith(
-                                                          fontSize: 14.0,
-                                                          fontWeight:
-                                                          FontWeight.w600,
-                                                          color: AppTheme
-                                                              .textColor,
-                                                          fontFamily:
-                                                          "Poppins"),
-                                                    ),
-                                                    Text(
-                                                      OverallTotalVal == 0
-                                                          ? "\$ " +
-                                                          (totalCartValue +
-                                                              conveniencFee)
-                                                              .toString()
-                                                          : "\$ " +
-                                                          OverallTotalVal
-                                                              .toString(),
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .caption
-                                                          .copyWith(
-                                                          fontSize: 14.0,
-                                                          fontWeight:
-                                                          FontWeight.w600,
-                                                          color: AppTheme
-                                                              .textColor,
-                                                          fontFamily:
-                                                          "Poppins"),
-                                                    ),
-                                                  ],
-                                                )),
-                                            Padding(
-                                                padding: EdgeInsets.only(top: 15.0),
-                                                child: AppButton(
-                                                  onPressed: () {
-                                                    if (date == "") {
-                                                      _scaffoldKey.currentState
-                                                          .showSnackBar(SnackBar(
-                                                          content: Text(
-                                                              "Please Choose Delivery time")));
-                                                    }
-                                                    // _signUp();
-                                                    // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigation()));
-                                                  },
-                                                  shape:
-                                                  const RoundedRectangleBorder(
-                                                      borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(
-                                                              50))),
-                                                  text: 'PLACE ORDER',
-                                                  // loading: login is LoginLoading,
-                                                  // disableTouchWhenLoading: true,
-                                                ))
-                                          ],
-                                        ))),
-                              ),
-                            ))
-                            :
-                        Expanded(
-                          flex:10,
-                        child:Container(
-                            child:
-                            Center(
-                                child: Text(
-                                  "No Data Available",
-                                  style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w600,
-                                      color: AppTheme.textColor),
-                                ))))
+                                            ))),
+                                  ),
+                                ))
+                                :
+                            Expanded(
+                                flex:10,
+                                child:Container(
+                                    child:
+                                    Center(
+                                        child: Text(
+                                          "No Data Available",
+                                          style: TextStyle(
+                                              fontSize: 16.0,
+                                              fontFamily: 'Poppins',
+                                              fontWeight: FontWeight.w600,
+                                              color: AppTheme.textColor),
+                                        ))))
 
-                    ],
-                  )
-            //         Stack(
-            //           children: <Widget>[
-            //       //listview for cart
-            //      Padding(
-            //        padding: EdgeInsets.only(bottom: 50.0),
-            //       child:
-                //       ListView.separated(
-            //       controller: _scrollController,
-            //       physics: const AlwaysScrollableScrollPhysics(),
-            //       separatorBuilder: (context, index) {
-            //         return SizedBox(
-            //           height: 0.0,
-            //         );
-            //       },
-            //       // itemCount: state.members.length,
-            //       // itemCount: memberlist.length,
-            //       itemCount: _cartList!=null?_cartList.length:6,
-            //       itemBuilder: (context, index) {
-            //         return GestureDetector(
-            //             onTap: () {
-            //               // Navigator.push(
-            //               //     context,
-            //               //     MaterialPageRoute(
-            //               //         builder: (context) =>
-            //               //         new MemberDetails(userListData:memberlist[index])));
-            //             },
-            //             child: ScopedModel<CartModel>(
-            //                 model: cartModel,
-            //                 child: ScopedModelDescendant<CartModel>(
-            //                   builder: (context, child, model) {
-            //                     cartModel = model;
-            //                     print(cartModel);
-            //                     if (cartModel.cart.length == 0) {
-            //                       cartModel.cart.addAll(_cartList);
-            //                     }
-            //                     return buildCartList(index, model);
-            //                   },
-            //                 )));
-            //       })),
-            //   //custom dialog for time and total
-            //     flagDataNotAvailable==false
-            //       ?
-            //   Align(
-            //       alignment: Alignment.bottomCenter,
-            //       child: new ClipRect(
-            //         child: new BackdropFilter(
-            //           filter: new ImageFilter.blur(
-            //               sigmaX: 10.0, sigmaY: 10.0),
-            //           child: new Container(
-            //               width: MediaQuery.of(context).size.width,
-            //               height: 220.0,
-            //               decoration: new BoxDecoration(
-            //                   color:
-            //                   Colors.grey.shade200.withOpacity(0.5)),
-            //               child: Container(
-            //                   margin: EdgeInsets.all(20.0),
-            //                   child: Column(
-            //                     mainAxisAlignment:
-            //                     MainAxisAlignment.start,
-            //                     crossAxisAlignment:
-            //                     CrossAxisAlignment.start,
-            //                     children: [
-            //                       //delivery time
-            //                       Row(
-            //                         mainAxisAlignment:
-            //                         MainAxisAlignment.spaceBetween,
-            //                         children: [
-            //                           GestureDetector(
-            //                               onTap: () async {
-            //                                 final result =
-            //                                 await Navigator.pushNamed(
-            //                                     context,
-            //                                     Routes.addTime);
-            //                                 print("result:-" + result);
-            //                                 print("currentDate:-" +
-            //                                     currentDate);
-            //
-            //                                 if (result == "") {
-            //                                   setState(() {
-            //                                     date = currentDate;
-            //                                   });
-            //                                 } else {
-            //                                   setState(() {
-            //                                     date = result;
-            //                                   });
-            //                                 }
-            //                               },
-            //                               child: Text(
-            //                                 "Choose Delivery Time",
-            //                                 style: Theme.of(context)
-            //                                     .textTheme
-            //                                     .caption
-            //                                     .copyWith(
-            //                                     fontSize: 14.0,
-            //                                     fontWeight:
-            //                                     FontWeight.w600,
-            //                                     color:
-            //                                     Theme.of(context)
-            //                                         .primaryColor,
-            //                                     fontFamily:
-            //                                     "Poppins"),
-            //                               )),
-            //                           Text(
-            //                             date,
-            //                             style: Theme.of(context)
-            //                                 .textTheme
-            //                                 .caption
-            //                                 .copyWith(
-            //                                 fontSize: 14.0,
-            //                                 fontWeight:
-            //                                 FontWeight.w600,
-            //                                 color: AppTheme.textColor,
-            //                                 fontFamily: "Poppins"),
-            //                           ),
-            //                         ],
-            //                       ),
-            //                       // subtotal
-            //                       Padding(
-            //                           padding: EdgeInsets.only(top: 5.0),
-            //                           child: Row(
-            //                             mainAxisAlignment:
-            //                             MainAxisAlignment
-            //                                 .spaceBetween,
-            //                             children: [
-            //                               Text(
-            //                                 "SubTotal",
-            //                                 style: Theme.of(context)
-            //                                     .textTheme
-            //                                     .caption
-            //                                     .copyWith(
-            //                                     fontSize: 14.0,
-            //                                     fontWeight:
-            //                                     FontWeight.w600,
-            //                                     color: AppTheme
-            //                                         .textColor,
-            //                                     fontFamily:
-            //                                     "Poppins"),
-            //                               ),
-            //                               Text(
-            //                                 "\$" +
-            //                                     totalCartValue.toString(),
-            //                                 style: Theme.of(context)
-            //                                     .textTheme
-            //                                     .caption
-            //                                     .copyWith(
-            //                                     fontSize: 14.0,
-            //                                     fontWeight:
-            //                                     FontWeight.w600,
-            //                                     color: AppTheme
-            //                                         .textColor,
-            //                                     fontFamily:
-            //                                     "Poppins"),
-            //                               ),
-            //                             ],
-            //                           )),
-            //                       //convinience fee
-            //                       Padding(
-            //                           padding: EdgeInsets.only(top: 5.0),
-            //                           child: Row(
-            //                             mainAxisAlignment:
-            //                             MainAxisAlignment
-            //                                 .spaceBetween,
-            //                             children: [
-            //                               Text(
-            //                                 "Convinience Fee",
-            //                                 style: Theme.of(context)
-            //                                     .textTheme
-            //                                     .caption
-            //                                     .copyWith(
-            //                                     fontSize: 12.0,
-            //                                     fontWeight:
-            //                                     FontWeight.w400,
-            //                                     color: AppTheme
-            //                                         .textColor,
-            //                                     fontFamily:
-            //                                     "Poppins"),
-            //                               ),
-            //                               Text(
-            //                                 "\$ " +
-            //                                     conveniencFee.toString(),
-            //                                 style: Theme.of(context)
-            //                                     .textTheme
-            //                                     .caption
-            //                                     .copyWith(
-            //                                     fontSize: 12.0,
-            //                                     fontWeight:
-            //                                     FontWeight.w400,
-            //                                     color: AppTheme
-            //                                         .textColor,
-            //                                     fontFamily:
-            //                                     "Poppins"),
-            //                               ),
-            //                             ],
-            //                           )),
-            //                       //Total
-            //                       Padding(
-            //                           padding: EdgeInsets.only(
-            //                               top: 5.0, bottom: 15.0),
-            //                           child: Row(
-            //                             mainAxisAlignment:
-            //                             MainAxisAlignment
-            //                                 .spaceBetween,
-            //                             children: [
-            //                               Text(
-            //                                 "Total",
-            //                                 style: Theme.of(context)
-            //                                     .textTheme
-            //                                     .caption
-            //                                     .copyWith(
-            //                                     fontSize: 14.0,
-            //                                     fontWeight:
-            //                                     FontWeight.w600,
-            //                                     color: AppTheme
-            //                                         .textColor,
-            //                                     fontFamily:
-            //                                     "Poppins"),
-            //                               ),
-            //                               Text(
-            //                                 OverallTotalVal == 0
-            //                                     ? "\$ " +
-            //                                     (totalCartValue +
-            //                                         conveniencFee)
-            //                                         .toString()
-            //                                     : "\$ " +
-            //                                     OverallTotalVal
-            //                                         .toString(),
-            //                                 style: Theme.of(context)
-            //                                     .textTheme
-            //                                     .caption
-            //                                     .copyWith(
-            //                                     fontSize: 14.0,
-            //                                     fontWeight:
-            //                                     FontWeight.w600,
-            //                                     color: AppTheme
-            //                                         .textColor,
-            //                                     fontFamily:
-            //                                     "Poppins"),
-            //                               ),
-            //                             ],
-            //                           )),
-            //                       Padding(
-            //                           padding: EdgeInsets.only(top: 15.0),
-            //                           child: AppButton(
-            //                             onPressed: () {
-            //                               if (date == "") {
-            //                                 _scaffoldKey.currentState
-            //                                     .showSnackBar(SnackBar(
-            //                                     content: Text(
-            //                                         "Please Choose Delivery time")));
-            //                               }
-            //                               // _signUp();
-            //                               // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigation()));
-            //                             },
-            //                             shape:
-            //                             const RoundedRectangleBorder(
-            //                                 borderRadius:
-            //                                 BorderRadius.all(
-            //                                     Radius.circular(
-            //                                         50))),
-            //                             text: 'PLACE ORDER',
-            //                             // loading: login is LoginLoading,
-            //                             // disableTouchWhenLoading: true,
-            //                           ))
-            //                     ],
-            //                   ))),
-            //         ),
-            //       ))
-            //       :
-            //   Container(
-            //       child: Center(
-            //           child: Text(
-            //             "No Data Available",
-            //             style: TextStyle(
-            //                 fontSize: 16.0,
-            //                 fontFamily: 'Poppins',
-            //                 fontWeight: FontWeight.w600,
-            //                 color: AppTheme.textColor),
-            //           )))
-            //   ],
-            // ),
-            );
+                          ],
+                        )
+                      //         Stack(
+                      //           children: <Widget>[
+                      //       //listview for cart
+                      //      Padding(
+                      //        padding: EdgeInsets.only(bottom: 50.0),
+                      //       child:
+                      //       ListView.separated(
+                      //       controller: _scrollController,
+                      //       physics: const AlwaysScrollableScrollPhysics(),
+                      //       separatorBuilder: (context, index) {
+                      //         return SizedBox(
+                      //           height: 0.0,
+                      //         );
+                      //       },
+                      //       // itemCount: state.members.length,
+                      //       // itemCount: memberlist.length,
+                      //       itemCount: _cartList!=null?_cartList.length:6,
+                      //       itemBuilder: (context, index) {
+                      //         return GestureDetector(
+                      //             onTap: () {
+                      //               // Navigator.push(
+                      //               //     context,
+                      //               //     MaterialPageRoute(
+                      //               //         builder: (context) =>
+                      //               //         new MemberDetails(userListData:memberlist[index])));
+                      //             },
+                      //             child: ScopedModel<CartModel>(
+                      //                 model: cartModel,
+                      //                 child: ScopedModelDescendant<CartModel>(
+                      //                   builder: (context, child, model) {
+                      //                     cartModel = model;
+                      //                     print(cartModel);
+                      //                     if (cartModel.cart.length == 0) {
+                      //                       cartModel.cart.addAll(_cartList);
+                      //                     }
+                      //                     return buildCartList(index, model);
+                      //                   },
+                      //                 )));
+                      //       })),
+                      //   //custom dialog for time and total
+                      //     flagDataNotAvailable==false
+                      //       ?
+                      //   Align(
+                      //       alignment: Alignment.bottomCenter,
+                      //       child: new ClipRect(
+                      //         child: new BackdropFilter(
+                      //           filter: new ImageFilter.blur(
+                      //               sigmaX: 10.0, sigmaY: 10.0),
+                      //           child: new Container(
+                      //               width: MediaQuery.of(context).size.width,
+                      //               height: 220.0,
+                      //               decoration: new BoxDecoration(
+                      //                   color:
+                      //                   Colors.grey.shade200.withOpacity(0.5)),
+                      //               child: Container(
+                      //                   margin: EdgeInsets.all(20.0),
+                      //                   child: Column(
+                      //                     mainAxisAlignment:
+                      //                     MainAxisAlignment.start,
+                      //                     crossAxisAlignment:
+                      //                     CrossAxisAlignment.start,
+                      //                     children: [
+                      //                       //delivery time
+                      //                       Row(
+                      //                         mainAxisAlignment:
+                      //                         MainAxisAlignment.spaceBetween,
+                      //                         children: [
+                      //                           GestureDetector(
+                      //                               onTap: () async {
+                      //                                 final result =
+                      //                                 await Navigator.pushNamed(
+                      //                                     context,
+                      //                                     Routes.addTime);
+                      //                                 print("result:-" + result);
+                      //                                 print("currentDate:-" +
+                      //                                     currentDate);
+                      //
+                      //                                 if (result == "") {
+                      //                                   setState(() {
+                      //                                     date = currentDate;
+                      //                                   });
+                      //                                 } else {
+                      //                                   setState(() {
+                      //                                     date = result;
+                      //                                   });
+                      //                                 }
+                      //                               },
+                      //                               child: Text(
+                      //                                 "Choose Delivery Time",
+                      //                                 style: Theme.of(context)
+                      //                                     .textTheme
+                      //                                     .caption
+                      //                                     .copyWith(
+                      //                                     fontSize: 14.0,
+                      //                                     fontWeight:
+                      //                                     FontWeight.w600,
+                      //                                     color:
+                      //                                     Theme.of(context)
+                      //                                         .primaryColor,
+                      //                                     fontFamily:
+                      //                                     "Poppins"),
+                      //                               )),
+                      //                           Text(
+                      //                             date,
+                      //                             style: Theme.of(context)
+                      //                                 .textTheme
+                      //                                 .caption
+                      //                                 .copyWith(
+                      //                                 fontSize: 14.0,
+                      //                                 fontWeight:
+                      //                                 FontWeight.w600,
+                      //                                 color: AppTheme.textColor,
+                      //                                 fontFamily: "Poppins"),
+                      //                           ),
+                      //                         ],
+                      //                       ),
+                      //                       // subtotal
+                      //                       Padding(
+                      //                           padding: EdgeInsets.only(top: 5.0),
+                      //                           child: Row(
+                      //                             mainAxisAlignment:
+                      //                             MainAxisAlignment
+                      //                                 .spaceBetween,
+                      //                             children: [
+                      //                               Text(
+                      //                                 "SubTotal",
+                      //                                 style: Theme.of(context)
+                      //                                     .textTheme
+                      //                                     .caption
+                      //                                     .copyWith(
+                      //                                     fontSize: 14.0,
+                      //                                     fontWeight:
+                      //                                     FontWeight.w600,
+                      //                                     color: AppTheme
+                      //                                         .textColor,
+                      //                                     fontFamily:
+                      //                                     "Poppins"),
+                      //                               ),
+                      //                               Text(
+                      //                                 "\$" +
+                      //                                     totalCartValue.toString(),
+                      //                                 style: Theme.of(context)
+                      //                                     .textTheme
+                      //                                     .caption
+                      //                                     .copyWith(
+                      //                                     fontSize: 14.0,
+                      //                                     fontWeight:
+                      //                                     FontWeight.w600,
+                      //                                     color: AppTheme
+                      //                                         .textColor,
+                      //                                     fontFamily:
+                      //                                     "Poppins"),
+                      //                               ),
+                      //                             ],
+                      //                           )),
+                      //                       //convinience fee
+                      //                       Padding(
+                      //                           padding: EdgeInsets.only(top: 5.0),
+                      //                           child: Row(
+                      //                             mainAxisAlignment:
+                      //                             MainAxisAlignment
+                      //                                 .spaceBetween,
+                      //                             children: [
+                      //                               Text(
+                      //                                 "Convinience Fee",
+                      //                                 style: Theme.of(context)
+                      //                                     .textTheme
+                      //                                     .caption
+                      //                                     .copyWith(
+                      //                                     fontSize: 12.0,
+                      //                                     fontWeight:
+                      //                                     FontWeight.w400,
+                      //                                     color: AppTheme
+                      //                                         .textColor,
+                      //                                     fontFamily:
+                      //                                     "Poppins"),
+                      //                               ),
+                      //                               Text(
+                      //                                 "\$ " +
+                      //                                     conveniencFee.toString(),
+                      //                                 style: Theme.of(context)
+                      //                                     .textTheme
+                      //                                     .caption
+                      //                                     .copyWith(
+                      //                                     fontSize: 12.0,
+                      //                                     fontWeight:
+                      //                                     FontWeight.w400,
+                      //                                     color: AppTheme
+                      //                                         .textColor,
+                      //                                     fontFamily:
+                      //                                     "Poppins"),
+                      //                               ),
+                      //                             ],
+                      //                           )),
+                      //                       //Total
+                      //                       Padding(
+                      //                           padding: EdgeInsets.only(
+                      //                               top: 5.0, bottom: 15.0),
+                      //                           child: Row(
+                      //                             mainAxisAlignment:
+                      //                             MainAxisAlignment
+                      //                                 .spaceBetween,
+                      //                             children: [
+                      //                               Text(
+                      //                                 "Total",
+                      //                                 style: Theme.of(context)
+                      //                                     .textTheme
+                      //                                     .caption
+                      //                                     .copyWith(
+                      //                                     fontSize: 14.0,
+                      //                                     fontWeight:
+                      //                                     FontWeight.w600,
+                      //                                     color: AppTheme
+                      //                                         .textColor,
+                      //                                     fontFamily:
+                      //                                     "Poppins"),
+                      //                               ),
+                      //                               Text(
+                      //                                 OverallTotalVal == 0
+                      //                                     ? "\$ " +
+                      //                                     (totalCartValue +
+                      //                                         conveniencFee)
+                      //                                         .toString()
+                      //                                     : "\$ " +
+                      //                                     OverallTotalVal
+                      //                                         .toString(),
+                      //                                 style: Theme.of(context)
+                      //                                     .textTheme
+                      //                                     .caption
+                      //                                     .copyWith(
+                      //                                     fontSize: 14.0,
+                      //                                     fontWeight:
+                      //                                     FontWeight.w600,
+                      //                                     color: AppTheme
+                      //                                         .textColor,
+                      //                                     fontFamily:
+                      //                                     "Poppins"),
+                      //                               ),
+                      //                             ],
+                      //                           )),
+                      //                       Padding(
+                      //                           padding: EdgeInsets.only(top: 15.0),
+                      //                           child: AppButton(
+                      //                             onPressed: () {
+                      //                               if (date == "") {
+                      //                                 _scaffoldKey.currentState
+                      //                                     .showSnackBar(SnackBar(
+                      //                                     content: Text(
+                      //                                         "Please Choose Delivery time")));
+                      //                               }
+                      //                               // _signUp();
+                      //                               // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigation()));
+                      //                             },
+                      //                             shape:
+                      //                             const RoundedRectangleBorder(
+                      //                                 borderRadius:
+                      //                                 BorderRadius.all(
+                      //                                     Radius.circular(
+                      //                                         50))),
+                      //                             text: 'PLACE ORDER',
+                      //                             // loading: login is LoginLoading,
+                      //                             // disableTouchWhenLoading: true,
+                      //                           ))
+                      //                     ],
+                      //                   ))),
+                      //         ),
+                      //       ))
+                      //       :
+                      //   Container(
+                      //       child: Center(
+                      //           child: Text(
+                      //             "No Data Available",
+                      //             style: TextStyle(
+                      //                 fontSize: 16.0,
+                      //                 fontFamily: 'Poppins',
+                      //                 fontWeight: FontWeight.w600,
+                      //                 color: AppTheme.textColor),
+                      //           )))
+                      //   ],
+                      // ),
+                    );
+                  },
+                ));
+
           }),
         ));
   }

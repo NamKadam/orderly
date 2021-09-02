@@ -1,5 +1,6 @@
+import 'package:orderly/Models/model_scoped_cart.dart';
 import 'package:orderly/Models/model_user.dart';
-import 'package:orderly/Models/view_cart.dart';
+import 'package:orderly/Models/model_view_cart.dart';
 
 abstract class AuthenticationEvent {}
 
@@ -12,8 +13,8 @@ class OnSaveUser extends AuthenticationEvent {
 }
 
 class OnSaveCart extends AuthenticationEvent {
-  final List<Cart> cart;
-  OnSaveCart(this.cart);
+  final CartModel cartModel;
+  OnSaveCart(this.cartModel);
 
 }
 

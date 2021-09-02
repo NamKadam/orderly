@@ -1,4 +1,4 @@
-import 'package:orderly/Models/view_cart.dart';
+import 'package:orderly/Models/model_view_cart.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class CartModel extends Model {

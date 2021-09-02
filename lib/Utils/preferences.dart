@@ -10,6 +10,7 @@ class Preferences {
   //updated on 5/08/2021 for token
   static String fcmToken = 'token';
   static String deviceId='device_id';
+  static String cart='cart';
 
 
 

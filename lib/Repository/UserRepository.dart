@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:orderly/Api/api.dart';
-import 'package:orderly/Models/cart_model.dart';
+import 'package:orderly/Models/model_scoped_cart.dart';
 import 'package:orderly/Models/model_user.dart';
-import 'package:orderly/Models/view_cart.dart';
+import 'package:orderly/Models/model_view_cart.dart';
 import 'package:orderly/Utils/preferences.dart';
 import 'package:orderly/Utils/util_preferences.dart';
 
@@ -26,6 +26,14 @@ class UserRepository {
       Preferences.user,
       jsonEncode(user.toJson()),
     );
+  }
+
+  //save cart
+  Future<dynamic> saveCart(CartModel cartModel) async {
+
+    return await UtilPreferences.setString(
+      Preferences.cart,
+      jsonEncode(cartModel.cart.map((i) => Cart.toJson(i)).toList()).toString(),);
   }
 
 

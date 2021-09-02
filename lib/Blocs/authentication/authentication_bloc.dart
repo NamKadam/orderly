@@ -87,6 +87,32 @@ class AuthBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
         throw Exception(message);
       }
     }
+    //updated for cart List
+    if (event is OnSaveCart) {
+      ///Save to Storage user via repository
+      final savePreferences = await userRepository.saveCart(event.cartModel);
+
+      ///Check result save user
+      if (savePreferences) {
+        ///Set token network
+        // httpManager.getOption.headers["Authorization"] =
+        //     "Bearer " + event.user.token;
+        // httpManager.postOption.headers["Authorization"] =
+        //     "Bearer " + event.user.token;
+
+        ///Set user
+        Application.cart = event.cartModel.cart;
+        // UtilPreferences.setString(Preferences.user, Application.user.toString());
+
+        ///Notify loading to UI
+        yield AuthenticationSuccess();
+
+
+      } else {
+        final String message = "Cannot save user data to storage phone";
+        throw Exception(message);
+      }
+    }
 
 
     if (event is OnClear) {
