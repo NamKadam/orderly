@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:orderly/Blocs/authentication/authentication_event.dart';
 import 'package:orderly/Blocs/authentication/authentication_state.dart';
 import 'package:orderly/Models/model_user.dart';
+import 'package:orderly/Models/model_view_cart.dart';
 import 'package:orderly/Repository/UserRepository.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,7 +26,7 @@ class AuthBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
       yield AuthenticationBeginCheck();
       final hasUser = userRepository.getUser();
 
-      if (hasUser!=null) {
+      if (hasUser!=null ) {
         ///Getting data from Storage
         final userModel = User.fromJson(jsonDecode(hasUser));
 
@@ -38,7 +39,7 @@ class AuthBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
         // final ResultApiModel result = await userRepository.validateToken(); //commented on 17/12/2020
 
         ///Fetch api success
-        if (userModel.fbId!=null) {
+        if (userModel.fbId!=null ) {
           ///Set user
           Application.user = userModel;
           yield AuthenticationSuccess();
@@ -58,8 +59,6 @@ class AuthBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
         ///
         yield AuthenticationFail();
       }
-
-
     }
 
     if (event is OnSaveUser) {
@@ -87,6 +86,7 @@ class AuthBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
         throw Exception(message);
       }
     }
+
     //updated for cart List
     if (event is OnSaveCart) {
       ///Save to Storage user via repository
@@ -101,7 +101,7 @@ class AuthBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
         //     "Bearer " + event.user.token;
 
         ///Set user
-        Application.cart = event.cartModel.cart;
+        Application.cartModel = event.cartModel;
         // UtilPreferences.setString(Preferences.user, Application.user.toString());
 
         ///Notify loading to UI

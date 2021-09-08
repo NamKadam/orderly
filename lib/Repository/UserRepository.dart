@@ -30,7 +30,6 @@ class UserRepository {
 
   //save cart
   Future<dynamic> saveCart(CartModel cartModel) async {
-
     return await UtilPreferences.setString(
       Preferences.cart,
       jsonEncode(cartModel.cart.map((i) => Cart.toJson(i)).toList()).toString(),);
@@ -61,8 +60,18 @@ class UserRepository {
     return UtilPreferences.getString(Preferences.user);
   }
 
+  //get cart details
+  ///Get from Storage
+  dynamic getCart() {
+    return UtilPreferences.getString(Preferences.cart);
+  }
+
   ///Delete Storage
   Future<dynamic> deleteUser() async {
     return await UtilPreferences.remove(Preferences.user);
+  }
+
+  Future<dynamic> deleteCart() async {
+    return await UtilPreferences.remove(Preferences.cart);
   }
 }

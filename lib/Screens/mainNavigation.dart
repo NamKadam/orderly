@@ -241,10 +241,12 @@ class _MainNavigationState extends State<MainNavigation> {
                     child: ClipRRect(
                         borderRadius: BorderRadius.circular(30.0),
                         child: Container(
-                            child: new BackdropFilter(
-                          filter:
-                              new ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                          child: BottomNavigationBar(
+                            child:
+                          //   new BackdropFilter(
+                          // filter:
+                          //     new ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                          // child:
+                          BottomNavigationBar(
                             items: _bottomBarItem(context),
                             currentIndex: _selectedIndex,
                             type: BottomNavigationBarType.fixed,
@@ -256,6 +258,12 @@ class _MainNavigationState extends State<MainNavigation> {
                               _onItemTapped(index);
                             },
                           ),
-                        )))))));
+                        // )
+                        )
+                    )
+                )
+            )
+        )
+    );
   }
 }

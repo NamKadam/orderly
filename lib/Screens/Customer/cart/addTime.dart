@@ -15,21 +15,37 @@ class _AddTimeState extends State<AddTime> {
   String _dateTime="",finalDate="";
   String radioDay='Morning'; //by default selected
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  var currentDate,selectedDate,time;
+   AddTimeData _addTimeData;
 
 
   //set date
   Future _selectDate() async {
     DateTime picked = await showDatePicker(
       context: context,
-      initialDate: new DateTime.now(),
-      firstDate: new DateTime(1970),
-      lastDate: new DateTime(2022),
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now().subtract(Duration(days: 0)),
+      lastDate: DateTime(2022),
     );
-    //DateFormat import package intl
+
+    compareDates(picked);
+
     if(picked != null)
       setState(() => _dateTime = DateFormat("dd/MM/yyyy").format(picked));
   }
 
+  void compareDates(DateTime picked){
+    var now = DateTime.now();
+    currentDate = DateTime(now.year,now.month,now.day);
+    var month = DateFormat("MM").format(picked);
+    var year = DateFormat("yyyy").format(picked);
+    var day = DateFormat("dd").format(picked);
+    selectedDate = DateTime(int.parse(year),int.parse(month),int.parse(day));     //you can add today's date here
+    //DateFormat import package intl
+    time=DateFormat('hh:mm a').format(DateTime.now());
+    print("time:"+time);
+
+  }
 
 
 
@@ -37,6 +53,8 @@ class _AddTimeState extends State<AddTime> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _addTimeData=new AddTimeData();
+    _addTimeData.deliverySlot="0";
   }
 
   @override
@@ -114,6 +132,9 @@ class _AddTimeState extends State<AddTime> {
                                           isCheckedfree=!isCheckedfree;
                                         }
                                         isCheckedCharged = value;
+                                        _addTimeData.chargeAmt="150";
+                                        _addTimeData.deliveryType="0";
+                                        _addTimeData.deliverySlot="";
                                       });
                                     }),
                                 Text(
@@ -165,6 +186,8 @@ class _AddTimeState extends State<AddTime> {
                                               isCheckedCharged=!isCheckedCharged;
                                             }
                                             isCheckedfree = value;
+                                            _addTimeData.deliveryType="1";
+
                                           });
                                         }),
                                     Text(
@@ -261,6 +284,7 @@ class _AddTimeState extends State<AddTime> {
 
                                                 setState(() {
                                                   radioDay = val;
+                                                  _addTimeData.deliverySlot="0"; //for morning
                                                 });
                                               },
                                             )),
@@ -284,6 +308,8 @@ class _AddTimeState extends State<AddTime> {
                                               onChanged: (val) {
                                                 setState(() {
                                                   radioDay = val;
+                                                  _addTimeData.deliverySlot="1"; //for evening
+
                                                 });
                                               },
                                             )),
@@ -310,11 +336,21 @@ class _AddTimeState extends State<AddTime> {
                           // shape: shape,
                           onPressed: (){
                             if(isCheckedCharged==true){
-                              Navigator.pop(context,_dateTime);
+                              Navigator.pop(context,_addTimeData);
                             }else if(isCheckedfree==true && _dateTime!=""){
-                              Navigator.pop(context,_dateTime);
+                              if(currentDate.compareTo(selectedDate)==0) {
+                                if (time.contains("PM") && _addTimeData.deliverySlot == "0") {
+                                      _scaffoldKey.currentState.showSnackBar(SnackBar(
+                                      content: Text("Please select valid slot")));
+                                      }else{
+                                  Navigator.pop(context,_addTimeData);
+                                }
+                                      }else{
+                                Navigator.pop(context,_addTimeData);
 
-                            }else{
+                              }
+
+                            } else{
                               _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Please choose atleast 1 delivery Option")));
 
                             }
@@ -350,4 +386,18 @@ class _AddTimeState extends State<AddTime> {
           ),
         ));
   }
+}
+
+class AddTimeData{
+ String date,deliverySlot,deliveryType,chargeAmt;
+
+  AddTimeData(
+ {
+  this.date,
+ this.deliverySlot,
+ this.deliveryType,
+ this.chargeAmt
+}
+      );
+
 }

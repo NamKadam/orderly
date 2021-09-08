@@ -108,16 +108,18 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         // AppBloc.authBloc.add(OnClear());
        //updated on 10/02/2021
         final deletePreferences = await userRepository.deleteUser();
+        final deletePreferCart = await userRepository.deleteCart();
 
         ///Clear user Storage user via repository
         Application.user = null;
+        Application.cartModel = null;
 
         // ///Clear token httpManager
         // httpManager.getOption.headers = {};
         // httpManager.postOption.headers = {};
         ///Notify loading to UI
         /////updated on 10/02/2021
-        if (deletePreferences) {
+        if (deletePreferences ||deletePreferCart) {
           yield LogoutSuccess();
               } else {
                 final String message = "Cannot delete user data to storage phone";

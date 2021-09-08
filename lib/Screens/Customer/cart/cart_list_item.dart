@@ -34,7 +34,7 @@ class _CartListItemState extends State<CartListItem>{
      // var json1 = jsonEncode(cartList.map((e) => e.toJson()).toList());
      print("cartList:-"+json);
      cartList.forEach((f) {
-       widget.totalCartValue += int.parse(f.ratePerHour) * f.qty;
+       widget.totalCartValue += f.ratePerHour * f.qty;
        quantity += f.qty;
        print('total cart value:-' + totalCartValue.toString());
        print('quantity:-' + quantity.toString());

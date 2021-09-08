@@ -1,3 +1,4 @@
+import 'package:orderly/Models/model_scoped_cart.dart';
 import 'package:orderly/Models/model_user.dart';
 import 'package:orderly/Models/model_view_cart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,7 +10,8 @@ class Application {
 
 
   static User user;
-  static List<Cart> cart;
+  // static List<Cart> cart;
+  static CartModel cartModel;
   static String token;
 
 

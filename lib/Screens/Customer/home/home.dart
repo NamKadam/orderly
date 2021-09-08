@@ -6,22 +6,29 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:orderly/Api/api.dart';
+import 'package:orderly/Blocs/authentication/authentication_event.dart';
 import 'package:orderly/Blocs/home/bloc.dart';
 import 'package:orderly/Blocs/home/home_bloc.dart';
 import 'package:orderly/Blocs/home/home_event.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/model_producer_list.dart';
 import 'package:orderly/Models/model_product_List.dart';
+import 'package:orderly/Models/model_scoped_cart.dart';
+import 'package:orderly/Models/model_view_cart.dart';
 import 'package:orderly/Screens/Customer/cart/shopping_cart.dart';
 import 'package:orderly/Screens/Customer/home/home_item_detail.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/connectivity_check.dart';
+import 'package:orderly/Utils/preferences.dart';
 import 'package:orderly/Utils/progressDialog.dart';
 import 'package:orderly/Utils/routes.dart';
 import 'package:orderly/Utils/translate.dart';
+import 'package:orderly/Utils/util_preferences.dart';
 import 'package:orderly/Widgets/app_button.dart';
 import 'package:orderly/Widgets/app_dialogs.dart';
+import 'package:orderly/app_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:scoped_model/scoped_model.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:http/http.dart' as http;
 
@@ -46,6 +53,7 @@ class _HomeState extends State<Home> {
   String type = "ALL";
   int offset = 0;
   bool flagDataNotAvailable = false;
+  CartModel cartModel;
 
   Future<bool> _exitApp(BuildContext context) {
     return showDialog(
@@ -110,6 +118,7 @@ class _HomeState extends State<Home> {
 
   void initState() {
     super.initState();
+    cartModel=new CartModel();
     _homeBloc = BlocProvider.of<HomeBloc>(context);
 
     scrollController.addListener(() {
@@ -124,6 +133,22 @@ class _HomeState extends State<Home> {
         ));
       }
     });
+    getData();
+
+  }
+
+  void getData(){
+    final String cartString = UtilPreferences.getString(Preferences.cart);
+    if(cartString!=null) {
+
+       var _cart= jsonDecode(cartString).toList();
+       List<dynamic> _cartList = _cart.map((cartJson) => Cart.fromJson(cartJson)).toList();
+       cartModel.addAllProduct(_cartList.cast<Cart>());
+       Application.cartModel=cartModel;
+       print(_cartList);
+       // setState(() {
+       // });
+    }
     setBlocData();
   }
 
@@ -139,17 +164,20 @@ class _HomeState extends State<Home> {
 
   ///On Refresh List
   Future<void> _onRefresh() async {
+    _producerList=null;
     await Future.delayed(Duration(milliseconds: 1000));
+    //
+    // _homeBloc.add(OnLoadingProductList(
+    //     producerId: _producerList[producerListIndex].producerId.toString(),
+    //     type: type,
+    //     offset: offset.toString(),
+    //     ));
+    _homeBloc.add(OnLoadingProducerList());
 
-    _homeBloc.add(OnLoadingProductList(
-        producerId: _producerList[producerListIndex].producerId.toString(),
-        type: type,
-        offset: offset.toString(),
-        ));
     _controller.refreshCompleted();
   }
 
-  Future<void> AddedToCart(String producerId,String productId,String qty,String price) async {
+  Future<void> AddedToCart(CartModel model,String producerId,String productId,String qty,String price) async {
     Map<String,String> params={
       'producer_id':producerId,
       'product_id':productId,
@@ -164,11 +192,31 @@ class _HomeState extends State<Home> {
     try{
       if (response.statusCode == 200) {
         var resp = json.decode(response.body);
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>ShoppingCart(price:price)));
+        if(resp['msg']=="Successed"){
+          final Iterable refactorCategory = resp['cart'] ?? [];
+        final listCategory = refactorCategory.map((item) {
+          return Cart.fromJson(item);
+        }).toList();
+        // //
+          model.addProduct(listCategory[0]);
+          AppBloc.authBloc.add(OnSaveCart(model));
+          if(model!=null){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>ShoppingCart(price:price,cartModel:model)));
+          }
+        }else{
+          print('exists');
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>ShoppingCart(price:price,cartModel:model)));
+
+        }
+
+        await PsProgressDialog.showProgressWithoutMsg(context);
+
       }
     }catch(e){
+      print(e);
     }
   }
+
 
 
 
@@ -322,7 +370,7 @@ class _HomeState extends State<Home> {
       );
     }
 
-    Widget buildListViewItemProd(int index, List<Product> product) {
+    Widget buildListViewItemProd(int index, List<Product> product, CartModel model) {
       if (product == null) {
         // return ListView.builder(
         //   padding: EdgeInsets.all(0),
@@ -497,67 +545,75 @@ class _HomeState extends State<Home> {
                           fontFamily: "Poppins",
                           color: Theme.of(context).primaryColor),
                     ),
-                    Padding(
-                        padding: EdgeInsets.all(15.0),
-                        child: SizedBox(
-                            height: 25.0,
-                            width: MediaQuery.of(context).size.width,
-                            child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  side: BorderSide(
-                                      color: Theme.of(context).primaryColor,
-                                      width: 1),
-                                  primary: AppTheme.verifyPhone,
-                                  shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(50))),
-                                ),
-                                // shape: shape,
-                                onPressed: () async {
-                                  await PsProgressDialog.showProgressWithoutMsg(context);
-                                  AddedToCart(_producerList[producerListIndex].producerId.toString(),
-                                      _productList[index].productId.toString(),
-                                      _productList[index].qty.toString(),
-                                      _productList[index].ratePerHour.toString());                                },
-                                child: index < 0
-                                    ? Center(child: CircularProgressIndicator())
-                                    :
-                                        Stack(
-                                          // mainAxisAlignment: MainAxisAlignment.center,
-                                          // crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Align(
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  'ADD',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .button
-                                                      .copyWith(
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          fontSize: 12.0),
-                                                )),
-                                            // Align(
-                                            //     alignment: Alignment.centerRight,
-                                            //     //    child: InkWell(
-                                            //     // onTap: (){
-                                            //     //   setState(() {
-                                            //     //     // flagClickDisableAdd=true;
-                                            //     //
-                                            //     //   });
-                                            //     // },
-                                            //     child: Icon(Icons.add,
-                                            //         size: 20.0,
-                                            //         color: Colors.black)
-                                            //   // )
-                                            // )
-                                          ],
-                                        )
-                                )
-                            )
-                        )
+                  //updated on 2/09/2021
+                Padding(
+                               padding: EdgeInsets.all(15.0),
+                               child: SizedBox(
+                                   height: 25.0,
+                                   width: MediaQuery.of(context).size.width,
+                                   child: ElevatedButton(
+                                       style: ElevatedButton.styleFrom(
+                                         side: BorderSide(
+                                             color: Theme.of(context).primaryColor,
+                                             width: 1),
+                                         primary: AppTheme.verifyPhone,
+                                         shape: const RoundedRectangleBorder(
+                                             borderRadius: BorderRadius.all(
+                                                 Radius.circular(50))),
+                                       ),
+                                       // shape: shape,
+                                       onPressed: () async {
+                                         // model.addProduct(_productList[index]);
+                                         // Navigator.push(context, MaterialPageRoute(builder: (context)=>ShoppingCart(price:_productList[index].ratePerHour.toString(),cartModel:model)));
+
+                                         await PsProgressDialog.showProgressWithoutMsg(context);
+                                         AddedToCart(model,_producerList[producerListIndex].producerId.toString(),
+                                             _productList[index].productId.toString(),
+                                             _productList[index].qty.toString(),
+                                             _productList[index].ratePerHour.toString());
+
+                                         },
+                                       child: index < 0
+                                           ? Center(child: CircularProgressIndicator())
+                                           :
+                                       Stack(
+                                         // mainAxisAlignment: MainAxisAlignment.center,
+                                         // crossAxisAlignment: CrossAxisAlignment.center,
+                                         children: <Widget>[
+                                           Align(
+                                               alignment: Alignment.center,
+                                               child: Text(
+                                                 'ADD',
+                                                 style: Theme.of(context)
+                                                     .textTheme
+                                                     .button
+                                                     .copyWith(
+                                                     color: Colors.black,
+                                                     fontWeight:
+                                                     FontWeight.w500,
+                                                     fontSize: 12.0),
+                                               )),
+                                           // Align(
+                                           //     alignment: Alignment.centerRight,
+                                           //     //    child: InkWell(
+                                           //     // onTap: (){
+                                           //     //   setState(() {
+                                           //     //     // flagClickDisableAdd=true;
+                                           //     //
+                                           //     //   });
+                                           //     // },
+                                           //     child: Icon(Icons.add,
+                                           //         size: 20.0,
+                                           //         color: Colors.black)
+                                           //   // )
+                                           // )
+                                         ],
+                                       )
+                                   )
+                               )
+                           )
+
+
 
                   ],
                 ),
@@ -607,414 +663,424 @@ class _HomeState extends State<Home> {
                 //     builder: (context)=> ShoppingCart()
                 // ));
                 Navigator.pushNamed(context, Routes.cart);
-
               }
 
-              // return SafeArea(
-              //   child:
-              //   SmartRefresher(
-              //     enablePullDown: true,
-              //     // enablePullUp: state is ProductListSuccess, //used for pagination
-              //     // &&
-              //     // state.pagination != null &&
-              //     // state.pagination.page < state.pagination.maxPage,
-              //     onRefresh: _onRefresh,
-              //     // onLoading: () {
-              //     //   if (state is ProductListSuccess) {
-              //     //     // _onLoading(state.pagination.page, state.list);
-              //     //     _onRefresh();
-              //     //   }
-              //     // },
-              //     controller: _controller,
-              //     // header: ClassicHeader(
-              //     //   idleText: Translate.of(context).translate(
-              //     //     'pull_down_refresh',
-              //     //   ),
-              //     //   refreshingText: Translate.of(context).translate(
-              //     //     'refreshing',
-              //     //   ),
-              //     //   // completeText: Translate.of(context).translate(
-              //     //   //   'refresh_completed',
-              //     //   // ),
-              //     //   releaseText: Translate.of(context).translate(
-              //     //     'release_to_refresh',
-              //     //   ),
-              //     //   refreshingIcon: SizedBox(
-              //     //     width: 16.0,
-              //     //     height: 16.0,
-              //     //     child: CircularProgressIndicator(strokeWidth: 2),
-              //     //   ),
-              //     // ),
-              //     // footer: ClassicFooter(
-              //     //   loadingText: Translate.of(context).translate('loading'),
-              //     //   canLoadingText: Translate.of(context).translate(
-              //     //     'release_to_load_more',
-              //     //   ),
-              //     //   idleText: Translate.of(context).translate(
-              //     //     'pull_to_load_more',
-              //     //   ),
-              //     //   loadStyle: LoadStyle.ShowWhenLoading,
-              //     //   loadingIcon: SizedBox(
-              //     //     width: 16.0,
-              //     //     height: 16.0,
-              //     //     child: CircularProgressIndicator(strokeWidth: 2),
-              //     //   ),
-              //     // ),
-              //     child:
-                  return Container(
-                      height: MediaQuery.of(context).size.height,
-                      child:
-                      Column(
-                        children: [
-                          //for producer category
-                          // Expanded(
-                          //     child:
-                          Container(
-                            height: 120,
-                            child: buildCategory(_producerList),
-                            // )
-                          ),
-
-                          // for producer listview items
-                          Expanded(
-                              flex: 3,
-                              child: SingleChildScrollView(
-                                  child: Column(
-                                    children: [
-                                      // Expanded(
-                                      //     flex: 1,
-                                      //     child:
-                                      Container(
-                                        height: 200,
-                                        child: CachedNetworkImage(
-                                          imageUrl: _producerList != null
-                                              ? _producerList[producerListIndex]
-                                              .producerImageUrl
-                                              : "http://via.placeholder.com/350x150",
-                                          imageBuilder: (context, imageProvider) {
-                                            return Container(
-                                              height: 180,
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.zero,
-                                                image: DecorationImage(
-                                                  image: imageProvider,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                          placeholder: (context, url) {
-                                            return Shimmer.fromColors(
-                                              baseColor:
-                                              Theme.of(context).hoverColor,
-                                              highlightColor:
-                                              Theme.of(context).highlightColor,
-                                              enabled: true,
-                                              child: Container(
-                                                height: 120,
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.zero,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                          errorWidget: (context, url, error) {
-                                            return Shimmer.fromColors(
-                                              baseColor:
-                                              Theme.of(context).hoverColor,
-                                              highlightColor:
-                                              Theme.of(context).highlightColor,
-                                              enabled: true,
-                                              child: Container(
-                                                height: 120,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius: BorderRadius.zero,
-                                                ),
-                                                child: Icon(Icons.error),
-                                              ),
-                                            );
-                                          },
+              return
+                ScopedModel<CartModel>(
+                    model:cartModel,
+                    child:ScopedModelDescendant<CartModel>(
+                        builder: (context, child, model) {
+                          return SafeArea(
+                            child:
+                            SmartRefresher(
+                                enablePullDown: true,
+                                // enablePullUp: state is ProductListSuccess, //used for pagination
+                                // &&
+                                // state.pagination != null &&
+                                // state.pagination.page < state.pagination.maxPage,
+                                onRefresh: _onRefresh,
+                                // onLoading: () {
+                                //   if (state is ProductListSuccess) {
+                                //     // _onLoading(state.pagination.page, state.list);
+                                //     _onRefresh();
+                                //   }
+                                // },
+                                controller: _controller,
+                                // header: ClassicHeader(
+                                //   idleText: Translate.of(context).translate(
+                                //     'pull_down_refresh',
+                                //   ),
+                                //   refreshingText: Translate.of(context).translate(
+                                //     'refreshing',
+                                //   ),
+                                //   // completeText: Translate.of(context).translate(
+                                //   //   'refresh_completed',
+                                //   // ),
+                                //   releaseText: Translate.of(context).translate(
+                                //     'release_to_refresh',
+                                //   ),
+                                //   refreshingIcon: SizedBox(
+                                //     width: 16.0,
+                                //     height: 16.0,
+                                //     child: CircularProgressIndicator(strokeWidth: 2),
+                                //   ),
+                                // ),
+                                // footer: ClassicFooter(
+                                //   loadingText: Translate.of(context).translate('loading'),
+                                //   canLoadingText: Translate.of(context).translate(
+                                //     'release_to_load_more',
+                                //   ),
+                                //   idleText: Translate.of(context).translate(
+                                //     'pull_to_load_more',
+                                //   ),
+                                //   loadStyle: LoadStyle.ShowWhenLoading,
+                                //   loadingIcon: SizedBox(
+                                //     width: 16.0,
+                                //     height: 16.0,
+                                //     child: CircularProgressIndicator(strokeWidth: 2),
+                                //   ),
+                                // ),
+                                child:
+                                Container(
+                                    height: MediaQuery.of(context).size.height,
+                                    child:
+                                    Column(
+                                      children: [
+                                        //for producer category
+                                        // Expanded(
+                                        //     child:
+                                        Container(
+                                          height: 120,
+                                          child: buildCategory(_producerList),
+                                          // )
                                         ),
-                                      ),
-                                      // ),
-                                      // buildListViewItemProd()
 
-                                      // Expanded(
-                                      //   flex: 1,
-                                      //     child:
-                                      flagDataNotAvailable == false
-                                          ? Padding(
-                                          padding: EdgeInsets.only(
-                                              left: 15,
-                                              right: 15,
-                                              top: 15.0,
-                                              bottom:
-                                              selectedIndexList.length > 0
-                                                  ? 10.0
-                                                  : 80.0),
-                                          child: Wrap(
-                                            runSpacing: 10,
-                                            alignment:
-                                            WrapAlignment.spaceBetween,
-                                            children: List.generate(
-                                                _productList != null
-                                                    ? _productList.length
-                                                    : 6,
-                                                    (index) => index).map((item) {
-                                              return buildListViewItemProd(
-                                                  item, _productList);
-                                            }).toList(),
-                                          )
-                                        //updated on 7/08/2021
-                                        // GridView.builder(
-                                        //   padding: EdgeInsets.all(8.0),
-                                        //   itemCount: productLists.length,
-                                        //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount( crossAxisCount: 2, mainAxisSpacing: 8, crossAxisSpacing: 8, childAspectRatio: 0.8),
-                                        //   itemBuilder: (context, index){
-                                        //     return ScopedModel<CartModel>(
-                                        //         model: widget.model,
-                                        //         child:
-                                        //         ScopedModelDescendant<CartModel>(
-                                        //             builder: (context, child, model) {
-                                        //               model=widget.model;
-                                        //               if(model.cart.length==0)
-                                        //                 {
-                                        //                   model.cart.addAll(productLists);
-                                        //
-                                        //                 }
-                                        //               // return Card( child: Column( children: <Widget>[
-                                        //               //   Image.network(productLists[index].imgUrl, height: 120, width: 120,),
-                                        //               //   Text(productLists[index].title, style: TextStyle(fontWeight: FontWeight.bold),),
-                                        //               //   Text("\$"+productLists[index].price.toString()),
-                                        //               //   OutlineButton(
-                                        //               //       child: Text("Add"),
-                                        //               //       onPressed: () {
-                                        //               //         model.addProduct(productLists[index]);
-                                        //               //
-                                        //               //       }
-                                        //               //       )
-                                        //               // ]));
-                                        //               return Container(
-                                        //                   padding: EdgeInsets.only(left: 8),
-                                        //
-                                        //                   child:
-                                        //                   Card(
-                                        //                     elevation: 3.0,
-                                        //                     shape: RoundedRectangleBorder(
-                                        //
-                                        //                     ),
-                                        //                     child:
-                                        //
-                                        //                     Column(
-                                        //                       crossAxisAlignment: CrossAxisAlignment.center,
-                                        //                       children: <Widget>[
-                                        //                         CachedNetworkImage(
-                                        //                           imageUrl: productLists[index].imgUrl,
-                                        //                           imageBuilder: (context, imageProvider) {
-                                        //                             return Container(
-                                        //                               height: 110,
-                                        //                               decoration: BoxDecoration(
-                                        //                                 borderRadius: BorderRadius.zero,
-                                        //                                 image: DecorationImage(
-                                        //                                   image: imageProvider,
-                                        //                                   fit: BoxFit.cover,
-                                        //                                 ),
-                                        //                               ),
-                                        //
-                                        //                             );
-                                        //                           },
-                                        //                           placeholder: (context, url) {
-                                        //                             return Shimmer.fromColors(
-                                        //                               baseColor: Theme
-                                        //                                   .of(context)
-                                        //                                   .hoverColor,
-                                        //                               highlightColor: Theme
-                                        //                                   .of(context)
-                                        //                                   .highlightColor,
-                                        //                               enabled: true,
-                                        //                               child: Container(
-                                        //                                 height: 110,
-                                        //                                 decoration: BoxDecoration(
-                                        //                                   borderRadius: BorderRadius.zero,
-                                        //                                   color: Colors.white,
-                                        //                                 ),
-                                        //                               ),
-                                        //                             );
-                                        //                           },
-                                        //                           errorWidget: (context, url, error) {
-                                        //                             return Shimmer.fromColors(
-                                        //                               baseColor: Theme
-                                        //                                   .of(context)
-                                        //                                   .hoverColor,
-                                        //                               highlightColor: Theme
-                                        //                                   .of(context)
-                                        //                                   .highlightColor,
-                                        //                               enabled: true,
-                                        //                               child: Container(
-                                        //                                 height: 110,
-                                        //                                 decoration: BoxDecoration(
-                                        //                                   color: Colors.white,
-                                        //                                   borderRadius: BorderRadius.zero,
-                                        //                                 ),
-                                        //                                 child: Icon(Icons.error),
-                                        //                               ),
-                                        //                             );
-                                        //                           },
-                                        //                         ),
-                                        //                         Padding(padding: EdgeInsets.only(top: 3)),
-                                        //                         Text(
-                                        //                           productLists[index].title,
-                                        //                           style: Theme
-                                        //                               .of(context)
-                                        //                               .textTheme
-                                        //                               .caption!
-                                        //                               .copyWith(fontWeight: FontWeight.w400,fontFamily: 'Poppins',color: AppTheme.textColor),
-                                        //                         ),
-                                        //                         Padding(padding: EdgeInsets.only(top: 2)),
-                                        //                         Text(
-                                        //                           productLists[index].price.toString()+" \$/hr",
-                                        //                           maxLines: 1,
-                                        //                           style: Theme
-                                        //                               .of(context)
-                                        //                               .textTheme
-                                        //                               .subtitle2!
-                                        //                               .copyWith(fontWeight: FontWeight.w600,fontFamily: "Poppins",color: Theme.of(context).primaryColor),
-                                        //                         ),
-                                        //
-                                        //                         Padding(padding: EdgeInsets.all(15.0),
-                                        //                             child:
-                                        //                             SizedBox(
-                                        //                                 height: 25.0,
-                                        //                                 width: MediaQuery.of(context).size.width,
-                                        //                                 child:
-                                        //                                 ElevatedButton(
-                                        //                                   style: ElevatedButton.styleFrom(
-                                        //                                     side: BorderSide(color: Theme.of(context).primaryColor, width: 1),
-                                        //                                     primary: selectedIndexList.contains(index)?Theme.of(context).primaryColor:AppTheme.verifyPhone,
-                                        //
-                                        //                                     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),
-                                        //                                   ),
-                                        //                                   // shape: shape,
-                                        //                                   onPressed: (){
-                                        //                                     // Navigator.push(context, MaterialPageRoute(builder: (context) => HomeItemDetail()));
-                                        //
-                                        //                                   },
-                                        //                                   child:
-                                        //                                   !selectedIndexList.contains(index)
-                                        //                                       ?
-                                        //                                   GestureDetector(
-                                        //                                       onTap: (){
-                                        //                                         if (!selectedIndexList.contains(index)) {
-                                        //                                           selectedIndexList.add(index);
-                                        //                                         }
-                                        //                                         // else {
-                                        //                                         //   selectedIndexList.remove(index);
-                                        //                                         // }
-                                        //                                         // model.addProduct(productLists[index]);
-                                        //                                         setState(() {
-                                        //
-                                        //                                         });
-                                        //                                       },
-                                        //                                       child:
-                                        //                                       Stack(
-                                        //                                         // mainAxisAlignment: MainAxisAlignment.center,
-                                        //                                         // crossAxisAlignment: CrossAxisAlignment.center,
-                                        //                                         children: <Widget>[
-                                        //                                           Align(
-                                        //                                               alignment: Alignment.center,
-                                        //                                               child:
-                                        //                                               Text(
-                                        //                                                 'ADD',
-                                        //                                                 style: Theme.of(context)
-                                        //                                                     .textTheme
-                                        //                                                     .button!
-                                        //                                                     .copyWith(color: Colors.black, fontWeight: FontWeight.w500,fontSize: 12.0),
-                                        //                                               )),
-                                        //
-                                        //                                           Align(
-                                        //                                               alignment: Alignment.centerRight,
-                                        //                                               //    child: InkWell(
-                                        //                                               // onTap: (){
-                                        //                                               //   setState(() {
-                                        //                                               //     // flagClickDisableAdd=true;
-                                        //                                               //
-                                        //                                               //   });
-                                        //                                               // },
-                                        //                                               child: Icon(Icons.add,size: 20.0,color:Colors.black)
-                                        //                                             // )
-                                        //                                           )
-                                        //
-                                        //
-                                        //                                         ],
-                                        //                                       ))
-                                        //                                       :
-                                        //                                   index<0
-                                        //                                   ?
-                                        //                                   Center(child:CircularProgressIndicator())
-                                        //                                   :
-                                        //                                   Row(
-                                        //                                     crossAxisAlignment: CrossAxisAlignment.center,
-                                        //                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        //                                     children: <Widget>[
-                                        //                                       InkWell(
-                                        //                                           onTap: (){
-                                        //                                             // setState(() {
-                                        //                                               model.updateProduct(model.cart[index],
-                                        //                                                   model.cart[index].qty - 1);
-                                        //                                             // });
-                                        //
-                                        //                                           },
-                                        //                                           child: Icon(Icons.remove,color: Colors.white,size: 20.0,)),
-                                        //                                       Text(
-                                        //                                         model.cart[index].qty.toString(),
-                                        //                                         style: Theme.of(context)
-                                        //                                             .textTheme
-                                        //                                             .button!
-                                        //                                             .copyWith(color: Colors.white, fontWeight: FontWeight.w400,fontSize: 12.0),
-                                        //                                       ),
-                                        //                                       InkWell(
-                                        //                                           onTap: (){
-                                        //                                             // setState(() {
-                                        //                                               model.updateProduct(model.cart[index],
-                                        //                                                   model.cart[index].qty + 1);
-                                        //                                             // });
-                                        //                                           },
-                                        //                                           child: Icon(Icons.add,color: Colors.white,size: 20.0,))
-                                        //                                     ],
-                                        //                                   ),
-                                        //
-                                        //                                 )
-                                        //                             )
-                                        //                         )
-                                        //                       ],
-                                        //                     ),
-                                        //                   )
-                                        //               );
-                                        //             }));
-                                        //   },
-                                        // ),
-                                      )
-                                          : Center(
-                                        child: Padding(
-                                            padding:
-                                            EdgeInsets.only(top: 100.0),
-                                            child: Text(
-                                              "No Data Available",
-                                              style: TextStyle(
-                                                  fontFamily: 'Poppins',
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 16.0,
-                                                  color: AppTheme.textColor),
-                                            )),
-                                      )
-                                    ],
-                                  ))),
-                        ],
-                      ));
-              //   ),
-              // );
+                                        // for producer listview items
+                                        Expanded(
+                                            flex: 3,
+                                            child:
+                                                SingleChildScrollView(
+                                                    child: Column(
+                                                      children: [
+                                                        // Expanded(
+                                                        //     flex: 1,
+                                                        //     child:
+                                                        Container(
+                                                          height: 200,
+                                                          child: CachedNetworkImage(
+                                                            imageUrl: _producerList != null
+                                                                ? _producerList[producerListIndex]
+                                                                .producerImageUrl
+                                                                : "http://via.placeholder.com/350x150",
+                                                            imageBuilder: (context, imageProvider) {
+                                                              return Container(
+                                                                height: 180,
+                                                                decoration: BoxDecoration(
+                                                                  borderRadius: BorderRadius.zero,
+                                                                  image: DecorationImage(
+                                                                    image: imageProvider,
+                                                                    fit: BoxFit.cover,
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            },
+                                                            placeholder: (context, url) {
+                                                              return Shimmer.fromColors(
+                                                                baseColor:
+                                                                Theme.of(context).hoverColor,
+                                                                highlightColor:
+                                                                Theme.of(context).highlightColor,
+                                                                enabled: true,
+                                                                child: Container(
+                                                                  height: 120,
+                                                                  decoration: BoxDecoration(
+                                                                    borderRadius: BorderRadius.zero,
+                                                                    color: Colors.white,
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            },
+                                                            errorWidget: (context, url, error) {
+                                                              return Shimmer.fromColors(
+                                                                baseColor:
+                                                                Theme.of(context).hoverColor,
+                                                                highlightColor:
+                                                                Theme.of(context).highlightColor,
+                                                                enabled: true,
+                                                                child: Container(
+                                                                  height: 120,
+                                                                  decoration: BoxDecoration(
+                                                                    color: Colors.white,
+                                                                    borderRadius: BorderRadius.zero,
+                                                                  ),
+                                                                  child: Icon(Icons.error),
+                                                                ),
+                                                              );
+                                                            },
+                                                          ),
+                                                        ),
+                                                        // ),
+                                                        // buildListViewItemProd()
+                                                        SizedBox(height: 15.0,),
+
+                                                        // Expanded(
+                                                        //   flex: 1,
+                                                        //     child:
+                                                        flagDataNotAvailable == false
+                                                            ?
+                                                        Padding(
+                                                            padding: EdgeInsets.only(
+                                                                left: 10,
+                                                                right: 10,
+                                                                bottom:
+                                                                selectedIndexList.length > 0
+                                                                    ? 50.0
+                                                                    : 170.0),
+                                                            child:
+                                                        Wrap(
+                                                          runSpacing: 10,
+                                                          alignment:
+                                                          WrapAlignment.spaceBetween,
+                                                          children: List.generate(
+                                                              _productList != null
+                                                                  ? _productList.length
+                                                                  : 6,
+                                                                  (index) => index).map((item) {
+                                                            return buildListViewItemProd(
+                                                                item, _productList,model);
+                                                          }).toList(),
+                                                        ))
+                                                        //updated on 7/08/2021
+                                                        // GridView.builder(
+                                                        //   padding: EdgeInsets.all(8.0),
+                                                        //   itemCount: productLists.length,
+                                                        //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount( crossAxisCount: 2, mainAxisSpacing: 8, crossAxisSpacing: 8, childAspectRatio: 0.8),
+                                                        //   itemBuilder: (context, index){
+                                                        //     return ScopedModel<CartModel>(
+                                                        //         model: widget.model,
+                                                        //         child:
+                                                        //         ScopedModelDescendant<CartModel>(
+                                                        //             builder: (context, child, model) {
+                                                        //               model=widget.model;
+                                                        //               if(model.cart.length==0)
+                                                        //                 {
+                                                        //                   model.cart.addAll(productLists);
+                                                        //
+                                                        //                 }
+                                                        //               // return Card( child: Column( children: <Widget>[
+                                                        //               //   Image.network(productLists[index].imgUrl, height: 120, width: 120,),
+                                                        //               //   Text(productLists[index].title, style: TextStyle(fontWeight: FontWeight.bold),),
+                                                        //               //   Text("\$"+productLists[index].price.toString()),
+                                                        //               //   OutlineButton(
+                                                        //               //       child: Text("Add"),
+                                                        //               //       onPressed: () {
+                                                        //               //         model.addProduct(productLists[index]);
+                                                        //               //
+                                                        //               //       }
+                                                        //               //       )
+                                                        //               // ]));
+                                                        //               return Container(
+                                                        //                   padding: EdgeInsets.only(left: 8),
+                                                        //
+                                                        //                   child:
+                                                        //                   Card(
+                                                        //                     elevation: 3.0,
+                                                        //                     shape: RoundedRectangleBorder(
+                                                        //
+                                                        //                     ),
+                                                        //                     child:
+                                                        //
+                                                        //                     Column(
+                                                        //                       crossAxisAlignment: CrossAxisAlignment.center,
+                                                        //                       children: <Widget>[
+                                                        //                         CachedNetworkImage(
+                                                        //                           imageUrl: productLists[index].imgUrl,
+                                                        //                           imageBuilder: (context, imageProvider) {
+                                                        //                             return Container(
+                                                        //                               height: 110,
+                                                        //                               decoration: BoxDecoration(
+                                                        //                                 borderRadius: BorderRadius.zero,
+                                                        //                                 image: DecorationImage(
+                                                        //                                   image: imageProvider,
+                                                        //                                   fit: BoxFit.cover,
+                                                        //                                 ),
+                                                        //                               ),
+                                                        //
+                                                        //                             );
+                                                        //                           },
+                                                        //                           placeholder: (context, url) {
+                                                        //                             return Shimmer.fromColors(
+                                                        //                               baseColor: Theme
+                                                        //                                   .of(context)
+                                                        //                                   .hoverColor,
+                                                        //                               highlightColor: Theme
+                                                        //                                   .of(context)
+                                                        //                                   .highlightColor,
+                                                        //                               enabled: true,
+                                                        //                               child: Container(
+                                                        //                                 height: 110,
+                                                        //                                 decoration: BoxDecoration(
+                                                        //                                   borderRadius: BorderRadius.zero,
+                                                        //                                   color: Colors.white,
+                                                        //                                 ),
+                                                        //                               ),
+                                                        //                             );
+                                                        //                           },
+                                                        //                           errorWidget: (context, url, error) {
+                                                        //                             return Shimmer.fromColors(
+                                                        //                               baseColor: Theme
+                                                        //                                   .of(context)
+                                                        //                                   .hoverColor,
+                                                        //                               highlightColor: Theme
+                                                        //                                   .of(context)
+                                                        //                                   .highlightColor,
+                                                        //                               enabled: true,
+                                                        //                               child: Container(
+                                                        //                                 height: 110,
+                                                        //                                 decoration: BoxDecoration(
+                                                        //                                   color: Colors.white,
+                                                        //                                   borderRadius: BorderRadius.zero,
+                                                        //                                 ),
+                                                        //                                 child: Icon(Icons.error),
+                                                        //                               ),
+                                                        //                             );
+                                                        //                           },
+                                                        //                         ),
+                                                        //                         Padding(padding: EdgeInsets.only(top: 3)),
+                                                        //                         Text(
+                                                        //                           productLists[index].title,
+                                                        //                           style: Theme
+                                                        //                               .of(context)
+                                                        //                               .textTheme
+                                                        //                               .caption!
+                                                        //                               .copyWith(fontWeight: FontWeight.w400,fontFamily: 'Poppins',color: AppTheme.textColor),
+                                                        //                         ),
+                                                        //                         Padding(padding: EdgeInsets.only(top: 2)),
+                                                        //                         Text(
+                                                        //                           productLists[index].price.toString()+" \$/hr",
+                                                        //                           maxLines: 1,
+                                                        //                           style: Theme
+                                                        //                               .of(context)
+                                                        //                               .textTheme
+                                                        //                               .subtitle2!
+                                                        //                               .copyWith(fontWeight: FontWeight.w600,fontFamily: "Poppins",color: Theme.of(context).primaryColor),
+                                                        //                         ),
+                                                        //
+                                                        //                         Padding(padding: EdgeInsets.all(15.0),
+                                                        //                             child:
+                                                        //                             SizedBox(
+                                                        //                                 height: 25.0,
+                                                        //                                 width: MediaQuery.of(context).size.width,
+                                                        //                                 child:
+                                                        //                                 ElevatedButton(
+                                                        //                                   style: ElevatedButton.styleFrom(
+                                                        //                                     side: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+                                                        //                                     primary: selectedIndexList.contains(index)?Theme.of(context).primaryColor:AppTheme.verifyPhone,
+                                                        //
+                                                        //                                     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),
+                                                        //                                   ),
+                                                        //                                   // shape: shape,
+                                                        //                                   onPressed: (){
+                                                        //                                     // Navigator.push(context, MaterialPageRoute(builder: (context) => HomeItemDetail()));
+                                                        //
+                                                        //                                   },
+                                                        //                                   child:
+                                                        //                                   !selectedIndexList.contains(index)
+                                                        //                                       ?
+                                                        //                                   GestureDetector(
+                                                        //                                       onTap: (){
+                                                        //                                         if (!selectedIndexList.contains(index)) {
+                                                        //                                           selectedIndexList.add(index);
+                                                        //                                         }
+                                                        //                                         // else {
+                                                        //                                         //   selectedIndexList.remove(index);
+                                                        //                                         // }
+                                                        //                                         // model.addProduct(productLists[index]);
+                                                        //                                         setState(() {
+                                                        //
+                                                        //                                         });
+                                                        //                                       },
+                                                        //                                       child:
+                                                        //                                       Stack(
+                                                        //                                         // mainAxisAlignment: MainAxisAlignment.center,
+                                                        //                                         // crossAxisAlignment: CrossAxisAlignment.center,
+                                                        //                                         children: <Widget>[
+                                                        //                                           Align(
+                                                        //                                               alignment: Alignment.center,
+                                                        //                                               child:
+                                                        //                                               Text(
+                                                        //                                                 'ADD',
+                                                        //                                                 style: Theme.of(context)
+                                                        //                                                     .textTheme
+                                                        //                                                     .button!
+                                                        //                                                     .copyWith(color: Colors.black, fontWeight: FontWeight.w500,fontSize: 12.0),
+                                                        //                                               )),
+                                                        //
+                                                        //                                           Align(
+                                                        //                                               alignment: Alignment.centerRight,
+                                                        //                                               //    child: InkWell(
+                                                        //                                               // onTap: (){
+                                                        //                                               //   setState(() {
+                                                        //                                               //     // flagClickDisableAdd=true;
+                                                        //                                               //
+                                                        //                                               //   });
+                                                        //                                               // },
+                                                        //                                               child: Icon(Icons.add,size: 20.0,color:Colors.black)
+                                                        //                                             // )
+                                                        //                                           )
+                                                        //
+                                                        //
+                                                        //                                         ],
+                                                        //                                       ))
+                                                        //                                       :
+                                                        //                                   index<0
+                                                        //                                   ?
+                                                        //                                   Center(child:CircularProgressIndicator())
+                                                        //                                   :
+                                                        //                                   Row(
+                                                        //                                     crossAxisAlignment: CrossAxisAlignment.center,
+                                                        //                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        //                                     children: <Widget>[
+                                                        //                                       InkWell(
+                                                        //                                           onTap: (){
+                                                        //                                             // setState(() {
+                                                        //                                               model.updateProduct(model.cart[index],
+                                                        //                                                   model.cart[index].qty - 1);
+                                                        //                                             // });
+                                                        //
+                                                        //                                           },
+                                                        //                                           child: Icon(Icons.remove,color: Colors.white,size: 20.0,)),
+                                                        //                                       Text(
+                                                        //                                         model.cart[index].qty.toString(),
+                                                        //                                         style: Theme.of(context)
+                                                        //                                             .textTheme
+                                                        //                                             .button!
+                                                        //                                             .copyWith(color: Colors.white, fontWeight: FontWeight.w400,fontSize: 12.0),
+                                                        //                                       ),
+                                                        //                                       InkWell(
+                                                        //                                           onTap: (){
+                                                        //                                             // setState(() {
+                                                        //                                               model.updateProduct(model.cart[index],
+                                                        //                                                   model.cart[index].qty + 1);
+                                                        //                                             // });
+                                                        //                                           },
+                                                        //                                           child: Icon(Icons.add,color: Colors.white,size: 20.0,))
+                                                        //                                     ],
+                                                        //                                   ),
+                                                        //
+                                                        //                                 )
+                                                        //                             )
+                                                        //                         )
+                                                        //                       ],
+                                                        //                     ),
+                                                        //                   )
+                                                        //               );
+                                                        //             }));
+                                                        //   },
+                                                        // ),
+                                                        // )
+                                                            : Center(
+                                                          child: Padding(
+                                                              padding:
+                                                              EdgeInsets.only(top: 100.0),
+                                                              child: Text(
+                                                                "No Data Available",
+                                                                style: TextStyle(
+                                                                    fontFamily: 'Poppins',
+                                                                    fontWeight: FontWeight.w600,
+                                                                    fontSize: 16.0,
+                                                                    color: AppTheme.textColor),
+                                                              )),
+                                                        )
+                                                      ],
+                                                    ))),
+                                      ],
+                                    ))
+                            ),
+                          );
+    }));
+
+
                 })
             )
         )

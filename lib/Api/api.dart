@@ -17,6 +17,7 @@ class Api {
   static const String GET_PROD_LIST=HOST_URL+"product_list";
   static const String ADD_TO_CART=HOST_URL+"add_to_cart";
   static const String GET_CART_LIST=HOST_URL+"view_cart";
+  static const String DEL_CART_LIST=HOST_URL+"delete_cart";
 
   ///Login api
   static Future<dynamic> login(params) async {

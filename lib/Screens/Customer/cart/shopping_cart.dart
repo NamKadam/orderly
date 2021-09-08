@@ -15,9 +15,13 @@ import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/model_scoped_cart.dart';
 import 'package:orderly/Models/model_product_List.dart';
 import 'package:orderly/Models/model_view_cart.dart';
+import 'package:orderly/Screens/Customer/cart/addTime.dart';
 import 'package:orderly/Screens/Customer/cart/cart_list_item.dart';
+import 'package:orderly/Screens/Customer/profile/profAddress/addEditAddress.dart';
+import 'package:orderly/Screens/Customer/profile/profAddress/prof_address.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/connectivity_check.dart';
+import 'package:orderly/Utils/preferences.dart';
 import 'package:orderly/Utils/routes.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Utils/util_preferences.dart';
@@ -34,13 +38,13 @@ import 'package:http/http.dart' as http;
 
 class ShoppingCart extends StatefulWidget {
   String producerId,productId,qty,price;
-  // CartModel model;
+  CartModel cartModel;
 
   // double totalCartValue;
   // ShoppingCart({Key key, @required this.producerId, @required this.model})
   //     : super(key: key);
 
-  ShoppingCart({Key key, @required this.price})
+  ShoppingCart({Key key, @required this.price,@required this.cartModel})
       : super(key: key);
 
   _ShoppingCartState createState() => _ShoppingCartState();
@@ -57,10 +61,11 @@ class _ShoppingCartState extends State<ShoppingCart> {
   CartBloc cartBloc;
   bool isconnectedToInternet = false;
   bool flagDataNotAvailable = false;
-  List<dynamic> _cartList;
+  List<Cart> _cartList;
   int producerListIndex = 0;
   final _controller = RefreshController(initialRefresh: false);
   String flagRemove="";
+  AddTimeData addTimeresult;
 
 
   Future<void> showPlaceOrderBottomDialog(BuildContext context) async {
@@ -246,6 +251,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
     super.initState();
     cartBloc = BlocProvider.of<CartBloc>(context);
     getCurrentDate();
+    // setBlocData();
     getsharedPrefData();
 
   }
@@ -273,7 +279,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
     print("cartList:-" + json);
     cartList.forEach((f) {
       print(f.qty);
-      totalCartValue += int.parse(f.ratePerHour) * f.qty;
+      totalCartValue += f.ratePerHour * f.qty;
       print('total cart value:-' + totalCartValue.toString());
       print('quantity:-' + quantity.toString());
     });
@@ -296,8 +302,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
     _cartList.removeAt(index);
     // calculateTotal(cart);
   }
-
-
 
   // for cartList
   Widget buildCartList(int index, CartModel model) {
@@ -542,7 +546,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                   model.cart[index],
                                                   model.cart[index].qty - 1);
 
-                                              calculateTotal(model.cart,index,flagRemove);
+
+                                              // calculateTotal(model.cart,index,flagRemove);
 
                                             }
 
@@ -564,7 +569,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                             model.updateProduct(
                                                 model.cart[index],
                                                 model.cart[index].qty + 1);
-                                            calculateTotal(model.cart,index,"0");
+                                            // calculateTotal(model.cart,index,"0");
                                           },
                                           child: Image.asset(
                                             Images.plus,
@@ -602,10 +607,24 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 ),
 
                 onPressed: () {
-                      setState(() {
-                        _cartList.removeAt(index);
-                        model.cart.removeAt(index);
-                      });
+                  cartBloc.add(OnDeleteCartList(
+                      cartId:_cartList[index].id.toString()));
+                  // setState(() {
+                  //   if(_cartList[index]==0) {
+                  //     flagDataNotAvailable = true;
+                  //   }
+                  // });
+                    model.removeProduct(_cartList[index]);
+
+
+                      // setState(() {
+                        // _cartList.removeAt(index);
+                        // model.cart.removeAt(index);
+                      //   model.cart.removeAt(index);
+                      //   if(_cartList.length==0) {
+                      //     flagDataNotAvailable = true;
+                      //   }
+                      // });
 
                   },
               ),
@@ -619,12 +638,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
   }
 
   Future<void> setsharedPrefData() async{
-    // final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     // // Encode and store data in SharedPreferences
-    // String encodedData = jsonEncode(cartModel.cart.map((i) => Cart.toJson(i)).toList()).toString();
-    //
-    // // final String encodedData = Cart.encode(cartModel.cart);
-    // await prefs.setString('cart_key', encodedData);
+    String encodedData = jsonEncode(cartModel.cart.map((i) => Cart.toJson(i)).toList()).toString();
+
+    // final String encodedData = Cart.encode(cartModel.cart);
+    await prefs.setString('cart_key', encodedData);
     Navigator.pop(context);
     // // Fetch and decode data
     // final String cartString = await prefs.getString('cart_key');
@@ -641,14 +660,29 @@ class _ShoppingCartState extends State<ShoppingCart> {
     // if(_cartList.length<=0){
     //   setBlocData();
     // }
+   //  final String cartString = UtilPreferences.getString(Preferences.cart);
+   // if(cartString!=null) {
+   //
+   //    var _cart= jsonDecode(cartString).toList();
+   //    _cartList = _cart.map((cartJson) => Cart.fromJson(cartJson)).toList();
+   //    widget.cartModel.addAllProduct(_cartList);
+   //    print(_cartList);
+   //    setState(() {
+   //    });
+   //
+   // }
+   // else{
+   //   if(Application.cartModel==null){
+   //     setBlocData();
+   //   }else{
+       setState(() {
+         _cartList=Application.cartModel.cart;
 
-    if(Application.cart==null){
-      setBlocData();
-    }else{
-      _cartList=Application.cart;
-    }
+       });
+     // }
+   // }
 
-    print(_cartList);
+   print(_cartList);
 
   }
 
@@ -668,7 +702,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
           ),
           leading: InkWell(
               onTap: () {
-                AppBloc.authBloc.add(OnSaveCart(cartModel));
+                widget.cartModel.totalCartValue-=150;
+                AppBloc.authBloc.add(OnSaveCart(widget.cartModel));
                 Navigator.pop(context);
                 // showPlaceOrderBottomDialog(context);
                 // setsharedPrefData();
@@ -685,29 +720,31 @@ class _ShoppingCartState extends State<ShoppingCart> {
           listener: (context, state) {},
           child: BlocBuilder<CartBloc, CartState>(builder: (context, state) {
 
-            if(state is InitialCartListState){
-              cartModel=new CartModel();
-
-            }
+            // if(state is InitialCartListState){
+            //   cartModel=new CartModel();
+            //
+            // }
 
             if (state is CartListSuccess) {
-              cartModel=new CartModel();
-
+              // cartModel=new CartModel();
               _cartList = state.cartList;
               if(_cartList==null) {
                 flagDataNotAvailable = true;
               }
-                cartModel.addAllProduct(_cartList);
-
-             }
+                widget.cartModel.addAllProduct(_cartList);
+            }
+            //for delete cartList
+            if(state is CartDeleteSuccess){
+              print('deleted');
+            }
             return ScopedModel<CartModel>(
-                model: cartModel,
+                model: widget.cartModel,
                 child: ScopedModelDescendant<CartModel>(
                   builder: (context, child, model) {
-                    // cartModel = model;
+                    widget.cartModel = model;
                     // print(cartModel);
 
-                    totalCartValue=cartModel.totalCartValue;
+                    // totalCartValue=widget.cartModel.totalCartValue;
                     return Container(
                       // height: MediaQuery.of(context).size.height,
                         child:
@@ -732,7 +769,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                         //         builder: (context) =>
                                         //         new MemberDetails(userListData:memberlist[index])));
                                       },
-                                      child: buildCartList(index, model)
+                                      child: buildCartList(index, widget.cartModel)
                                       // ScopedModel<CartModel>(
                                       //     model: cartModel,
                                       //     child: ScopedModelDescendant<CartModel>(
@@ -749,8 +786,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                   );
                                 })),
 
-                            //bottom dialog
-                            flagDataNotAvailable==false
+                            // bottom dialog
+                            widget.cartModel.totalCartValue!=0.0
                                 ?
                             Align(
                                 alignment: Alignment.bottomCenter,
@@ -779,23 +816,37 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                   children: [
                                                     GestureDetector(
                                                         onTap: () async {
-                                                          final result =
-                                                          await Navigator.pushNamed(
-                                                              context,
-                                                              Routes.addTime);
-                                                          print("result:-" + result);
-                                                          print("currentDate:-" +
-                                                              currentDate);
+                                                          // final List<String> _response = await Navigator.push(
+                                                          //   context,
+                                                          //     await Navigator.pushNamed(context, Routes.addTime));
+                                                          // //for date
+                                                          //    if(_response[0]==""){
+                                                          //      date = currentDate;
+                                                          //    }else{
+                                                          //      date = _response[0];
+                                                          //    }
+                                                          //    String deliverySlot=_response[3];
+                                                          //    String deliveryType=_response[2];
+                                                          //    String amt=_response[1];
+                                                          //    setState(() {
+                                                          //
+                                                          //    });
+                                                          addTimeresult = await Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                                                          AddTime()));
+                                                          print("result:-" + addTimeresult.toString());
+                                                          print("currentDate:-" + currentDate);
 
-                                                          if (result == "") {
-                                                            setState(() {
+                                                          if (addTimeresult.date == null) {
                                                               date = currentDate;
-                                                            });
                                                           } else {
-                                                            setState(() {
-                                                              date = result;
-                                                            });
+                                                              date = addTimeresult.date;
                                                           }
+                                                          //for amt
+                                                          if(addTimeresult.chargeAmt!=null){
+                                                            widget.cartModel.totalCartValue+=int.parse(addTimeresult.chargeAmt);
+                                                          }
+                                                        setState(() {});
+
                                                         },
                                                         child: Text(
                                                           "Choose Delivery Time",
@@ -849,8 +900,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                               "Poppins"),
                                                         ),
                                                         Text(
-                                                          "\$" +
-                                                              totalCartValue.toString(),
+                                                          "\$" + widget.cartModel.totalCartValue.toString(),
                                                           style: Theme.of(context)
                                                               .textTheme
                                                               .caption
@@ -930,7 +980,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                         Text(
                                                           OverallTotalVal == 0
                                                               ? "\$ " +
-                                                              (totalCartValue +
+                                                              (widget.cartModel.totalCartValue +
                                                                   conveniencFee)
                                                                   .toString()
                                                               : "\$ " +
@@ -954,16 +1004,21 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                     padding: EdgeInsets.only(top: 15.0),
                                                     child: AppButton(
                                                       onPressed: () {
-                                                        // if (date == "") {
-                                                        //   _scaffoldKey.currentState
-                                                        //       .showSnackBar(SnackBar(
-                                                        //       content: Text(
-                                                        //           "Please Choose Delivery time")));
-                                                        // }
-                                                        _scaffoldKey.currentState
-                                                            .showSnackBar(SnackBar(
-                                                            content: Text(
-                                                                "Functionality Under Development")));
+                                                        if (date == "") {
+                                                          _scaffoldKey.currentState
+                                                              .showSnackBar(SnackBar(
+                                                              content: Text(
+                                                                  "Please Choose Delivery time")));
+                                                        }else {
+                                                          String cart_json = jsonEncode(widget.cartModel.cart.map((i)
+                                                          => Cart.toJson(i)).toList()).toString();
+                                                          // var json1 = jsonEncode(cartList.map((e) => e.toJson()).toList());
+                                                          print("cartList:-" + cart_json);
+                                                          Navigator.push(context,
+                                                              MaterialPageRoute(builder: (context)
+                                                              =>ProfAddress(addTimeData: addTimeresult,cartDetails: cart_json,)));
+                                                        }
+
                                                       },
                                                       shape:
                                                       const RoundedRectangleBorder(

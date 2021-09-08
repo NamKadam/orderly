@@ -17,14 +17,15 @@ class AddEditAddress extends StatefulWidget {
   final String flagAddEdit;
   const AddEditAddress({Key key, @required this.flagAddEdit}) : super(key: key);
 
-  AddEditeAddressState createState() => AddEditeAddressState();
+  AddEditAddressState createState() => AddEditAddressState();
 }
 
-class AddEditeAddressState extends State<AddEditAddress> {
+class AddEditAddressState extends State<AddEditAddress> {
 
   final _textFirstNameController = TextEditingController();
   final _textLastNameController = TextEditingController();
   final _textZipController = TextEditingController();
+  final _textEmailController = TextEditingController();
   final _textMobileController = TextEditingController();
   final _focusName = FocusNode();
   final _focusLastName = FocusNode();

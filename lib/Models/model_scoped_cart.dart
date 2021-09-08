@@ -32,7 +32,7 @@ class CartModel extends Model {
     int index = cart.indexWhere((i) => i.id == product.id);
     cart[index].qty = 1;
     cart.removeWhere((item) => item.id == product.id);
-    // calculateTotal();
+    calculateTotal();
     notifyListeners();
   }
 
@@ -41,7 +41,7 @@ class CartModel extends Model {
     cart[index].qty = qty;
     if (cart[index].qty == 0)
       removeProduct(product);
-    // calculateTotal();
+    calculateTotal();
     notifyListeners();
   }
 
@@ -54,7 +54,7 @@ class CartModel extends Model {
   void calculateTotal() {
     totalCartValue = 0;
     cart.forEach((f) {
-      totalCartValue += int.parse(f.ratePerHour) * f.qty;
+      totalCartValue += f.ratePerHour * f.qty;
     });
     print(""+totalCartValue.toString());
   }

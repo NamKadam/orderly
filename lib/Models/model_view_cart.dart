@@ -30,7 +30,7 @@ class Cart {
   String userId;
   int producerId;
   int productId;
-  String ratePerHour;
+  int ratePerHour;
   int qty;
   String productName;
   String productDesc;

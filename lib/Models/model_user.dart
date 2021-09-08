@@ -31,6 +31,9 @@ class User {
   dynamic mobile;
   dynamic userType;
   dynamic isRegistered;
+  dynamic zipcode;
+  dynamic address;
+
 
   User(
       {this.userId,
@@ -40,7 +43,9 @@ class User {
         this.emailId,
         this.mobile,
         this.userType,
-        this.isRegistered});
+        this.isRegistered,
+      this.zipcode,
+      this.address});
 
   User.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'];
@@ -51,6 +56,8 @@ class User {
     mobile = json['mobile'];
     userType = json['user_type'];
     isRegistered = json['is_registered'];
+    zipcode = json['zipcode'];
+    address = json['address'];
   }
 
   Map<String, dynamic> toJson() {
@@ -63,6 +70,8 @@ class User {
     data['mobile'] = this.mobile;
     data['user_type'] = this.userType;
     data['is_registered'] = this.isRegistered;
+    data['zipcode'] = this.zipcode;
+    data['address'] = this.address;
     return data;
   }
 }
