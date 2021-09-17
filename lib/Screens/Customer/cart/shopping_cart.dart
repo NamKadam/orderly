@@ -32,7 +32,6 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:http/http.dart' as http;
 
 
 
@@ -249,6 +248,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    addTimeresult=new AddTimeData();
     cartBloc = BlocProvider.of<CartBloc>(context);
     getCurrentDate();
     // setBlocData();
@@ -575,7 +575,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                             Images.plus,
                                             height: 22.0,
                                             width: 22.0,
-                                          ))),
+                                          )
+                                      )),
                                 ],
                               )
                             ],
@@ -685,6 +686,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
    print(_cartList);
 
   }
+  
+
 
   @override
   Widget build(BuildContext context) {
@@ -702,7 +705,14 @@ class _ShoppingCartState extends State<ShoppingCart> {
           ),
           leading: InkWell(
               onTap: () {
-                widget.cartModel.totalCartValue-=150;
+                if(addTimeresult!=null){
+                  if(addTimeresult.chargeAmt!=null) {
+
+                    widget.cartModel.totalCartValue =
+                        widget.cartModel.totalCartValue - int.parse(addTimeresult.chargeAmt);
+                  }
+                }
+
                 AppBloc.authBloc.add(OnSaveCart(widget.cartModel));
                 Navigator.pop(context);
                 // showPlaceOrderBottomDialog(context);
@@ -1016,7 +1026,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                           print("cartList:-" + cart_json);
                                                           Navigator.push(context,
                                                               MaterialPageRoute(builder: (context)
-                                                              =>ProfAddress(addTimeData: addTimeresult,cartDetails: cart_json,)));
+                                                              =>ProfAddress(addTimeData: addTimeresult,cartDetails: widget.cartModel,)));
                                                         }
 
                                                       },

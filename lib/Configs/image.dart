@@ -32,6 +32,11 @@ class Images {
   static const String calender='assets/images/calender.png';
   static const String razorpay='assets/images/razor.png';
   static const String stripe='assets/images/stripe.png';
+  static const String edit='assets/images/edit.png';
+  static const String inventory='assets/images/inventory.png';
+  static const String inventoryActive='assets/images/inventory-active.png';
+  static const String claim='assets/images/claim.png';
+  static const String claimActive='assets/images/claim-active.png';
 
   ///Singleton factory
   static final Images _instance = Images._internal();

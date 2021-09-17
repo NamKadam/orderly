@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:orderly/Models/ResultApiModel.dart';
 import 'package:http/http.dart' as http;
+import 'package:orderly/Models/model_address.dart';
 import 'package:orderly/Models/model_producer_list.dart';
 import 'package:orderly/Models/model_product_List.dart';
 import 'package:orderly/Models/model_view_cart.dart';
@@ -18,6 +19,10 @@ class Api {
   static const String ADD_TO_CART=HOST_URL+"add_to_cart";
   static const String GET_CART_LIST=HOST_URL+"view_cart";
   static const String DEL_CART_LIST=HOST_URL+"delete_cart";
+  static const String GET_CHARGES=HOST_URL+"urgent_charges";
+  static const String GET_ADDRESS_LIST=HOST_URL+"view_address";
+  static const String ADD_ADDRESS=HOST_URL+"add_address";
+  static const String EDIT_ADDRESS=HOST_URL+"update_address";
 
   ///Login api
   static Future<dynamic> login(params) async {
@@ -76,7 +81,17 @@ class Api {
     }
   }
 
-
+  //get cart list
+  static Future<dynamic> getAddress(params) async {
+    final response = await http.post(
+      Uri.parse(GET_ADDRESS_LIST),
+      body: params,
+    );
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+      return AddressResp.fromJson(responseJson);
+    }
+  }
 
   static Future<PostalCode> fetchPincode(http.Client client, String value) async {
     print('Passing Area: $value');

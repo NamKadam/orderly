@@ -14,6 +14,9 @@ import 'package:orderly/Screens/Customer/home/homeUpdated.dart';
 import 'package:orderly/Screens/Customer/orders/myOrders.dart';
 import 'package:orderly/Screens/Customer/producers/producers.dart';
 import 'package:orderly/Screens/Customer/profile/profile.dart';
+import 'package:orderly/Screens/FleetManager/claims/claims.dart';
+import 'package:orderly/Screens/FleetManager/inventory/inventory_list.dart';
+import 'package:orderly/Screens/FleetManager/orders/fleet_orders.dart';
 import 'package:orderly/Utils/routes.dart';
 
 import 'package:orderly/Utils/translate.dart';
@@ -21,86 +24,185 @@ import 'package:orderly/Utils/translate.dart';
 // import 'package:orderly/flutterexample.dart';
 
 class MainNavigation extends StatefulWidget {
+  String userType;
+  MainNavigation({Key key, this.userType}) : super(key: key);
+
   _MainNavigationState createState() => _MainNavigationState();
 }
 
 class _MainNavigationState extends State<MainNavigation> {
   int _selectedIndex = 0;
-  var title = "Home";
+  var title = "";
 
   ///List bottom menu
   List<BottomNavigationBarItem> _bottomBarItem(BuildContext context) {
-    return [
-      BottomNavigationBarItem(
-        icon: Icon(Icons.home),
-        title: Padding(
-          padding: EdgeInsets.only(top: 3),
-          child: Text(Translate.of(context).translate('home')),
+    if(widget.userType=="0"){
+      return [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          title: Padding(
+            padding: EdgeInsets.only(top: 3),
+            child: Text(Translate.of(context).translate('orders')),
+          ),
         ),
-      ),
-      BottomNavigationBarItem(
-        icon: Image.asset(
-          Images.producer,
-          width: 25.0,
-          height: 25.0,
+        BottomNavigationBarItem(
+          icon: Image.asset(
+            Images.producer,
+            width: 25.0,
+            height: 25.0,
+          ),
+          activeIcon: Image.asset(
+            Images.producerActive,
+            width: 25.0,
+            height: 25.0,
+          ),
+          title: Padding(
+            padding: EdgeInsets.only(top: 3),
+            child: Text(Translate.of(context).translate('producer')),
+          ),
         ),
-        activeIcon: Image.asset(
-          Images.producerActive,
-          width: 25.0,
-          height: 25.0,
+        BottomNavigationBarItem(
+          icon: Image.asset(
+            Images.order,
+            width: 25.0,
+            height: 25.0,
+          ),
+          activeIcon: Image.asset(
+            Images.orderActive,
+            width: 25.0,
+            height: 25.0,
+          ),
+          title: Padding(
+            padding: EdgeInsets.only(top: 3),
+            child: Text(Translate.of(context).translate('my_order')),
+          ),
         ),
-        title: Padding(
-          padding: EdgeInsets.only(top: 3),
-          child: Text(Translate.of(context).translate('producer')),
+        BottomNavigationBarItem(
+          icon: Image.asset(
+            Images.profile,
+            width: 25.0,
+            height: 25.0,
+          ),
+          activeIcon: Image.asset(
+            Images.profileActive,
+            width: 25.0,
+            height: 25.0,
+          ),
+          title: Padding(
+            padding: EdgeInsets.only(top: 3),
+            child: Text(Translate.of(context).translate('profile')),
+          ),
         ),
-      ),
-      BottomNavigationBarItem(
-        icon: Image.asset(
-          Images.order,
-          width: 25.0,
-          height: 25.0,
+      ];
+    }
+    else{
+      //for fleet
+      return [
+        BottomNavigationBarItem(
+          icon: Image.asset(
+            Images.order,
+            width: 25.0,
+            height: 25.0,
+          ),
+          activeIcon: Image.asset(
+            Images.orderActive,
+            width: 25.0,
+            height: 25.0,
+          ),
+          title: Padding(
+            padding: EdgeInsets.only(top: 3),
+            child: Text(Translate.of(context).translate('orders')),
+          ),
         ),
-        activeIcon: Image.asset(
-          Images.orderActive,
-          width: 25.0,
-          height: 25.0,
+        BottomNavigationBarItem(
+          icon: Image.asset(
+            Images.inventory,
+            width: 25.0,
+            height: 25.0,
+          ),
+          activeIcon: Image.asset(
+            Images.inventoryActive,
+            width: 25.0,
+            height: 25.0,
+          ),
+          title: Padding(
+            padding: EdgeInsets.only(top: 3),
+            child: Text(Translate.of(context).translate('inventory')),
+          ),
         ),
-        title: Padding(
-          padding: EdgeInsets.only(top: 3),
-          child: Text(Translate.of(context).translate('my_order')),
+        BottomNavigationBarItem(
+          icon: Image.asset(
+            Images.claim,
+            width: 25.0,
+            height: 25.0,
+          ),
+          activeIcon: Image.asset(
+            Images.claimActive,
+            width: 25.0,
+            height: 25.0,
+          ),
+          title: Padding(
+            padding: EdgeInsets.only(top: 3),
+            child: Text(Translate.of(context).translate('claims')),
+          ),
         ),
-      ),
-      BottomNavigationBarItem(
-        icon: Image.asset(
-          Images.profile,
-          width: 25.0,
-          height: 25.0,
+        BottomNavigationBarItem(
+          icon: Image.asset(
+            Images.profile,
+            width: 25.0,
+            height: 25.0,
+          ),
+          activeIcon: Image.asset(
+            Images.profileActive,
+            width: 25.0,
+            height: 25.0,
+          ),
+          title: Padding(
+            padding: EdgeInsets.only(top: 3),
+            child: Text(Translate.of(context).translate('profile')),
+          ),
         ),
-        activeIcon: Image.asset(
-          Images.profileActive,
-          width: 25.0,
-          height: 25.0,
-        ),
-        title: Padding(
-          padding: EdgeInsets.only(top: 3),
-          child: Text(Translate.of(context).translate('profile')),
-        ),
-      ),
-    ];
+      ];
+    }
+
   }
 
   ///On change tab bottom menu
   void _onItemTapped(int index) async {
     setState(() {
       _selectedIndex = index;
-      if (_selectedIndex == 0) {
-        title = "Home";
-      } else if (_selectedIndex == 1) {
-        title = "Producers";
-      } else if (_selectedIndex == 2) {
-        title = "My Orders";
+      if(widget.userType=="0")
+        {
+          //for customer
+          if (_selectedIndex == 0) {
+            title = "Home";
+          } else if (_selectedIndex == 1) {
+            title = "Producers";
+          } else if (_selectedIndex == 2) {
+            title = "My Orders";
+          }
+        }else{
+        //for fleet
+        if (_selectedIndex == 0) {
+          title = "Orders";
+        } else if (_selectedIndex == 1) {
+          title = "Inventory";
+        } else if (_selectedIndex == 2) {
+          title = "Claims";
+        }
       }
+
     });
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if(widget.userType=="0"){ //for customer
+      title="Home";
+    }else{ //for fleet manager
+      title="Orders";
+    }
   }
 
   @override
@@ -108,7 +210,8 @@ class _MainNavigationState extends State<MainNavigation> {
     // TODO: implement build
     return Scaffold(
         appBar: _selectedIndex != 3 //3=profile
-            ? AppBar(
+            ?
+        AppBar(
                 title: Text(
                   title,
                   style: TextStyle(
@@ -165,11 +268,37 @@ class _MainNavigationState extends State<MainNavigation> {
                               textAlign: TextAlign.center,
                             ),
                           ),
+                        ),
+                        if(widget.userType=="1")//for fleet
+                        Positioned(
+                          right: 5,
+                          top: 5,
+                          child: new Container(
+                            padding: EdgeInsets.all(1),
+                            decoration: new BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(8.5),
+                            ),
+                            constraints: BoxConstraints(
+                              minWidth: 17,
+                              minHeight: 17,
+                            ),
+                            child: Text(
+                              "0",
+                              style: new TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w400,
+                                  fontFamily: 'Poppins'
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         )
                       ],
                       ),
-
-                      Stack(
+                      if(widget.userType=="0") //for customer
+                        Stack(
                         children: [
                           IconButton(
                             icon: Image.asset(
@@ -218,12 +347,26 @@ class _MainNavigationState extends State<MainNavigation> {
         body: IndexedStack(
           index: _selectedIndex,
           children: <Widget>[
-            Home(),
-            // HomeUpdated(model: CartModel()),
-            // FlutterExample(),
-            Producers(model: CartModel()),
-            MyOrders(),
-            Profile(),
+            widget.userType=="0" //for customer
+            ?
+              Home()
+            :  //for fleet manager
+              FleetOrders(),
+              // HomeUpdated(model: CartModel()),
+              // FlutterExample(),
+              widget.userType=="0"
+              ?
+              Producers(model: CartModel())
+              :
+              Inventory(),
+              widget.userType=="0"
+              ?
+              MyOrders()
+              :
+              Claims(),
+              Profile(),
+
+
           ],
         ),
         bottomNavigationBar: Padding(

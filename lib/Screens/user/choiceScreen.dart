@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:orderly/Configs/theme.dart';
+import 'package:orderly/Screens/mainNavigation.dart';
+import 'package:orderly/Screens/user/verify_phone.dart';
 import 'package:orderly/Utils/routes.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Widgets/app_button.dart';
@@ -135,7 +137,11 @@ class _ChoiceScreenState extends State<ChoiceScreen>{
 
                  }else if(flagClickManager==true){
                    flagRoleType="1";//for fleet manager
-                   Navigator.pushReplacementNamed(context, Routes.verifyPhone,arguments:flagRoleType);
+                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)
+                   =>
+                       // VerifyPhone(flagRoleType: flagRoleType)
+                       MainNavigation(userType: flagRoleType)
+                   ));
                  }
                },
                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),

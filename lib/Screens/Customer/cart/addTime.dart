@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:orderly/Api/api.dart';
 import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+
 
 
 class AddTime extends StatefulWidget {
@@ -31,7 +36,10 @@ class _AddTimeState extends State<AddTime> {
     compareDates(picked);
 
     if(picked != null)
-      setState(() => _dateTime = DateFormat("dd/MM/yyyy").format(picked));
+      setState(() {
+        _dateTime = DateFormat("dd/MM/yyyy").format(picked);
+        _addTimeData.date=_dateTime;
+      });
   }
 
   void compareDates(DateTime picked){
@@ -44,9 +52,7 @@ class _AddTimeState extends State<AddTime> {
     //DateFormat import package intl
     time=DateFormat('hh:mm a').format(DateTime.now());
     print("time:"+time);
-
   }
-
 
 
   @override
@@ -55,6 +61,23 @@ class _AddTimeState extends State<AddTime> {
     super.initState();
     _addTimeData=new AddTimeData();
     _addTimeData.deliverySlot="0";
+    // getCharges();
+  }
+
+  //to get chargeable amt
+  Future<void> getCharges() async{
+    Uri url=Uri.parse(Api.GET_CHARGES);
+    var response=await http.get(url);
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+      var charges=responseJson['charges'][0];
+      _addTimeData.chargeAmt=charges['amount'].toString();
+      _addTimeData.deliveryType="0";
+      _addTimeData.deliverySlot="";
+    }
+    // setState(() {
+    //
+    // });
   }
 
   @override
@@ -127,14 +150,15 @@ class _AddTimeState extends State<AddTime> {
                                             getColor),
                                     value: isCheckedCharged,
                                     onChanged: (bool value) {
+                                      getCharges();
                                       setState(() {
                                         if(isCheckedfree==true){
                                           isCheckedfree=!isCheckedfree;
                                         }
                                         isCheckedCharged = value;
-                                        _addTimeData.chargeAmt="150";
-                                        _addTimeData.deliveryType="0";
-                                        _addTimeData.deliverySlot="";
+
+
+
                                       });
                                     }),
                                 Text(
@@ -186,6 +210,7 @@ class _AddTimeState extends State<AddTime> {
                                               isCheckedCharged=!isCheckedCharged;
                                             }
                                             isCheckedfree = value;
+                                            _addTimeData.chargeAmt=null;
                                             _addTimeData.deliveryType="1";
 
                                           });
@@ -337,18 +362,27 @@ class _AddTimeState extends State<AddTime> {
                           onPressed: (){
                             if(isCheckedCharged==true){
                               Navigator.pop(context,_addTimeData);
-                            }else if(isCheckedfree==true && _dateTime!=""){
-                              if(currentDate.compareTo(selectedDate)==0) {
-                                if (time.contains("PM") && _addTimeData.deliverySlot == "0") {
-                                      _scaffoldKey.currentState.showSnackBar(SnackBar(
-                                      content: Text("Please select valid slot")));
-                                      }else{
+                            }else if(isCheckedfree==true){
+
+                              if(_dateTime!=""){
+                                if(currentDate.compareTo(selectedDate)==0) {
+                                  if (time.contains("PM") && _addTimeData.deliverySlot == "0")
+                                  {
+                                    _scaffoldKey.currentState.showSnackBar(SnackBar(
+                                        content: Text("Please select valid slot")));
+                                  }
+                                  else{
+                                    Navigator.pop(context,_addTimeData);
+                                  }
+                                }
+                                else{
                                   Navigator.pop(context,_addTimeData);
                                 }
-                                      }else{
-                                Navigator.pop(context,_addTimeData);
+                              }else{
+                                _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Please choose delivery date")));
 
                               }
+
 
                             } else{
                               _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Please choose atleast 1 delivery Option")));

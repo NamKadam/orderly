@@ -55,6 +55,10 @@ class UserRepository {
     return await Api.getCartList(params);
   }
 
+  Future<dynamic> fetchAddressList({String fbId}) async {
+    final params = {"userid":fbId};
+    return await Api.getAddress(params);
+  }
   ///Get from Storage
   dynamic getUser() {
     return UtilPreferences.getString(Preferences.user);

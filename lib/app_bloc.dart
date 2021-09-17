@@ -1,3 +1,4 @@
+import 'package:orderly/Blocs/address/address_bloc.dart';
 import 'package:orderly/Blocs/home/bloc.dart';
 import 'package:orderly/Blocs/login/login_bloc.dart';
 import 'package:orderly/Blocs/mycart/bloc.dart';
@@ -18,7 +19,7 @@ class AppBloc {
   static final userRegBloc = UserRegBloc(userRepository: userRepository);
   static final homeBloc = HomeBloc(homeRepository: userRepository);
   static final cartBloc = CartBloc(cartRepository: userRepository);
-
+  static final addressBloc=AddressBloc(addressRepo:userRepository);
 
 
   static final List<BlocProvider> providers = [
@@ -46,6 +47,9 @@ class AppBloc {
     BlocProvider<CartBloc>(
       create: (context) => cartBloc,
     ),
+    BlocProvider<AddressBloc>(
+      create: (context) => addressBloc,
+    ),
 
 
   ];
@@ -59,6 +63,7 @@ class AppBloc {
     userRegBloc.close();
     homeBloc.close();
     cartBloc.close();
+    addressBloc.close();
   }
 
   ///Singleton factory

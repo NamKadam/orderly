@@ -24,7 +24,6 @@ class _VerifyPhoneState extends State<VerifyPhone>{
   var countrycode;
 
 
-
   Future<void> _showMessage(String message) async {
     return showDialog<void>(
       context: context,
