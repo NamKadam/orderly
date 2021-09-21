@@ -17,6 +17,7 @@ import 'package:orderly/Screens/Customer/profile/profile.dart';
 import 'package:orderly/Screens/FleetManager/claims/claims.dart';
 import 'package:orderly/Screens/FleetManager/inventory/inventory_list.dart';
 import 'package:orderly/Screens/FleetManager/orders/fleet_orders.dart';
+import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/routes.dart';
 
 import 'package:orderly/Utils/translate.dart';
@@ -24,25 +25,23 @@ import 'package:orderly/Utils/translate.dart';
 // import 'package:orderly/flutterexample.dart';
 
 class MainNavigation extends StatefulWidget {
-  String userType;
-  MainNavigation({Key key, this.userType}) : super(key: key);
 
   _MainNavigationState createState() => _MainNavigationState();
 }
 
 class _MainNavigationState extends State<MainNavigation> {
   int _selectedIndex = 0;
-  var title = "";
+  String title = "";
 
   ///List bottom menu
   List<BottomNavigationBarItem> _bottomBarItem(BuildContext context) {
-    if(widget.userType=="0"){
+    if(Application.user.userType=="0"){
       return [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
           title: Padding(
             padding: EdgeInsets.only(top: 3),
-            child: Text(Translate.of(context).translate('orders')),
+            child: Text(Translate.of(context).translate('home')),
           ),
         ),
         BottomNavigationBarItem(
@@ -171,7 +170,7 @@ class _MainNavigationState extends State<MainNavigation> {
   void _onItemTapped(int index) async {
     setState(() {
       _selectedIndex = index;
-      if(widget.userType=="0")
+      if(Application.user.userType=="0")
         {
           //for customer
           if (_selectedIndex == 0) {
@@ -198,11 +197,15 @@ class _MainNavigationState extends State<MainNavigation> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if(widget.userType=="0"){ //for customer
+    // print("userType="+Application.user.userType);
+    if(Application.user.userType=="0"){ //for customer
       title="Home";
     }else{ //for fleet manager
       title="Orders";
     }
+    setState(() {
+
+    });
   }
 
   @override
@@ -269,7 +272,7 @@ class _MainNavigationState extends State<MainNavigation> {
                             ),
                           ),
                         ),
-                        if(widget.userType=="1")//for fleet
+                        if(Application.user.userType=="1")//for fleet
                         Positioned(
                           right: 5,
                           top: 5,
@@ -297,7 +300,7 @@ class _MainNavigationState extends State<MainNavigation> {
                         )
                       ],
                       ),
-                      if(widget.userType=="0") //for customer
+                      if(Application.user.userType=="0") //for customer
                         Stack(
                         children: [
                           IconButton(
@@ -347,19 +350,19 @@ class _MainNavigationState extends State<MainNavigation> {
         body: IndexedStack(
           index: _selectedIndex,
           children: <Widget>[
-            widget.userType=="0" //for customer
+            Application.user.userType=="0" //for customer
             ?
               Home()
             :  //for fleet manager
               FleetOrders(),
               // HomeUpdated(model: CartModel()),
               // FlutterExample(),
-              widget.userType=="0"
+            Application.user.userType=="0"
               ?
               Producers(model: CartModel())
               :
               Inventory(),
-              widget.userType=="0"
+            Application.user.userType=="0"
               ?
               MyOrders()
               :

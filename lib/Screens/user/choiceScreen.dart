@@ -134,14 +134,14 @@ class _ChoiceScreenState extends State<ChoiceScreen>{
                  if(flagClickCust==true){
                    flagRoleType="0";//for customer
                    Navigator.pushNamed(context, Routes.signIn,arguments: flagRoleType);
-
-                 }else if(flagClickManager==true){
+                 }
+                 else if(flagClickManager==true){
                    flagRoleType="1";//for fleet manager
-                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)
-                   =>
-                       // VerifyPhone(flagRoleType: flagRoleType)
-                       MainNavigation(userType: flagRoleType)
+                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+                       VerifyPhone()
+
                    ));
+
                  }
                },
                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),

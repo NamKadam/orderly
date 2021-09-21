@@ -391,7 +391,8 @@ class _ProfAddressState extends State<ProfAddress> {
                                   child: Padding(
                                       padding: EdgeInsets.only(
                                           left: 50.0, right: 100.0),
-                                      child: AppButton(
+                                      child:
+                                      AppButton(
                                         onPressed: () {
                                           Navigator.push(
                                               context,

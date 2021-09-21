@@ -18,7 +18,7 @@ class _AddTimeState extends State<AddTime> {
   bool isCheckedCharged = false;
   bool isCheckedfree = false;
   String _dateTime="",finalDate="";
-  String radioDay='Morning'; //by default selected
+  String radioDay=''; //by default selected
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   var currentDate,selectedDate,time;
    AddTimeData _addTimeData;
@@ -284,62 +284,96 @@ class _AddTimeState extends State<AddTime> {
                                       )
 
                                 ],)),
-                                //morning/evenig day selection
+                                //morning/evening day selection
                                 Padding(
                                   padding: EdgeInsets.only(top:5.0,bottom:5.0),
                                   child:
-                                  Row(
+                                  Column(
+                                      mainAxisAlignment:MainAxisAlignment.start,
                                     children: [
-                                      Expanded(
-                                        child:
-                                        Theme(
-                                            data: Theme.of(context).copyWith(
-                                              unselectedWidgetColor: Theme.of(context).primaryColor,
-                                            ),
-                                            child:RadioListTile(
-                                              activeColor: Theme.of(context).primaryColor,
-                                              groupValue: radioDay,
-                                              title: Text('Morning',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .subtitle2
-                                                    .copyWith(fontWeight: FontWeight.w500,color: AppTheme.textColor),),
-                                              value: 'Morning',
-                                              onChanged: (val) {
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child:
+                                            Theme(
+                                                data: Theme.of(context).copyWith(
+                                                  unselectedWidgetColor: Theme.of(context).primaryColor,
+                                                ),
+                                                child:RadioListTile(
+                                                  activeColor: Theme.of(context).primaryColor,
+                                                  groupValue: radioDay,
+                                                  title: Text('Morning',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .subtitle2
+                                                        .copyWith(fontWeight: FontWeight.w500,color: AppTheme.textColor),),
+                                                  value: 'Morning',
+                                                  onChanged: (val) {
 
-                                                setState(() {
-                                                  radioDay = val;
-                                                  _addTimeData.deliverySlot="0"; //for morning
-                                                });
-                                              },
-                                            )),
+                                                    setState(() {
+                                                      radioDay = val;
+                                                      _addTimeData.deliverySlot="0"; //for morning
+                                                    });
+                                                  },
+                                                )),
+                                          ),
+                                          if(radioDay=="Morning")
+                                          Padding(padding: EdgeInsets.all(5.0),
+                                              child:
+                                              Text("7 am - 11 am",style: TextStyle(
+                                            fontSize: 14.0,
+                                            fontFamily: 'Poppins',
+                                            fontWeight: FontWeight.w600,
+                                            color: AppTheme.textColor
+                                          ),
+                    )
+            )
+                                        ],
                                       ),
 
-                                      Expanded(
-                                        child:
-                                        Theme(
-                                            data: Theme.of(context).copyWith(
-                                              unselectedWidgetColor: Theme.of(context).primaryColor,
-                                            ),
-                                            child:RadioListTile(
-                                              activeColor: Theme.of(context).primaryColor,
-                                              groupValue: radioDay,
-                                              title: Text('Evening',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .subtitle2
-                                                    .copyWith(fontWeight: FontWeight.w500,color: AppTheme.textColor),),
-                                              value: 'Female',
-                                              onChanged: (val) {
-                                                setState(() {
-                                                  radioDay = val;
-                                                  _addTimeData.deliverySlot="1"; //for evening
+                                      //for evening
 
-                                                });
-                                              },
-                                            )),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                              child:
+                                            Theme(
+                                                data: Theme.of(context).copyWith(
+                                                  unselectedWidgetColor: Theme.of(context).primaryColor,
+                                                ),
+                                                child:RadioListTile(
+                                                  activeColor: Theme.of(context).primaryColor,
+                                                  groupValue: radioDay,
+                                                  title: Text('Evening',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .subtitle2
+                                                        .copyWith(fontWeight: FontWeight.w500,color: AppTheme.textColor),),
+                                                  value: 'Evening',
+                                                  onChanged: (val) {
+                                                    setState(() {
+                                                      radioDay = val;
+                                                      _addTimeData.deliverySlot="1"; //for evening
+
+                                                    });
+                                                  },
+                                                )),
+                                             ),
+
+                                          if(radioDay=="Evening")
+                                            Padding(padding: EdgeInsets.all(5.0),
+                                              child:
+                                              Text("5 pm - 9 pm",style: TextStyle(
+                                                  fontSize: 14.0,
+                                                  fontFamily: 'Poppins',
+                                                  fontWeight: FontWeight.w600,
+                                                  color: AppTheme.textColor
+                                              ),
+                                              )
+                                            )
+                                        ],
                                       )
-                                    ],
+                                      ],
                                   ),
 
                                 ),

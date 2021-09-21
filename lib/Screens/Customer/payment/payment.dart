@@ -24,7 +24,8 @@ class _PaymentState extends State<Payment>{
   String radioPay="COD";
   static const platform=const MethodChannel("razorpay_flutter");
   Razorpay _razorpay ;
-  var razorPayKey='rzp_test_2UuUOV1rGmCSEg',razorPaySecretKey='gR8mI6DRPj5i0jLcLO3JJMwR'; //account of  destek used
+  // var razorPayKey='rzp_test_2UuUOV1rGmCSEg',razorPaySecretKey='gR8mI6DRPj5i0jLcLO3JJMwR'; //account of  destek used
+  var razorPayKey='rzp_test_xaIitfKWJUnhNw',razorPaySecretKey='bN7b4z4jEpnPYM4SywN7E8Wu'; //account of  orderly used
 
   @override
   void initState() {
@@ -56,9 +57,9 @@ class _PaymentState extends State<Payment>{
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    Fluttertoast.showToast(
-        msg: "ERROR: " + response.code.toString() + " - " + response.message,
-        toastLength: Toast.LENGTH_SHORT);
+    // Fluttertoast.showToast(
+    //     msg: "ERROR: " + response.code.toString() + " - " + response.message,
+    //     toastLength: Toast.LENGTH_SHORT);
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {

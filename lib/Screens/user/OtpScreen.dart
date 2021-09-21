@@ -193,20 +193,20 @@ class _OtpScreenState extends State<OtpScreen>{
 
       print("fb_id"+firebaseUser_Id);
 
-      if(widget.otpVerify.flagRoleType=="0"){ //for customer
+      // if(widget.otpVerify.flagRoleType=="0"){ //for customer
         // Navigator.pushNamed(context, Routes.signUp);
         _loginBloc.add(OnLogin(
-          fbId: firebaseUser_Id.toString()
+          fbId: firebaseUser_Id.toString(),
         ));
 
-      }else{//for fleet manager
-        // _loginBloc!.add(OnLogin(
-        //   mobile: phone,
-        //   otp: "success",
-        // ));
-        // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigation()));
-
-      }
+      // }else{//for fleet manager
+      //   // _loginBloc!.add(OnLogin(
+      //   //   mobile: phone,
+      //   //   otp: "success",
+      //   // ));
+      //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigation(userType: "1")));
+      //
+      // }
     } else {
       scaffoldKey.currentState.showSnackBar(SnackBar(
             content: Text("Please enter valid sms code"),
@@ -559,7 +559,6 @@ class _OtpScreenState extends State<OtpScreen>{
                   if(state.userModel.isRegistered=="false"){
                     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
                         SignUp(user:authResult.user,signUpDataNavigation:widget.navigateData,phone: widget.otpVerify.phone.toString(),)));
-
                   }
                   else {
                     Navigator.pushReplacement(context, MaterialPageRoute(

@@ -735,7 +735,8 @@ class _SignUpState extends State<SignUp>{
                     //     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigation()));
                     //   }
 
-                    return Padding(padding: EdgeInsets.all(40.0),
+                    return
+                      Padding(padding: EdgeInsets.all(40.0),
                         child:
                         AppButton(
                           onPressed: (){
