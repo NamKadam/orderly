@@ -25,11 +25,11 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  flutter_bloc: 7.0.1
+  flutter_bloc: 7.3.0
   http: any
   http_interceptor: any
   shared_preferences: 2.0.1
-  country_list_pick: 1.0.1+4
+  country_list_pick: 1.0.1+5
   image_picker: 0.8.2
   image_cropper: 1.4.1
   path_provider: 2.0.2

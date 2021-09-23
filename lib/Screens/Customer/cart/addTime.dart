@@ -326,13 +326,11 @@ class _AddTimeState extends State<AddTime> {
                                             fontWeight: FontWeight.w600,
                                             color: AppTheme.textColor
                                           ),
-                    )
-            )
+                                       )
+                                       )
                                         ],
                                       ),
-
                                       //for evening
-
                                       Row(
                                         children: [
                                           Expanded(

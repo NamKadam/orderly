@@ -62,16 +62,47 @@ class CartBloc extends Bloc<CartEvent,CartState> {
       try {
         if (response.statusCode == 200) {
           var resp = json.decode(response.body); //for dio dont need to convert to json.decode
-          CartDeleteSuccess();
+         yield CartDeleteSuccess();
       }
       }catch(e){
-        CartListLoadFail();
+        yield CartListLoadFail();
       }
 
     }
 
+    //for place order
+    if(event is PlaceOrder){
+      yield PlaceOrderLoading();
+
+      Map<String,String> params={
+        'product_array':event.cartDetails,
+        'user_id':Application.user.fbId,
+        'delivery_type':event.deliveryType,
+        'delivery_date':event.deliveryDate,
+        'delivery_slot':event.deliverySlot,
+        'urgent_amount':event.amount,
+        'sub_total':event.subTotal,
+        'convinience_fee':event.convFee,
+        'grand_total':event.total,
+        'discount':'',
+        'order_status_id':'1',
+        'address':event.addressId
+      };
+
+      try {
+
+        var response = await http.post(Uri.parse(Api.PLACE_ORDER), body: params,);
+
+        if (response.statusCode == 200) {
+          var resp = json.decode(response.body); //for dio dont need to convert to json.decode
+          yield PlaceOrderSuccess();
+        }
+      }catch(e){
+        print("error:-"+e.toString());
+        yield PlaceOrderFail();
+      }
+
+    }
 
   }
-
-
 }

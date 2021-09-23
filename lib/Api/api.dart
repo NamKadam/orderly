@@ -23,6 +23,7 @@ class Api {
   static const String GET_ADDRESS_LIST=HOST_URL+"view_address";
   static const String ADD_ADDRESS=HOST_URL+"add_address";
   static const String EDIT_ADDRESS=HOST_URL+"update_address";
+  static const String PLACE_ORDER=HOST_URL+"place_order";
 
   ///Login api
   static Future<dynamic> login(params) async {

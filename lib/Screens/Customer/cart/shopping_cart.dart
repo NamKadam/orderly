@@ -61,7 +61,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
   bool isconnectedToInternet = false;
   bool flagDataNotAvailable = false;
   List<Cart> _cartList;
-  int producerListIndex = 0;
+  int producerListIndex = 0,subTotal=0;
   final _controller = RefreshController(initialRefresh: false);
   String flagRemove="";
   AddTimeData addTimeresult;
@@ -244,6 +244,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
     });
   }
 
+
   @override
   void initState() {
     // TODO: implement initState
@@ -292,6 +293,16 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
     OverallTotalVal = totalCartValue + conveniencFee;
     setState(() {});
+  }
+
+  //overall total
+  void calculateOverallTotal(double total,double convenience){
+    setState(() {
+      OverallTotalVal=total+conveniencFee;
+
+
+    });
+
   }
 
   void removeProduct(List<Cart> cart, Cart cartItem) {
@@ -546,6 +557,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                   model.cart[index],
                                                   model.cart[index].qty - 1);
 
+                                               calculateOverallTotal(model.totalCartValue, conveniencFee);
 
                                               // calculateTotal(model.cart,index,flagRemove);
 
@@ -570,6 +582,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                 model.cart[index],
                                                 model.cart[index].qty + 1);
                                             // calculateTotal(model.cart,index,"0");
+                                            calculateOverallTotal(model.totalCartValue, conveniencFee);
                                           },
                                           child: Image.asset(
                                             Images.plus,
@@ -678,6 +691,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
    //   }else{
        setState(() {
          _cartList=Application.cartModel.cart;
+         calculateOverallTotal(Application.cartModel.totalCartValue, conveniencFee);
+
 
        });
      // }
@@ -705,13 +720,13 @@ class _ShoppingCartState extends State<ShoppingCart> {
           ),
           leading: InkWell(
               onTap: () {
-                if(addTimeresult!=null){
-                  if(addTimeresult.chargeAmt!=null) {
-
-                    widget.cartModel.totalCartValue =
-                        widget.cartModel.totalCartValue - int.parse(addTimeresult.chargeAmt);
-                  }
-                }
+                // if(addTimeresult!=null){
+                //   if(addTimeresult.chargeAmt!=null) {
+                //
+                //     widget.cartModel.totalCartValue =
+                //         widget.cartModel.totalCartValue - int.parse(addTimeresult.chargeAmt);
+                //   }
+                // }
 
                 AppBloc.authBloc.add(OnSaveCart(widget.cartModel));
                 Navigator.pop(context);
@@ -847,13 +862,22 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                           print("currentDate:-" + currentDate);
 
                                                           if (addTimeresult.date == null) {
-                                                              date = currentDate;
+                                                            addTimeresult.date = currentDate;
+                                                            date=currentDate;
                                                           } else {
                                                               date = addTimeresult.date;
                                                           }
                                                           //for amt
                                                           if(addTimeresult.chargeAmt!=null){
-                                                            widget.cartModel.totalCartValue+=int.parse(addTimeresult.chargeAmt);
+                                                            try {
+                                                              subTotal = widget.cartModel.totalCartValue.toInt() + int.parse(
+                                                                          addTimeresult.chargeAmt);
+                                                              print(subTotal);
+                                                              calculateOverallTotal(subTotal.toDouble(), conveniencFee);
+                                                            }catch(e){
+                                                              print(e);
+                                                            }
+                                                            // widget.cartModel.totalCartValue+=int.parse(addTimeresult.chargeAmt);
                                                           }
                                                         setState(() {});
 
@@ -910,7 +934,11 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                               "Poppins"),
                                                         ),
                                                         Text(
-                                                          "\$" + widget.cartModel.totalCartValue.toString(),
+                                                          subTotal==0
+                                                           ?
+                                                          "\$" + widget.cartModel.totalCartValue.toString()
+                                                           :
+                                                             "\$" + subTotal.toString(),
                                                           style: Theme.of(context)
                                                               .textTheme
                                                               .caption
@@ -988,14 +1016,13 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                               "Poppins"),
                                                         ),
                                                         Text(
-                                                          OverallTotalVal == 0
-                                                              ? "\$ " +
-                                                              (widget.cartModel.totalCartValue +
-                                                                  conveniencFee)
-                                                                  .toString()
-                                                              : "\$ " +
-                                                              OverallTotalVal
-                                                                  .toString(),
+                                                          // OverallTotalVal == 0
+                                                          //     ?
+                                                          // "\$ " + (subTotal.toDouble() + conveniencFee).toString()
+                                                          //     :
+                                                          // "\$ " + OverallTotalVal
+                                                          //         .toString(),
+                                                          OverallTotalVal.toString(),
                                                           style: Theme.of(context)
                                                               .textTheme
                                                               .caption
@@ -1024,12 +1051,20 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                           => Cart.toJson(i)).toList()).toString();
                                                           // var json1 = jsonEncode(cartList.map((e) => e.toJson()).toList());
                                                           print("cartList:-" + cart_json);
+                                                          print("cartList:-" + widget.cartModel.cart.toString());
                                                           Navigator.push(context,
                                                               MaterialPageRoute(builder: (context)
-                                                              =>ProfAddress(addTimeData: addTimeresult,cartDetails: widget.cartModel,)));
-                                                        }
-
-                                                      },
+                                                              =>ProfAddress(
+                                                                addTimeData: addTimeresult,
+                                                                cartDetails: cart_json,
+                                                                subTotal:widget.cartModel.totalCartValue.toString(),
+                                                                convFee:conveniencFee.toString(),
+                                                                total:OverallTotalVal.toString(),
+                                                                )
+                                                              )
+                                                          );
+                                                         }
+                                                        },
                                                       shape:
                                                       const RoundedRectangleBorder(
                                                           borderRadius:

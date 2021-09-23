@@ -18,11 +18,15 @@ enum AppState {
   picked,
   cropped,
 }
-class AddInventoryItem extends StatefulWidget{
-  _AddInventoryItemState createState()=>_AddInventoryItemState();
+class AddEditInventoryItem extends StatefulWidget{
+  String flagAddEdit;
+
+  AddEditInventoryItem({Key key,@required this.flagAddEdit}):super(key: key);
+
+  _AddEditInventoryItemState createState()=>_AddEditInventoryItemState();
 }
 
-class _AddInventoryItemState extends State<AddInventoryItem>{
+class _AddEditInventoryItemState extends State<AddEditInventoryItem>{
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   File _image;
@@ -303,7 +307,11 @@ class _AddInventoryItemState extends State<AddInventoryItem>{
       key: _scaffoldKey,
       appBar: new AppBar(
         title: Text(
-          'Add Item',
+          widget.flagAddEdit=="0"
+              ?
+          'Add Item'
+          :
+          "Edit Items",
           style: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w600,
@@ -475,7 +483,8 @@ class _AddInventoryItemState extends State<AddInventoryItem>{
                       _textNoOfItemsController.clear();
                     },
                   )),
-
+        widget.flagAddEdit=="0"
+              ?
         Padding(padding: EdgeInsets.all(40.0),
             child:
             AppButton(
@@ -489,6 +498,58 @@ class _AddInventoryItemState extends State<AddInventoryItem>{
               disableTouchWhenLoading: true,
             )
         )
+            :
+        Padding(
+            padding: EdgeInsets.only(left:20.0,right: 20.0,top:45.0),
+            child:
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                    child:
+                    SizedBox(
+                        height: 45.0,
+                        width: MediaQuery.of(context).size.width,
+                        child:
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              side: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+                              primary: Colors.white,
+
+                              shape:  const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(50)),
+                              )),
+                          // shape: shape,
+                          onPressed: (){
+                            Navigator.pop(context);
+                          },
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                "Cancel",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .button
+                                    .copyWith(color: AppTheme.appColor, fontWeight: FontWeight.w600),
+                              ),
+                            ],
+                          ),
+                        ))),
+                SizedBox(width: 10.0,),
+                Expanded(child:AppButton(
+                  onPressed: () {
+                  },
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(50))),
+                  text: 'Save',
+                ))
+
+              ],
+            ))
             ],
           ),
         ),

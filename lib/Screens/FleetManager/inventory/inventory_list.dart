@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/model_inventory.dart';
-import 'package:orderly/Screens/FleetManager/inventory/add_inventory_item.dart';
+import 'package:orderly/Screens/FleetManager/inventory/add_edit_inventory_item.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Widgets/app_button.dart';
 import 'package:shimmer/shimmer.dart';
@@ -465,7 +465,12 @@ class _InventoryState extends State<Inventory>{
                                                   Radius.circular(50)),
                                             )),
                                         // shape: shape,
-                                        onPressed: (){},
+                                        onPressed: (){
+                                          Navigator.push(context, MaterialPageRoute(builder: (context)
+                                          =>AddEditInventoryItem(flagAddEdit: "1",)) //for edit
+                                          );
+
+                                        },
                                         child: Row(
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           mainAxisAlignment: MainAxisAlignment.center,
@@ -504,7 +509,7 @@ class _InventoryState extends State<Inventory>{
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      // floatingActionButtonLocation: FloatingActionButtonLocation.startDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
         floatingActionButton:
         Padding(
           padding: const EdgeInsets.only(bottom:80.0),
@@ -522,7 +527,9 @@ class _InventoryState extends State<Inventory>{
                  ),
                  child: FloatingActionButton(
                     onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>AddInventoryItem()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context)
+                      =>AddEditInventoryItem(flagAddEdit: "0") //for add
+                      ));
                     },
                    child:  Container(
                      constraints: new BoxConstraints.expand(

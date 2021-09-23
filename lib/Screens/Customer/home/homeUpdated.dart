@@ -54,7 +54,6 @@ class _HomeUpdatedState extends State<HomeUpdated> {
   bool flagNoData=false;
   CartModel model;
 
-
   // void getProducts() {
   //   for (int i = 0; i < 10; i++) {
   //     Products product = new Products(

@@ -24,12 +24,15 @@ import 'package:shimmer/shimmer.dart';
 
 class ProfAddress extends StatefulWidget {
   AddTimeData addTimeData;
-  CartModel cartDetails;
+  String cartDetails;
+  String convFee,total,subTotal;
 
-  ProfAddress({Key key, @required this.addTimeData, @required this.cartDetails})
+  ProfAddress({Key key, @required this.addTimeData,
+    @required this.cartDetails, @required this.convFee,
+    @required this.total,@required this.subTotal})
       : super(key: key);
-
   _ProfAddressState createState() => _ProfAddressState();
+
 }
 
 class _ProfAddressState extends State<ProfAddress> {
@@ -42,6 +45,7 @@ class _ProfAddressState extends State<ProfAddress> {
   List<Address> _addressList;
   bool flagNoDataAvail=false;
   final _controller = RefreshController(initialRefresh: false);
+  int pos=0;
 
 
   @override
@@ -262,6 +266,7 @@ class _ProfAddressState extends State<ProfAddress> {
             groupValue:id,
             onChanged: (val) {
               setState(() {
+                pos=index;
                 radioItem = _addressList[index].userName;
                 id = _addressList[index].uaId;
                 print(radioItem + " " + id.toString());
@@ -398,11 +403,13 @@ class _ProfAddressState extends State<ProfAddress> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) => Payment(
-                                                        addTimeData:
-                                                            widget.addTimeData,
-                                                        cartDet:
-                                                            widget.cartDetails,
-                                                      )));
+                                                        addTimeData: widget.addTimeData,
+                                                        cartDet: widget.cartDetails,
+                                                        total: widget.total,
+                                                    subTotal:widget.subTotal,
+                                                    convFee: widget.convFee,
+                                                    address: _addressList[pos],
+                                                  )));
                                         },
                                         shape: const RoundedRectangleBorder(
                                             borderRadius: BorderRadius.all(
