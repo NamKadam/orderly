@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:orderly/Api/api.dart';
 import 'package:orderly/Blocs/authentication/bloc.dart';
 import 'package:orderly/Blocs/home/home_bloc.dart';
@@ -28,6 +29,7 @@ import 'package:orderly/Utils/util_preferences.dart';
 import 'package:orderly/Widgets/app_button.dart';
 import 'package:orderly/Widgets/app_dialogs.dart';
 import 'package:orderly/app_bloc.dart';
+import 'package:readmore/readmore.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
@@ -237,7 +239,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
   getCurrentDate() {
     var date = new DateTime.now().toString();
     var dateParse = DateTime.parse(date);
-    var formattedDate = "${dateParse.day}/${dateParse.month}/${dateParse.year}";
+    // var formattedDate = new DateFormat('yyyy-MM-dd HH:mm').parse(date);
+
+    var formattedDate = "${dateParse.year}-${dateParse.month}-${dateParse.day}";
     setState(() {
       currentDate = formattedDate.toString();
       print("currentDate:-" + currentDate);
@@ -251,6 +255,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
     super.initState();
     addTimeresult=new AddTimeData();
     cartBloc = BlocProvider.of<CartBloc>(context);
+    // AppBloc.authBloc.add(OnSaveCart(widget.cartModel));
+
     getCurrentDate();
     // setBlocData();
     getsharedPrefData();
@@ -299,6 +305,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
   void calculateOverallTotal(double total,double convenience){
     setState(() {
       OverallTotalVal=total+conveniencFee;
+      print("OverallTotal:-"+OverallTotalVal.toString());
 
 
     });
@@ -316,7 +323,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
   // for cartList
   Widget buildCartList(int index, CartModel model) {
-    if (model.cart.length<=0) {
+    if (model.cart==null || model.cart.length<=0) {
       return ListView.builder(
         padding: EdgeInsets.all(0),
         shrinkWrap: true,
@@ -477,7 +484,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                           color: AppTheme.textColor,
                                           fontFamily: "Poppins"),
                                 ),
-                                Text(
+                                ReadMoreText(
                                   model.cart[index].productDesc == null
                                       ? ""
                                       : model.cart[index].productDesc,
@@ -489,7 +496,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                           color: AppTheme.textColor,
                                           fontWeight: FontWeight.w400,
                                           fontFamily: "Poppins"),
-                                ),
+                                    trimLines: 2,
+                                    trimMode: TrimMode.Line,
+                                    trimCollapsedText: 'Show more',
+                                    trimExpandedText: 'Show less'
+
+                            ),
                                 Text(
                                   model.cart[index].productName == null
                                       ? "sold by: "
@@ -689,17 +701,35 @@ class _ShoppingCartState extends State<ShoppingCart> {
    //   if(Application.cartModel==null){
    //     setBlocData();
    //   }else{
-       setState(() {
-         _cartList=Application.cartModel.cart;
-         calculateOverallTotal(Application.cartModel.totalCartValue, conveniencFee);
+
+       // setState(() {
+    if(Application.cartModel.cart!=null){
+      _cartList=Application.cartModel.cart;
+    }
+
+    calculateOverallTotal(Application.cartModel.totalCartValue, conveniencFee);
 
 
-       });
+       // });
+     // }
      // }
    // }
 
    print(_cartList);
 
+  }
+
+  void clearData(){
+    AddTime.isCheckedfree=false;
+    AddTime.isCheckedCharged=false;
+    AddTime.radioDay='';
+    AddTime.dateTime="";
+    AddTime.deliveryType='';
+    AddTime.deliverySlot='';
+    AddTime.chargedAmt=null;
+    AddTime.currentDate=null;
+    AddTime.selectedDate=null;
+    AddTime.time=null;
   }
   
 
@@ -727,6 +757,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 //         widget.cartModel.totalCartValue - int.parse(addTimeresult.chargeAmt);
                 //   }
                 // }
+                clearData();
 
                 AppBloc.authBloc.add(OnSaveCart(widget.cartModel));
                 Navigator.pop(context);
@@ -767,7 +798,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 child: ScopedModelDescendant<CartModel>(
                   builder: (context, child, model) {
                     widget.cartModel = model;
-                    // print(cartModel);
+                    print("cartModel:-"+widget.cartModel.toString());
 
                     // totalCartValue=widget.cartModel.totalCartValue;
                     return Container(
@@ -856,34 +887,42 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                           //    setState(() {
                                                           //
                                                           //    });
-                                                          addTimeresult = await Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                                                          // addTimeresult = await Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                                                         await Navigator.push(context, MaterialPageRoute(builder: (context)=>
                                                           AddTime()));
                                                           print("result:-" + addTimeresult.toString());
                                                           print("currentDate:-" + currentDate);
 
-                                                          if (addTimeresult.date == null) {
-                                                            addTimeresult.date = currentDate;
+                                                          if (AddTime.dateTime == "") {
+                                                            AddTime.dateTime = currentDate;
+                                                            AddTime.time=DateFormat('hh:mm a').format(DateTime.now());
+                                                            AddTime.currentDate=currentDate;
+                                                            AddTime.selectedDate=currentDate;
                                                             date=currentDate;
                                                           } else {
-                                                              date = addTimeresult.date;
+                                                              date = AddTime.dateTime;
                                                           }
                                                           //for amt
-                                                          if(addTimeresult.chargeAmt!=null){
+                                                          // if(addTimeresult.chargeAmt!=null){
+                                                          if(AddTime.chargedAmt!=null){
                                                             try {
                                                               subTotal = widget.cartModel.totalCartValue.toInt() + int.parse(
-                                                                          addTimeresult.chargeAmt);
+                                                                  AddTime.chargedAmt);
                                                               print(subTotal);
-                                                              calculateOverallTotal(subTotal.toDouble(), conveniencFee);
                                                             }catch(e){
                                                               print(e);
                                                             }
                                                             // widget.cartModel.totalCartValue+=int.parse(addTimeresult.chargeAmt);
+                                                          }else{
+                                                            subTotal=widget.cartModel.totalCartValue.toInt();
                                                           }
-                                                        setState(() {});
+                                                          calculateOverallTotal(subTotal.toDouble(), conveniencFee);
+
+                                                          setState(() {});
 
                                                         },
                                                         child: Text(
-                                                          "Choose Delivery Time",
+                                                          "Choose Delivery",
                                                           style: Theme.of(context)
                                                               .textTheme
                                                               .caption
@@ -1047,6 +1086,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                               content: Text(
                                                                   "Please Choose Delivery time")));
                                                         }else {
+                                                          // AddTime.isCheckedfree=false;
+                                                          // AddTime.isCheckedCharged=false;
+                                                          // AddTime.radioDay='';
+                                                          // AddTime.dateTime="";
                                                           String cart_json = jsonEncode(widget.cartModel.cart.map((i)
                                                           => Cart.toJson(i)).toList()).toString();
                                                           // var json1 = jsonEncode(cartList.map((e) => e.toJson()).toList());
@@ -1056,7 +1099,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                               MaterialPageRoute(builder: (context)
                                                               =>ProfAddress(
                                                                 addTimeData: addTimeresult,
-                                                                cartDetails: cart_json,
+                                                                cartDetails: widget.cartModel.cart,
                                                                 subTotal:widget.cartModel.totalCartValue.toString(),
                                                                 convFee:conveniencFee.toString(),
                                                                 total:OverallTotalVal.toString(),

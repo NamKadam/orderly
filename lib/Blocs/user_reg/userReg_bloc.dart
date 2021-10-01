@@ -49,7 +49,7 @@ class UserRegBloc extends Bloc<UserRegEvent, UserRegState> {
 
         var response = await http.post(
             url,
-            body:params
+            body:params,
         );
 
         try{

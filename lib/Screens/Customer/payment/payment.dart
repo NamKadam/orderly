@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,7 +13,9 @@ import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/model_address.dart';
 import 'package:orderly/Models/model_scoped_cart.dart';
+import 'package:orderly/Models/model_view_cart.dart';
 import 'package:orderly/Screens/Customer/cart/addTime.dart';
+import 'package:orderly/Screens/Customer/orders/myOrders.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/preferences.dart';
@@ -22,11 +25,12 @@ import 'package:orderly/Widgets/app_button.dart';
 import 'package:orderly/app_bloc.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_stripe/flutter_stripe.dart' as stripepay;
 
 
 class Payment extends StatefulWidget{
   AddTimeData addTimeData;
-  String cartDet;
+  List<Cart> cartDet;
   String convFee,total,subTotal;
   Address address;
 
@@ -45,19 +49,22 @@ class _PaymentState extends State<Payment>{
   // var razorPayKey='rzp_test_2UuUOV1rGmCSEg',razorPaySecretKey='gR8mI6DRPj5i0jLcLO3JJMwR'; //account of  destek used
   var razorPayKey='rzp_test_xaIitfKWJUnhNw',razorPaySecretKey='bN7b4z4jEpnPYM4SywN7E8Wu'; //account of  orderly used
   CartBloc _cartBloc;
+  String cartList="",paymentId="";
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _cartBloc=BlocProvider.of<CartBloc>(context);
-    _razorpay = Razorpay();
+     cartList= jsonEncode(widget.cartDet.map((i) => Cart.toJson(i)).toList()).toString();
+      print("cartList:-"+cartList);
+     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
 
   }
-  //
+
   //   JSONObject orderRequest = new JSONObject();
   //   orderRequest.put("amount", 50000); // amount in the smallest currency unit
   //   orderRequest.put("currency", "INR");
@@ -65,15 +72,16 @@ class _PaymentState extends State<Payment>{
 
   // void creatOrder(){
   //   RazorpayClient razorpay = new RazorpayClient(razorPayKey, razorPaySecretKey);
-  //
+
   //   Order order = razorpay.Orders.create(orderRequest);
   // }
 
 
-
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    Fluttertoast.showToast(
-        msg: "SUCCESS: " + response.paymentId, toastLength: Toast.LENGTH_SHORT);
+    // Fluttertoast.showToast(
+    //     msg: "SUCCESS: " + response.paymentId, toastLength: Toast.LENGTH_SHORT);
+    paymentId=response.paymentId.toString();
+    doPayment();
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
@@ -96,7 +104,7 @@ class _PaymentState extends State<Payment>{
 
   //for checkout optios
   void openCheckout() async {
-    int amt=int.parse(widget.total)*100;
+    double amt=double.parse(widget.total)*100;
     print("amt:-"+amt.toString());
     var options = {
       'key': razorPayKey,
@@ -117,39 +125,118 @@ class _PaymentState extends State<Payment>{
     }
   }
 
-  Future<void> placeOrder() async{
-    Uri url=Uri.parse(Api.PLACE_ORDER);
-    String data=widget.cartDet.replaceAll('"\"', "");
+  //for Stripe payment
+  Map<String, dynamic> paymentIntentData;
+  //for stripe
+  Future<void> makePayment() async {
+    final url = Uri.parse('https://api.stripe.com/');
+    final response =
+    await http.get(url, headers: {'Content-Type': 'application/json'});
+    print('------$response----');
+    paymentIntentData = json.decode(response.body);
+    print(response.body);
 
-    Map<String,String> params={
-      'product_array':data,
-      'user_id':Application.user.fbId,
-      'delivery_type':widget.addTimeData.deliveryType,
-      'delivery_date':widget.addTimeData.date,
-      'delivery_slot':widget.addTimeData.deliverySlot,
-      'urgent_amount':widget.addTimeData.chargeAmt,
-      'sub_total':widget.subTotal,
-      'convinience_fee':widget.convFee,
-      'grand_total':widget.total,
-      'discount':'',
-      'order_status_id':'1',
-      'address':widget.address.uaId.toString()
-    };
-
-    try {
-      var response = await http.post(url, body: params,);
-      if (response.statusCode == 200) {
-        var resp = json.decode(response.body); //for dio dont need to convert to json.decode
-        UtilPreferences.remove(Preferences.cart);
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>
-            MainNavigation()));
-      }
-    }catch(e){
-      print("error:-"+e.toString());
-    }
-
-
+    await stripepay.Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: stripepay.SetupPaymentSheetParameters(
+            paymentIntentClientSecret: paymentIntentData['paymentIntent'],
+            applePay: true,
+            googlePay: true,
+            style: ThemeMode.dark,
+            merchantCountryCode: 'US',
+            merchantDisplayName: 'Aditi'));
+    setState(() {});
+    displayPaymentSheet();
   }
+
+  Future<void> displayPaymentSheet() async {
+    try {
+      await stripepay.Stripe.instance.presentPaymentSheet(
+          parameters: stripepay.$PresentPaymentSheetParameters(
+              clientSecret: paymentIntentData['paymentIntent'],
+              confirmPayment: true));
+      setState(() {
+        paymentIntentData = null;
+      });
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Payment Successful...')));
+    } catch (e) {
+      //If the payment is not done then this will come to catch block
+      print(e);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Payment Failed...')));
+    }
+  }
+
+
+  //called method for payment
+  void doPayment()
+  {
+    _cartBloc.add(PlaceOrder(
+        deliveryType: AddTime.deliveryType,
+        deliveryDate: AddTime.dateTime,
+        deliverySlot: AddTime.deliveryType=="0"
+            ?"9"
+            :AddTime.deliverySlot,
+        convFee: widget.convFee,
+        amount: AddTime.chargedAmt==null?"0":AddTime.chargedAmt,
+        subTotal: widget.subTotal,
+        total: widget.total.toString(),
+        addressId: widget.address.uaId.toString(),
+        cartDetails: cartList,
+        paymentId:paymentId,
+        paymentMode: radioPay
+    ));
+  }
+
+  void clearData(){
+    AddTime.isCheckedfree=false;
+    AddTime.isCheckedCharged=false;
+    AddTime.radioDay='';
+    AddTime.dateTime="";
+    AddTime.deliveryType='';
+    AddTime.deliverySlot='';
+    AddTime.chargedAmt=null;
+    AddTime.currentDate=null;
+    AddTime.selectedDate=null;
+    AddTime.selectedDate=null;
+    AddTime.time=null;
+  }
+
+  Future<void> _showMessage(String message) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+           "Payment",
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(
+                  message,
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              child: Text(
+                'OK',
+              ),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder:
+                    (context)=> MainNavigation(flagOrder:"1")));
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +245,7 @@ class _PaymentState extends State<Payment>{
       key: _scaffoldKey,
       appBar: new AppBar(
         title: Text(
-          Translate.of(context).translate('track_order'),
+          "Payment",
           style: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w600,
@@ -231,48 +318,48 @@ class _PaymentState extends State<Payment>{
             ),
 
             //for stripe
-            Card(
-              elevation: 5.0,
-              child:  Theme(
-                data: Theme.of(context).copyWith(
-                  unselectedWidgetColor:
-                  Theme.of(context).primaryColor,
-                ),
-                child: RadioListTile(
-                  activeColor: AppTheme.appColor,
-                      groupValue: radioPay,
-                      secondary: IconButton(
-                          icon:Image.asset(Images.stripe,height: 80.0,width: 80.0,)),
-                      title: Text('Stripe',
-                        style: Theme.of(context)
-                            .textTheme
-                            .subtitle2
-                            .copyWith(fontWeight: FontWeight.w600,color: AppTheme.textColor),),
-                      value: 'Stripe',
-                      onChanged: (val) {
-
-                        setState(() {
-                          radioPay = val;
-                        });
-                      },
-                    )),
-
-
-
-            ),
+            // Card(
+            //   elevation: 5.0,
+            //   child:  Theme(
+            //     data: Theme.of(context).copyWith(
+            //       unselectedWidgetColor:
+            //       Theme.of(context).primaryColor,
+            //     ),
+            //     child: RadioListTile(
+            //       activeColor: AppTheme.appColor,
+            //           groupValue: radioPay,
+            //           secondary: IconButton(
+            //               icon:Image.asset(Images.stripe,height: 80.0,width: 80.0,)),
+            //           title: Text('Stripe',
+            //             style: Theme.of(context)
+            //                 .textTheme
+            //                 .subtitle2
+            //                 .copyWith(fontWeight: FontWeight.w600,color: AppTheme.textColor),),
+            //           value: 'Stripe',
+            //           onChanged: (val) {
+            //
+            //             setState(() {
+            //               radioPay = val;
+            //             });
+            //           },
+            //         )),
+            //
+            //
+            //
+            // ),
             //temperoray for COD
             Card(
               elevation: 5.0,
-              child:  Theme(
+              child:Theme(
                   data: Theme.of(context).copyWith(
                     unselectedWidgetColor:
                     Theme.of(context).primaryColor,
                   ),
-                  child: RadioListTile(
+                  child:RadioListTile(
                     activeColor: AppTheme.appColor,
                     groupValue: radioPay,
-                    secondary: IconButton(
-                        icon:Image.asset(Images.stripe,height: 80.0,width: 80.0,)),
+                    // secondary: IconButton(
+                    //     icon:Image.asset(Images.stripe,height: 80.0,width: 80.0,)),
                     title: Text('COD',
                       style: Theme.of(context)
                           .textTheme
@@ -284,10 +371,8 @@ class _PaymentState extends State<Payment>{
                         radioPay = val;
                       });
                     },
-                  )),
-
-
-
+                  )
+              ),
             ),
             //to place button at bottom.expanded widget is used in Column
             Expanded(child:Container()),
@@ -296,11 +381,12 @@ class _PaymentState extends State<Payment>{
             BlocBuilder<CartBloc,CartState>(builder: (context,order){
               return BlocListener<CartBloc,CartState>(listener: (context,state){
                   if(state is PlaceOrderSuccess){
+                    clearData();
                     UtilPreferences.remove(Preferences.cart);
-                     Navigator.push(context, MaterialPageRoute(builder: (context)=>
-                         MainNavigation()));
-                  }
+                    _showMessage("Order Placed Successfully");
 
+
+                  }
                   if(state is PlaceOrderFail){
                     _scaffoldKey.currentState.showSnackBar(SnackBar(content:Text("failed")));
                   }
@@ -311,21 +397,14 @@ class _PaymentState extends State<Payment>{
                         onPressed: () {
                           if(radioPay=="COD")
                           {
-                            // _cartBloc.add(PlaceOrder(
-                            //     deliveryType: widget.addTimeData.deliveryType,
-                            //     deliveryDate: widget.addTimeData.date,
-                            //     deliverySlot: widget.addTimeData.deliverySlot,
-                            //     convFee: widget.convFee,
-                            //     amount: widget.addTimeData.chargeAmt,
-                            //     subTotal: widget.subTotal,
-                            //     total: widget.total.toString(),
-                            //     addressId: widget.address.uaId.toString(),
-                            //     cartDetails: widget.cartDet
-                            // ));
-                            placeOrder();
+                            doPayment();
+                            // placeOrder();
                           }else if(radioPay=="RazorPay"){
                             openCheckout();
-                          }
+                          }else if(radioPay=="Stripe")
+                            {
+                              makePayment();
+                            }
                         },
                         shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(Radius.circular(50))),

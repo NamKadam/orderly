@@ -11,7 +11,7 @@ class PsProgressDialog {
 
   static Future getFuture() {
     return Future(() async {
-      await Future.delayed(Duration(seconds: 5));
+      await Future.delayed(Duration(seconds: 1));
       return 'Please Wait...';
     });
   }

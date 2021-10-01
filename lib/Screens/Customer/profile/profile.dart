@@ -57,17 +57,16 @@ class _ProfileState extends State<Profile>{
         ],
       ),
       body: Container(
+        margin: EdgeInsets.only(bottom: 75.0),
         child:SingleChildScrollView(
-      child:
+        child:
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             HeaderWidget(),
             SizedBox(height: 5.0,),//for spacing
-
             CardViewWidget(),
             SizedBox(height: 5.0,), //for spacing
-
             //logout
             Container(color: Colors.white,
                 child:Padding(
@@ -103,16 +102,14 @@ class _ProfileState extends State<Profile>{
               ),
             )
             )
-            )
+            ),
+
           ],
-        ),
+        )),
 
-      ),
       )
-
     );
   }
-
 }
 
 class HeaderWidget extends StatelessWidget{
@@ -135,9 +132,7 @@ class HeaderWidget extends StatelessWidget{
           ),
           color:
           Colors.white,
-
         ),
-
         child:
         ClipRRect(
           child: Image.file(
@@ -146,9 +141,7 @@ class HeaderWidget extends StatelessWidget{
           ),
 
           borderRadius: BorderRadius.circular(10),
-
         ),
-
       );
     }
     //updated on 30/11/2020

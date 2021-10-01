@@ -83,16 +83,18 @@ class CartBloc extends Bloc<CartEvent,CartState> {
         'urgent_amount':event.amount,
         'sub_total':event.subTotal,
         'convinience_fee':event.convFee,
-        'grand_total':event.total,
-        'discount':'',
-        'order_status_id':'1',
-        'address':event.addressId
+        'grant_total':event.total,
+        'discount':'0',
+        'order_status_id':'0',
+        'address':event.addressId,
+        'payment_transaction_id':event.paymentId,
+        'payment_mode':event.paymentMode
       };
+      print("params:-"+params.toString());
 
       try {
-
-        var response = await http.post(Uri.parse(Api.PLACE_ORDER), body: params,);
-
+        var response = await http.post(Uri.parse(Api.PLACE_ORDER), body: params);
+        print("response:-"+response.body);
         if (response.statusCode == 200) {
           var resp = json.decode(response.body); //for dio dont need to convert to json.decode
           yield PlaceOrderSuccess();

@@ -8,6 +8,7 @@ import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/model_address.dart';
 import 'package:orderly/Models/model_scoped_cart.dart';
+import 'package:orderly/Models/model_view_cart.dart';
 import 'package:orderly/Screens/Customer/cart/addTime.dart';
 import 'package:orderly/Screens/Customer/orders/order_list_item.dart';
 import 'package:orderly/Screens/Customer/orders/orders_filter.dart';
@@ -24,7 +25,7 @@ import 'package:shimmer/shimmer.dart';
 
 class ProfAddress extends StatefulWidget {
   AddTimeData addTimeData;
-  String cartDetails;
+  List<Cart> cartDetails;
   String convFee,total,subTotal;
 
   ProfAddress({Key key, @required this.addTimeData,
@@ -38,7 +39,7 @@ class ProfAddress extends StatefulWidget {
 class _ProfAddressState extends State<ProfAddress> {
   String flagAddEdit = "";
   List<OrderStatusTimeFilter> OrderList = [];
-  int id = 1;
+  int id;
   String radioItem = '';
   AddressBloc _addressBloc;
   bool isconnectedToInternet = false,isFirstTimeChecked=true;
@@ -361,6 +362,12 @@ class _ProfAddressState extends State<ProfAddress> {
         body: BlocBuilder<AddressBloc, AddressState>(builder: (context, state) {
           if (state is AddressListSuccess) {
             _addressList = state.addressList;
+            if(pos==0) { //to have for first time only
+              id = state.addressList[0].uaId;
+            }
+            flagNoDataAvail=false;
+          }
+          if(state is AddressLoading){
             flagNoDataAvail=false;
           }
           if (state is AddressListLoadFail) {

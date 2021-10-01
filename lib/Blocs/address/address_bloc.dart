@@ -117,7 +117,4 @@ class AddressBloc extends Bloc<AddressEvent,AddressState> {
 
   }
 
-
-
-
 }

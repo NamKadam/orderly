@@ -10,18 +10,67 @@ import 'package:http/http.dart' as http;
 
 
 
-class AddTime extends StatefulWidget {
-  _AddTimeState createState() => _AddTimeState();
+class AddTime extends StatelessWidget {
+  static bool isCheckedCharged = false;
+  static bool isCheckedfree = false;
+  static String dateTime="";
+  static String radioDay='',deliveryType='',deliverySlot=''; //by default selected
+  static var currentDate,selectedDate,time,chargedAmt;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  void clearData(){
+    AddTime.deliveryType='';
+    AddTime.deliverySlot='';
+    AddTime.dateTime="";
+    AddTime.chargedAmt=null;
+    AddTime.currentDate=null;
+    AddTime.selectedDate=null;
+    AddTime.time=null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
+        key: _scaffoldKey,
+        appBar: new AppBar(
+        title: Text(
+        'Add Time',
+        style: TextStyle(
+        fontFamily: 'Poppins',
+        fontWeight: FontWeight.w600,
+        fontSize: 18.0,
+        color: AppTheme.textColor),
+    ),
+    leading: InkWell(
+    onTap: () {
+      if(AddTime.isCheckedCharged==false && AddTime.isCheckedfree==false){
+       clearData();
+       print(radioDay);
+      }
+    Navigator.pop(context);
+    },
+    child: Icon(
+    Icons.arrow_back_ios,
+    color: AppTheme.textColor,
+    )),
+    backgroundColor: Colors.white,
+    elevation: 0,
+    ),
+      body:TimeData(scaffoldKey:_scaffoldKey)
+    );
+  }
+
+
+}
+class TimeData extends StatefulWidget{
+  var scaffoldKey = GlobalKey<ScaffoldState>();
+  TimeData({Key key,@required this.scaffoldKey}):super(key: key);
+  _TimeDataState createState()=>_TimeDataState();
 }
 
-class _AddTimeState extends State<AddTime> {
-  bool isCheckedCharged = false;
-  bool isCheckedfree = false;
-  String _dateTime="",finalDate="";
-  String radioDay=''; //by default selected
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
-  var currentDate,selectedDate,time;
-   AddTimeData _addTimeData;
+class _TimeDataState extends State<TimeData> {
+
 
 
   //set date
@@ -37,21 +86,20 @@ class _AddTimeState extends State<AddTime> {
 
     if(picked != null)
       setState(() {
-        _dateTime = DateFormat("dd/MM/yyyy").format(picked);
-        _addTimeData.date=_dateTime;
+        AddTime.dateTime = DateFormat("yyyy-MM-dd").format(picked);
       });
   }
 
   void compareDates(DateTime picked){
     var now = DateTime.now();
-    currentDate = DateTime(now.year,now.month,now.day);
+    AddTime.currentDate = DateTime(now.year,now.month,now.day);
     var month = DateFormat("MM").format(picked);
     var year = DateFormat("yyyy").format(picked);
     var day = DateFormat("dd").format(picked);
-    selectedDate = DateTime(int.parse(year),int.parse(month),int.parse(day));     //you can add today's date here
+    AddTime.selectedDate = DateTime(int.parse(year),int.parse(month),int.parse(day));     //you can add today's date here
     //DateFormat import package intl
-    time=DateFormat('hh:mm a').format(DateTime.now());
-    print("time:"+time);
+    AddTime.time=DateFormat('hh:mm a').format(DateTime.now());
+    print("time:"+AddTime.time);
   }
 
 
@@ -59,9 +107,7 @@ class _AddTimeState extends State<AddTime> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _addTimeData=new AddTimeData();
-    _addTimeData.deliverySlot="0";
-    // getCharges();
+    // AddTime.deliverySlot="0";
   }
 
   //to get chargeable amt
@@ -71,9 +117,9 @@ class _AddTimeState extends State<AddTime> {
     if (response.statusCode == 200) {
       final responseJson = json.decode(response.body);
       var charges=responseJson['charges'][0];
-      _addTimeData.chargeAmt=charges['amount'].toString();
-      _addTimeData.deliveryType="0";
-      _addTimeData.deliverySlot="";
+      AddTime.chargedAmt=charges['amount'].toString();
+      AddTime.deliveryType="0";
+      AddTime.deliverySlot="";
     }
     // setState(() {
     //
@@ -96,29 +142,7 @@ class _AddTimeState extends State<AddTime> {
     }
 
     // TODO: implement build
-    return Scaffold(
-      key: _scaffoldKey,
-        appBar: new AppBar(
-          title: Text(
-            'Add Time',
-            style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
-                fontSize: 18.0,
-                color: AppTheme.textColor),
-          ),
-          leading: InkWell(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Icon(
-                Icons.arrow_back_ios,
-                color: AppTheme.textColor,
-              )),
-          backgroundColor: Colors.white,
-          elevation: 0,
-        ),
-        body: Container(
+    return  Container(
           width: MediaQuery.of(context).size.width,
           child: Card(
             elevation: 0.0,
@@ -148,14 +172,19 @@ class _AddTimeState extends State<AddTime> {
                                     fillColor:
                                         MaterialStateProperty.resolveWith(
                                             getColor),
-                                    value: isCheckedCharged,
+                                    value: AddTime.isCheckedCharged,
                                     onChanged: (bool value) {
                                       getCharges();
                                       setState(() {
-                                        if(isCheckedfree==true){
-                                          isCheckedfree=!isCheckedfree;
+                                        AddTime.radioDay='';
+                                        AddTime.dateTime='';
+                                        AddTime.currentDate=null;
+                                        AddTime.selectedDate=null;
+                                        if(AddTime.isCheckedfree==true){
+                                          AddTime.isCheckedfree=!AddTime.isCheckedfree;
                                         }
-                                        isCheckedCharged = value;
+
+                                        AddTime.isCheckedCharged = value;
 
 
 
@@ -203,15 +232,16 @@ class _AddTimeState extends State<AddTime> {
                                         fillColor:
                                         MaterialStateProperty.resolveWith(
                                             getColor),
-                                        value: isCheckedfree,
+                                        value: AddTime.isCheckedfree,
                                         onChanged: (bool value) {
                                           setState(() {
-                                            if(isCheckedCharged==true){
-                                              isCheckedCharged=!isCheckedCharged;
+                                            if(AddTime.isCheckedCharged==true){
+                                              AddTime.isCheckedCharged=!AddTime.isCheckedCharged;
                                             }
-                                            isCheckedfree = value;
-                                            _addTimeData.chargeAmt=null;
-                                            _addTimeData.deliveryType="1";
+                                            AddTime.isCheckedfree = value;
+                                            AddTime.chargedAmt=null;
+
+                                            AddTime.deliveryType="1";
 
                                           });
                                         }),
@@ -240,141 +270,148 @@ class _AddTimeState extends State<AddTime> {
                                   ],
                                 ),
                                 //choose date
-                                Padding(
-                                  padding: EdgeInsets.only(left:15.0,right: 15.0,top:10.0),
-                                    child:Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                  Text(
-                                    Translate.of(context).translate('choose date'),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .caption
-                                        .copyWith(
-                                        fontSize: 13.0,
-                                        fontWeight: FontWeight.w500,
-                                        color: Theme.of(context).primaryColor,
-                                        fontFamily: "Poppins"),
-                                  ),
-                                  //date
-                                      Row(
-                                        children: [
-                                          Text(
-                                            _dateTime,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .caption
-                                                .copyWith(
-                                                fontSize: 13.0,
-                                                fontWeight: FontWeight.w500,
-                                                color: AppTheme.textColor,
-                                                fontFamily: "Poppins"),
-                                          ),
-                                          SizedBox(width: 8.0,),
-                                          GestureDetector(
-
-                                            child: Image.asset(Images.calender, height: 20.0,
-                                              width: 20.0,),
-                                            onTap: (){
-                                              _selectDate();
-                                              debugPrint("clicked");
-                                            },
-                                          )
-                                        ],
-                                      )
-
-                                ],)),
-                                //morning/evening day selection
-                                Padding(
-                                  padding: EdgeInsets.only(top:5.0,bottom:5.0),
-                                  child:
+                                if(AddTime.isCheckedfree==true)
                                   Column(
-                                      mainAxisAlignment:MainAxisAlignment.start,
                                     children: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child:
-                                            Theme(
-                                                data: Theme.of(context).copyWith(
-                                                  unselectedWidgetColor: Theme.of(context).primaryColor,
-                                                ),
-                                                child:RadioListTile(
-                                                  activeColor: Theme.of(context).primaryColor,
-                                                  groupValue: radioDay,
-                                                  title: Text('Morning',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .subtitle2
-                                                        .copyWith(fontWeight: FontWeight.w500,color: AppTheme.textColor),),
-                                                  value: 'Morning',
-                                                  onChanged: (val) {
-
-                                                    setState(() {
-                                                      radioDay = val;
-                                                      _addTimeData.deliverySlot="0"; //for morning
-                                                    });
-                                                  },
-                                                )),
-                                          ),
-                                          if(radioDay=="Morning")
-                                          Padding(padding: EdgeInsets.all(5.0),
-                                              child:
-                                              Text("7 am - 11 am",style: TextStyle(
-                                            fontSize: 14.0,
-                                            fontFamily: 'Poppins',
-                                            fontWeight: FontWeight.w600,
-                                            color: AppTheme.textColor
-                                          ),
-                                       )
-                                       )
-                                        ],
-                                      ),
-                                      //for evening
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                              child:
-                                            Theme(
-                                                data: Theme.of(context).copyWith(
-                                                  unselectedWidgetColor: Theme.of(context).primaryColor,
-                                                ),
-                                                child:RadioListTile(
-                                                  activeColor: Theme.of(context).primaryColor,
-                                                  groupValue: radioDay,
-                                                  title: Text('Evening',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .subtitle2
-                                                        .copyWith(fontWeight: FontWeight.w500,color: AppTheme.textColor),),
-                                                  value: 'Evening',
-                                                  onChanged: (val) {
-                                                    setState(() {
-                                                      radioDay = val;
-                                                      _addTimeData.deliverySlot="1"; //for evening
-
-                                                    });
-                                                  },
-                                                )),
-                                             ),
-
-                                          if(radioDay=="Evening")
-                                            Padding(padding: EdgeInsets.all(5.0),
-                                              child:
-                                              Text("5 pm - 9 pm",style: TextStyle(
-                                                  fontSize: 14.0,
-                                                  fontFamily: 'Poppins',
-                                                  fontWeight: FontWeight.w600,
-                                                  color: AppTheme.textColor
+                                      Padding(
+                                          padding: EdgeInsets.only(left:15.0,right: 15.0,top:10.0),
+                                          child:Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                Translate.of(context).translate('choose date'),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .caption
+                                                    .copyWith(
+                                                    fontSize: 13.0,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Theme.of(context).primaryColor,
+                                                    fontFamily: "Poppins"),
                                               ),
-                                              )
-                                            )
-                                        ],
-                                      )
-                                      ],
-                                  ),
+                                              //date
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    AddTime.dateTime,
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .caption
+                                                        .copyWith(
+                                                        fontSize: 13.0,
+                                                        fontWeight: FontWeight.w500,
+                                                        color: AppTheme.textColor,
+                                                        fontFamily: "Poppins"),
+                                                  ),
+                                                  SizedBox(width: 8.0,),
+                                                  GestureDetector(
 
-                                ),
+                                                    child: Image.asset(Images.calender, height: 20.0,
+                                                      width: 20.0,),
+                                                    onTap: (){
+                                                      _selectDate();
+                                                      debugPrint("clicked");
+                                                    },
+                                                  )
+                                                ],
+                                              )
+
+                                            ],)),
+                                      //morning/evening day selection
+                                      Padding(
+                                        padding: EdgeInsets.only(top:5.0,bottom:5.0),
+                                        child:
+                                        Column(
+                                          mainAxisAlignment:MainAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child:
+                                                  Theme(
+                                                      data: Theme.of(context).copyWith(
+                                                        unselectedWidgetColor: Theme.of(context).primaryColor,
+                                                      ),
+                                                      child:RadioListTile(
+                                                        activeColor: Theme.of(context).primaryColor,
+                                                        groupValue: AddTime.radioDay,
+                                                        title: Text('Morning',
+                                                          style: Theme.of(context)
+                                                              .textTheme
+                                                              .subtitle2
+                                                              .copyWith(fontWeight: FontWeight.w500,color: AppTheme.textColor),),
+                                                        value: 'Morning',
+                                                        onChanged: (val) {
+
+                                                          setState(() {
+                                                            AddTime.radioDay = val;
+                                                            AddTime.deliverySlot="0"; //for morning
+                                                          });
+                                                        },
+                                                      )),
+                                                ),
+                                                if(AddTime.radioDay=="Morning")
+                                                  Padding(padding: EdgeInsets.all(5.0),
+                                                      child:
+                                                      Text("7 am - 11 am",style: TextStyle(
+                                                          fontSize: 14.0,
+                                                          fontFamily: 'Poppins',
+                                                          fontWeight: FontWeight.w600,
+                                                          color: AppTheme.textColor
+                                                      ),
+                                                      )
+                                                  )
+                                              ],
+                                            ),
+                                            //for evening
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child:
+                                                  Theme(
+                                                      data: Theme.of(context).copyWith(
+                                                        unselectedWidgetColor: Theme.of(context).primaryColor,
+                                                      ),
+                                                      child:RadioListTile(
+                                                        activeColor: Theme.of(context).primaryColor,
+                                                        groupValue: AddTime.radioDay,
+                                                        title: Text('Evening',
+                                                          style: Theme.of(context)
+                                                              .textTheme
+                                                              .subtitle2
+                                                              .copyWith(fontWeight: FontWeight.w500,color: AppTheme.textColor),),
+                                                        value: 'Evening',
+                                                        onChanged: (val) {
+                                                          setState(() {
+                                                            AddTime.radioDay = val;
+                                                            AddTime.deliverySlot="1"; //for evening
+                                                            print("deliverySlot:-"+AddTime.deliverySlot);
+
+                                                          });
+                                                        },
+                                                      )),
+                                                ),
+
+                                                if(AddTime.radioDay=="Evening")
+                                                  Padding(padding: EdgeInsets.all(5.0),
+                                                      child:
+                                                      Text("5 pm - 9 pm",style: TextStyle(
+                                                          fontSize: 14.0,
+                                                          fontFamily: 'Poppins',
+                                                          fontWeight: FontWeight.w600,
+                                                          color: AppTheme.textColor
+                                                      ),
+                                                      )
+                                                  )
+                                              ],
+                                            )
+                                          ],
+                                        ),
+
+                                      ),
+                                    ],
+                                  )
+
                               ],
                             ),
                                 )
@@ -392,32 +429,41 @@ class _AddTimeState extends State<AddTime> {
                           ),
                           // shape: shape,
                           onPressed: (){
-                            if(isCheckedCharged==true){
-                              Navigator.pop(context,_addTimeData);
-                            }else if(isCheckedfree==true){
+                            if(AddTime.isCheckedCharged==true){
+                              Navigator.pop(context);
+                            }else if(AddTime.isCheckedfree==true){
+                              print("deleiverySlot:-"+AddTime.deliverySlot);
 
-                              if(_dateTime!=""){
-                                if(currentDate.compareTo(selectedDate)==0) {
-                                  if (time.contains("PM") && _addTimeData.deliverySlot == "0")
-                                  {
-                                    _scaffoldKey.currentState.showSnackBar(SnackBar(
-                                        content: Text("Please select valid slot")));
-                                  }
-                                  else{
-                                    Navigator.pop(context,_addTimeData);
+                              if(AddTime.dateTime!=""){
+                                if(AddTime.currentDate.compareTo(AddTime.selectedDate)==0) {
+                                  if(AddTime.radioDay!='')
+                                    {
+                                      if (AddTime.time.contains("PM") && AddTime.deliverySlot == "0")
+                                      {
+                                        widget.scaffoldKey.currentState.showSnackBar(SnackBar(
+                                            content: Text("Please select valid slot")));
+                                      }
+                                      else{
+                                        Navigator.pop(context);
+                                      }
+                                    }
+                                else{
+                                    widget.scaffoldKey.currentState.showSnackBar(SnackBar(
+                                    content: Text("Please select delivery slot")));
+
                                   }
                                 }
                                 else{
-                                  Navigator.pop(context,_addTimeData);
+                                  Navigator.pop(context);
                                 }
                               }else{
-                                _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Please choose delivery date")));
+                                widget.scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Please choose delivery date")));
 
                               }
 
 
                             } else{
-                              _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Please choose atleast 1 delivery Option")));
+                              widget.scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Please choose atleast 1 delivery Option")));
 
                             }
                             // if(isCheckedfree!=true && isCheckedCharged!=true){
@@ -450,19 +496,26 @@ class _AddTimeState extends State<AddTime> {
                   ],
                 )),
           ),
-        ));
+        );
   }
 }
 
 class AddTimeData{
- String date,deliverySlot,deliveryType,chargeAmt;
+ String deliverySlot,deliveryType,dateTime="",radioDay='',chargedAmt='';
+ bool isCheckedCharged=false,isCheckedFree=false;
+ var currentDate,selectedDate,time;
 
   AddTimeData(
  {
-  this.date,
  this.deliverySlot,
  this.deliveryType,
- this.chargeAmt
+   this.dateTime,
+   this.radioDay,
+   this.chargedAmt,
+   this.currentDate,
+   this.selectedDate,
+   this.isCheckedCharged,
+   this.isCheckedFree
 }
       );
 

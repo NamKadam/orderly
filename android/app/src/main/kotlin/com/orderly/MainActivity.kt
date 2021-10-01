@@ -1,6 +1,12 @@
 package com.orderly
 
 import io.flutter.embedding.android.FlutterActivity
+//for stripe
+import io.flutter.embedding.android.FlutterFragmentActivity
 
-class MainActivity: FlutterActivity() {
+//for stripe
+class MainActivity: FlutterFragmentActivity() {
 }
+
+//class MainActivity: FlutterActivity() {
+//}

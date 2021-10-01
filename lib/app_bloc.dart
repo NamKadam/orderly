@@ -8,6 +8,7 @@ import 'package:orderly/Repository/UserRepository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'Blocs/authentication/authentication_bloc.dart';
+import 'Blocs/myOrders/myOrders_bloc.dart';
 
 class AppBloc {
   static final userRepository = UserRepository();
@@ -20,6 +21,7 @@ class AppBloc {
   static final homeBloc = HomeBloc(homeRepository: userRepository);
   static final cartBloc = CartBloc(cartRepository: userRepository);
   static final addressBloc=AddressBloc(addressRepo:userRepository);
+  static final myOrdersBloc=MyOrdersBloc(ordersRepo:userRepository);
 
 
   static final List<BlocProvider> providers = [
@@ -51,6 +53,10 @@ class AppBloc {
       create: (context) => addressBloc,
     ),
 
+    BlocProvider<MyOrdersBloc>(
+      create: (context) => myOrdersBloc,
+    ),
+
 
   ];
 
@@ -64,6 +70,7 @@ class AppBloc {
     homeBloc.close();
     cartBloc.close();
     addressBloc.close();
+    myOrdersBloc.close();
   }
 
   ///Singleton factory

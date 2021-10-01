@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:orderly/Api/api.dart';
 import 'package:orderly/Models/model_scoped_cart.dart';
 import 'package:orderly/Models/model_user.dart';
@@ -59,6 +60,14 @@ class UserRepository {
     final params = {"userid":fbId};
     return await Api.getAddress(params);
   }
+
+  //fetch myOrders
+  Future<dynamic> fetchMyOrdersList({String fbId}) async
+  {
+    final params = {"userid":fbId};
+    return await Api.getOrdersList(params);
+  }
+
   ///Get from Storage
   dynamic getUser() {
     return UtilPreferences.getString(Preferences.user);

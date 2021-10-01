@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:orderly/Models/ResultApiModel.dart';
 import 'package:http/http.dart' as http;
 import 'package:orderly/Models/model_address.dart';
+import 'package:orderly/Models/model_myOrders.dart';
 import 'package:orderly/Models/model_producer_list.dart';
 import 'package:orderly/Models/model_product_List.dart';
 import 'package:orderly/Models/model_view_cart.dart';
@@ -24,6 +25,7 @@ class Api {
   static const String ADD_ADDRESS=HOST_URL+"add_address";
   static const String EDIT_ADDRESS=HOST_URL+"update_address";
   static const String PLACE_ORDER=HOST_URL+"place_order";
+  static const String GET_MYORDER=HOST_URL+"my_order";
 
   ///Login api
   static Future<dynamic> login(params) async {
@@ -91,6 +93,18 @@ class Api {
     if (response.statusCode == 200) {
       final responseJson = json.decode(response.body);
       return AddressResp.fromJson(responseJson);
+    }
+  }
+
+  //fetch myorders list
+  static Future<dynamic> getOrdersList(params) async {
+    final response = await http.post(
+      Uri.parse(GET_MYORDER),
+      body: params,
+    );
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+      return MyOrdersResp.fromJson(responseJson);
     }
   }
 

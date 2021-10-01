@@ -107,7 +107,6 @@ class AuthBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
         ///Notify loading to UI
         yield AuthenticationSuccess();
 
-
       } else {
         final String message = "Cannot save user data to storage phone";
         throw Exception(message);

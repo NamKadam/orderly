@@ -25,6 +25,8 @@ import 'package:orderly/Utils/translate.dart';
 // import 'package:orderly/flutterexample.dart';
 
 class MainNavigation extends StatefulWidget {
+  String flagOrder="";
+  MainNavigation({Key key,@required this.flagOrder}):super(key: key);
 
   _MainNavigationState createState() => _MainNavigationState();
 }
@@ -35,7 +37,7 @@ class _MainNavigationState extends State<MainNavigation> {
 
   ///List bottom menu
   List<BottomNavigationBarItem> _bottomBarItem(BuildContext context) {
-    if(Application.user.userType=="0"){
+    // if(Application.user.userType=="0"){
       return [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
@@ -93,76 +95,76 @@ class _MainNavigationState extends State<MainNavigation> {
           ),
         ),
       ];
-    }
-    else{
-      //for fleet
-      return [
-        BottomNavigationBarItem(
-          icon: Image.asset(
-            Images.order,
-            width: 25.0,
-            height: 25.0,
-          ),
-          activeIcon: Image.asset(
-            Images.orderActive,
-            width: 25.0,
-            height: 25.0,
-          ),
-          title: Padding(
-            padding: EdgeInsets.only(top: 3),
-            child: Text(Translate.of(context).translate('orders')),
-          ),
-        ),
-        BottomNavigationBarItem(
-          icon: Image.asset(
-            Images.inventory,
-            width: 25.0,
-            height: 25.0,
-          ),
-          activeIcon: Image.asset(
-            Images.inventoryActive,
-            width: 25.0,
-            height: 25.0,
-          ),
-          title: Padding(
-            padding: EdgeInsets.only(top: 3),
-            child: Text(Translate.of(context).translate('inventory')),
-          ),
-        ),
-        BottomNavigationBarItem(
-          icon: Image.asset(
-            Images.claim,
-            width: 25.0,
-            height: 25.0,
-          ),
-          activeIcon: Image.asset(
-            Images.claimActive,
-            width: 25.0,
-            height: 25.0,
-          ),
-          title: Padding(
-            padding: EdgeInsets.only(top: 3),
-            child: Text(Translate.of(context).translate('claims')),
-          ),
-        ),
-        BottomNavigationBarItem(
-          icon: Image.asset(
-            Images.profile,
-            width: 25.0,
-            height: 25.0,
-          ),
-          activeIcon: Image.asset(
-            Images.profileActive,
-            width: 25.0,
-            height: 25.0,
-          ),
-          title: Padding(
-            padding: EdgeInsets.only(top: 3),
-            child: Text(Translate.of(context).translate('profile')),
-          ),
-        ),
-      ];
-    }
+    // }
+    // else{
+    //   //for fleet
+    //   return [
+    //     BottomNavigationBarItem(
+    //       icon: Image.asset(
+    //         Images.order,
+    //         width: 25.0,
+    //         height: 25.0,
+    //       ),
+    //       activeIcon: Image.asset(
+    //         Images.orderActive,
+    //         width: 25.0,
+    //         height: 25.0,
+    //       ),
+    //       title: Padding(
+    //         padding: EdgeInsets.only(top: 3),
+    //         child: Text(Translate.of(context).translate('orders')),
+    //       ),
+    //     ),
+    //     BottomNavigationBarItem(
+    //       icon: Image.asset(
+    //         Images.inventory,
+    //         width: 25.0,
+    //         height: 25.0,
+    //       ),
+    //       activeIcon: Image.asset(
+    //         Images.inventoryActive,
+    //         width: 25.0,
+    //         height: 25.0,
+    //       ),
+    //       title: Padding(
+    //         padding: EdgeInsets.only(top: 3),
+    //         child: Text(Translate.of(context).translate('inventory')),
+    //       ),
+    //     ),
+    //     BottomNavigationBarItem(
+    //       icon: Image.asset(
+    //         Images.claim,
+    //         width: 25.0,
+    //         height: 25.0,
+    //       ),
+    //       activeIcon: Image.asset(
+    //         Images.claimActive,
+    //         width: 25.0,
+    //         height: 25.0,
+    //       ),
+    //       title: Padding(
+    //         padding: EdgeInsets.only(top: 3),
+    //         child: Text(Translate.of(context).translate('claims')),
+    //       ),
+    //     ),
+    //     BottomNavigationBarItem(
+    //       icon: Image.asset(
+    //         Images.profile,
+    //         width: 25.0,
+    //         height: 25.0,
+    //       ),
+    //       activeIcon: Image.asset(
+    //         Images.profileActive,
+    //         width: 25.0,
+    //         height: 25.0,
+    //       ),
+    //       title: Padding(
+    //         padding: EdgeInsets.only(top: 3),
+    //         child: Text(Translate.of(context).translate('profile')),
+    //       ),
+    //     ),
+    //   ];
+    // }
 
   }
 
@@ -170,8 +172,8 @@ class _MainNavigationState extends State<MainNavigation> {
   void _onItemTapped(int index) async {
     setState(() {
       _selectedIndex = index;
-      if(Application.user.userType=="0")
-        {
+      // if(Application.user.userType=="0")
+      //   {
           //for customer
           if (_selectedIndex == 0) {
             title = "Home";
@@ -180,16 +182,17 @@ class _MainNavigationState extends State<MainNavigation> {
           } else if (_selectedIndex == 2) {
             title = "My Orders";
           }
-        }else{
-        //for fleet
-        if (_selectedIndex == 0) {
-          title = "Orders";
-        } else if (_selectedIndex == 1) {
-          title = "Inventory";
-        } else if (_selectedIndex == 2) {
-          title = "Claims";
-        }
-      }
+        // }
+      // else{
+      //   //for fleet
+      //   if (_selectedIndex == 0) {
+      //     title = "Orders";
+      //   } else if (_selectedIndex == 1) {
+      //     title = "Inventory";
+      //   } else if (_selectedIndex == 2) {
+      //     title = "Claims";
+      //   }
+      // }
 
     });
   }
@@ -198,10 +201,15 @@ class _MainNavigationState extends State<MainNavigation> {
     // TODO: implement initState
     super.initState();
     // print("userType="+Application.user.userType);
-    if(Application.user.userType=="0"){ //for customer
-      title="Home";
-    }else{ //for fleet manager
-      title="Orders";
+    if(widget.flagOrder=="1"){ //from place order to redirect to orders
+      _selectedIndex=2;
+      title = "My Orders";
+    }else {
+      // if (Application.user.userType == "0") { //for customer
+        title = "Home";
+      // } else { //for fleet manager
+      //   title = "Orders";
+      // }
     }
     setState(() {
 
@@ -272,35 +280,35 @@ class _MainNavigationState extends State<MainNavigation> {
                             ),
                           ),
                         ),
-                        if(Application.user.userType=="1")//for fleet
-                        Positioned(
-                          right: 5,
-                          top: 5,
-                          child: new Container(
-                            padding: EdgeInsets.all(1),
-                            decoration: new BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(8.5),
-                            ),
-                            constraints: BoxConstraints(
-                              minWidth: 17,
-                              minHeight: 17,
-                            ),
-                            child: Text(
-                              "0",
-                              style: new TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w400,
-                                  fontFamily: 'Poppins'
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        )
+                        // if(Application.user.userType=="1")//for fleet
+                        // Positioned(
+                        //   right: 5,
+                        //   top: 5,
+                        //   child: new Container(
+                        //     padding: EdgeInsets.all(1),
+                        //     decoration: new BoxDecoration(
+                        //       color: Colors.red,
+                        //       borderRadius: BorderRadius.circular(8.5),
+                        //     ),
+                        //     constraints: BoxConstraints(
+                        //       minWidth: 17,
+                        //       minHeight: 17,
+                        //     ),
+                        //     child: Text(
+                        //       "0",
+                        //       style: new TextStyle(
+                        //           color: Colors.white,
+                        //           fontSize: 10,
+                        //           fontWeight: FontWeight.w400,
+                        //           fontFamily: 'Poppins'
+                        //       ),
+                        //       textAlign: TextAlign.center,
+                        //     ),
+                        //   ),
+                        // )
                       ],
                       ),
-                      if(Application.user.userType=="0") //for customer
+                      // if(Application.user.userType=="0") //for customer
                         Stack(
                         children: [
                           IconButton(
@@ -350,26 +358,24 @@ class _MainNavigationState extends State<MainNavigation> {
         body: IndexedStack(
           index: _selectedIndex,
           children: <Widget>[
-            Application.user.userType=="0" //for customer
-            ?
-              Home()
-            :  //for fleet manager
-              FleetOrders(),
-              // HomeUpdated(model: CartModel()),
-              // FlutterExample(),
-            Application.user.userType=="0"
-              ?
-              Producers(model: CartModel())
-              :
-              Inventory(),
-            Application.user.userType=="0"
-              ?
-              MyOrders()
-              :
-              Claims(),
+            // Application.user.userType=="0" //for customer
+            // ?
+              Home(),
+            // :  //for fleet manager
+            //   FleetOrders(),
+            //   // HomeUpdated(model: CartModel()),
+            //   // FlutterExample(),
+            // Application.user.userType=="0"
+            //   ?
+              Producers(model: CartModel()),
+              // :
+              // Inventory(),
+            // Application.user.userType=="0"
+            //   ?
+              MyOrders(),
+              // :
+              // Claims(),
               Profile(),
-
-
           ],
         ),
         bottomNavigationBar: Padding(
@@ -379,7 +385,6 @@ class _MainNavigationState extends State<MainNavigation> {
                     decoration: BoxDecoration(
                       border: Border.all(color: Color(0xFF727C8E5C)),
                       borderRadius: BorderRadius.circular(30.0),
-
                       //   boxShadow: [
                       // BoxShadow(color: Colors.black38, spreadRadius: 0, blurRadius: 10),
                       // ],
@@ -394,13 +399,13 @@ class _MainNavigationState extends State<MainNavigation> {
                           // child:
                           BottomNavigationBar(
                             items: _bottomBarItem(context),
-                            currentIndex: _selectedIndex,
+                            currentIndex: widget.flagOrder!="1"?_selectedIndex:2,
                             type: BottomNavigationBarType.fixed,
-                            unselectedItemColor:
-                                Theme.of(context).unselectedWidgetColor,
-                            selectedItemColor: Theme.of(context).primaryColor,
-                            showUnselectedLabels: true,
+                            unselectedItemColor:Theme.of(context).unselectedWidgetColor,
+                            selectedItemColor:Theme.of(context).primaryColor,
+                            showUnselectedLabels:true,
                             onTap: (index) {
+                              widget.flagOrder="";
                               _onItemTapped(index);
                             },
                           ),

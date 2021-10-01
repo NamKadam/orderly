@@ -189,6 +189,7 @@ class _HomeState extends State<Home> {
     var response = await http.post(Uri.parse(Api.ADD_TO_CART),
       body: params,
     );
+
     try{
       if (response.statusCode == 200) {
         var resp = json.decode(response.body);
@@ -206,18 +207,13 @@ class _HomeState extends State<Home> {
         }else{
           print('exists');
           Navigator.push(context, MaterialPageRoute(builder: (context)=>ShoppingCart(price:price,cartModel:model)));
-
         }
-
-        await PsProgressDialog.showProgressWithoutMsg(context);
-
+        // await PsProgressDialog.showProgressWithoutMsg(context);
       }
     }catch(e){
       print(e);
     }
   }
-
-
 
 
   @override
@@ -483,6 +479,7 @@ class _HomeState extends State<Home> {
                 shape: RoundedRectangleBorder(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
+                  // mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     CachedNetworkImage(
                       imageUrl: product[index].productImage,
@@ -529,13 +526,15 @@ class _HomeState extends State<Home> {
                       },
                     ),
                     Padding(padding: EdgeInsets.only(top: 3)),
-                    Text(
+                    Padding(
+                      padding: EdgeInsets.only(left:10.0,right: 10.0),
+                        child:Text(
                       product[index].productName,
                       style: Theme.of(context).textTheme.caption.copyWith(
                           fontWeight: FontWeight.w400,
                           fontFamily: 'Poppins',
                           color: AppTheme.textColor),
-                    ),
+                    )),
                     Padding(padding: EdgeInsets.only(top: 2)),
                     Text(
                       product[index].ratePerHour.toString() + " \$/hr",

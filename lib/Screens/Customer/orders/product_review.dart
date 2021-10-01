@@ -320,7 +320,8 @@ class _ProductReviewState extends State<ProductReview> {
                                 width: 0.5,
                               ),
                             ),
-                            child: Padding(
+                            child:
+                            Padding(
                               padding: EdgeInsets.only(left: 10.0, right: 10.0),
                               child:
 

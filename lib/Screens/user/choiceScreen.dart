@@ -21,6 +21,41 @@ class _ChoiceScreenState extends State<ChoiceScreen>{
   bool flagClickCust=false;
   bool flagClickManager=false;
   String flagRoleType="";
+  Future<void> _showMessage(String message) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            "",
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(
+                  message,
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              child: Text(
+                'OK',
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -137,10 +172,11 @@ class _ChoiceScreenState extends State<ChoiceScreen>{
                  }
                  else if(flagClickManager==true){
                    flagRoleType="1";//for fleet manager
-                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
-                       VerifyPhone()
+                   _showMessage("Functionality under development");
 
-                   ));
+                   // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+                   //     VerifyPhone()
+                   // ));
 
                  }
                },
