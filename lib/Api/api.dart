@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:orderly/Models/ResultApiModel.dart';
 import 'package:http/http.dart' as http;
 import 'package:orderly/Models/model_address.dart';
+import 'package:orderly/Models/model_fleetOrder_det.dart';
+import 'package:orderly/Models/model_fleet_orders.dart';
 import 'package:orderly/Models/model_myOrders.dart';
 import 'package:orderly/Models/model_producer_list.dart';
 import 'package:orderly/Models/model_product_List.dart';
@@ -15,6 +17,7 @@ class Api {
   static const String HOST_URL="http://93.188.162.210:3000/";//updated on 23/12/2020
   static const String CUST_REG="register";//updated on 23/12/2020
   static const String CUST_LOGIN=HOST_URL+"login";
+  static const String FLEET_LOGIN=HOST_URL+"fleet_login";
   static const String GET_PRODUCER_LIST=HOST_URL+"producer";
   static const String GET_PROD_LIST=HOST_URL+"product_list";
   static const String ADD_TO_CART=HOST_URL+"add_to_cart";
@@ -24,13 +27,29 @@ class Api {
   static const String GET_ADDRESS_LIST=HOST_URL+"view_address";
   static const String ADD_ADDRESS=HOST_URL+"add_address";
   static const String EDIT_ADDRESS=HOST_URL+"update_address";
+  static const String DEL_ADDRESS=HOST_URL+"delete_address";
   static const String PLACE_ORDER=HOST_URL+"place_order";
   static const String GET_MYORDER=HOST_URL+"my_order";
+  static const String GET_FLEET_ORDER=HOST_URL+"fleet_manager_orders";
+  static const String GET_FLEET_ORDER_DET=HOST_URL+"fleet_manager_orders_details";
+  static const String UPDATE_FLEET_STATUS=HOST_URL+"update_order_status";
 
   ///Login api
   static Future<dynamic> login(params) async {
     final response = await http.post(
       Uri.parse(CUST_LOGIN),
+      body: params,
+    );
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+      return ResultApiModel.fromJson(responseJson);
+    }
+  }
+
+  //for fleet login
+  static Future<dynamic> fleetlogin(params) async {
+    final response = await http.post(
+      Uri.parse(FLEET_LOGIN),
       body: params,
     );
     if (response.statusCode == 200) {
@@ -84,7 +103,7 @@ class Api {
     }
   }
 
-  //get cart list
+  //get address list
   static Future<dynamic> getAddress(params) async {
     final response = await http.post(
       Uri.parse(GET_ADDRESS_LIST),
@@ -105,6 +124,31 @@ class Api {
     if (response.statusCode == 200) {
       final responseJson = json.decode(response.body);
       return MyOrdersResp.fromJson(responseJson);
+    }
+  }
+
+  //fleet manager
+   //fleet order list
+  static Future<dynamic> getFleetOrdersList(params) async {
+    final response = await http.post(
+      Uri.parse(GET_FLEET_ORDER),
+      body: params,
+    );
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+      return FleetOrderResp.fromJson(responseJson);
+    }
+  }
+
+  //fleet order det
+  static Future<dynamic> getFleetOrdersDet(params) async {
+    final response = await http.post(
+      Uri.parse(GET_FLEET_ORDER_DET),
+      body: params,
+    );
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+      return FleetOrderDetResp.fromJson(responseJson);
     }
   }
 

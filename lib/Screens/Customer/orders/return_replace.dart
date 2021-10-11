@@ -2,13 +2,17 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:orderly/Configs/theme.dart';
+import 'package:orderly/Models/model_myOrders.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Widgets/app_button.dart';
+import 'package:readmore/readmore.dart';
 import 'package:shimmer/shimmer.dart';
 
 enum ReturnReasons { peformance, damage, arrivedLate, wrongItem, extraItem }
 
 class ReturnReplace extends StatefulWidget {
+  Orders orderData;
+  ReturnReplace({Key key,@required this.orderData}):super(key: key);
   _ReturnReplaceState createState() => _ReturnReplaceState();
 }
 
@@ -25,7 +29,7 @@ class _ReturnReplaceState extends State<ReturnReplace> {
       key: _scaffoldKey,
       appBar: new AppBar(
         title: Text(
-          Translate.of(context).translate('retur_replace'),
+          Translate.of(context).translate('return_replace'),
           style: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w600,
@@ -74,11 +78,11 @@ class _ReturnReplaceState extends State<ReturnReplace> {
                                     CachedNetworkImage(
                                       filterQuality: FilterQuality.medium,
                                       // imageUrl: Api.PHOTO_URL + widget.users.avatar,
-                                      imageUrl:
-                                      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
-                                      // imageUrl: widget.users.avatar == null
-                                      //     ? "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
-                                      //     : Api.PHOTO_URL + widget.users.avatar,
+                                      // imageUrl:
+                                      // "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
+                                      imageUrl: widget.orderData.imgPaths == null
+                                          ? "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
+                                          : widget.orderData.imgPaths,
                                       placeholder: (context, url) {
                                         return Shimmer.fromColors(
                                           baseColor: Theme.of(context).hoverColor,
@@ -138,8 +142,7 @@ class _ReturnReplaceState extends State<ReturnReplace> {
                                           CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              "Producer one",
-                                              // widget.users.firstName+" "+widget.users.lastName,
+                                              widget.orderData.producerName,
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .caption
@@ -150,11 +153,12 @@ class _ReturnReplaceState extends State<ReturnReplace> {
                                                       .primaryColor,
                                                   fontFamily: "Poppins"),
                                             ),
-                                            Text(
-                                              // widget.users.address != null
-                                              //     ? widget.users.address
-                                              //     : "",
-                                              "50 tonnes Vanilla Icecream",
+                                            ReadMoreText(
+                                              widget.orderData.productDesc,
+                                                trimLines: 2,
+                                                trimMode: TrimMode.Line,
+                                                trimCollapsedText: 'Show more',
+                                                trimExpandedText: 'Show less',
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .button
@@ -168,7 +172,7 @@ class _ReturnReplaceState extends State<ReturnReplace> {
                                               // widget.users.address != null
                                               //     ? widget.users.address
                                               //     : "",
-                                              "Quantity: 05",
+                                              "Quantity: "+widget.orderData.qty.toString(),
                                               style: Theme.of(context)
                                                   .textTheme
                                                   .button

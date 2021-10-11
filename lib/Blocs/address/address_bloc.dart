@@ -115,6 +115,29 @@ class AddressBloc extends Bloc<AddressEvent,AddressState> {
 
     }
 
+    // delete address
+    if(event is OnDeleteAddress){
+      yield AddressLoading();
+
+      Map<String,String> params={
+        'address_id':event.addressId,
+      };
+
+      var response = await http.post(
+        Uri.parse(Api.DEL_ADDRESS),
+        body: params,
+      );
+      try {
+        if (response.statusCode == 200) {
+          var resp = json.decode(response.body); //for dio dont need to convert to json.decode
+          yield AddressDeleteSuccess();
+        }
+      }catch(e){
+        yield AddressDeleteFail();
+      }
+
+    }
+
   }
 
 }

@@ -10,6 +10,13 @@ class OnLogin extends LoginEvent {
 
 }
 
+class OnFleetLogin extends LoginEvent{
+  var fbId,mobile,fcmId,deviceId;
+
+  OnFleetLogin({this.fbId,this.fcmId,this.deviceId,this.mobile});
+
+}
+
 class OnLogout extends LoginEvent {
   OnLogout();
 }

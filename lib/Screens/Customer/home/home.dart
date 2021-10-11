@@ -277,6 +277,7 @@ class _HomeState extends State<Home> {
                     //     {
                     //       if(mounted) {
                     //         setState(() {
+                    offset=0;
                               producerListIndex = index;
                               type = index == 0 ? "ALL" : "";
                               flagDataNotAvailable = false;
@@ -670,19 +671,26 @@ class _HomeState extends State<Home> {
                     child:ScopedModelDescendant<CartModel>(
                         builder: (context, child, model) {
                           return SafeArea(
+
                             child:
                             SmartRefresher(
                                 enablePullDown: true,
+                                // enablePullUp: true, //used for pagination
                                 // enablePullUp: state is ProductListSuccess, //used for pagination
                                 // &&
                                 // state.pagination != null &&
                                 // state.pagination.page < state.pagination.maxPage,
                                 onRefresh: _onRefresh,
                                 // onLoading: () {
-                                //   if (state is ProductListSuccess) {
-                                //     // _onLoading(state.pagination.page, state.list);
-                                //     _onRefresh();
-                                //   }
+                                //         offset += 10;
+                                //         _homeBloc.add(OnLoadingProductList(
+                                //         producerId: _producerList[producerListIndex].producerId.toString(),
+                                //         type: type,
+                                //         offset: offset.toString()
+                                //         ));
+                                //         _controller.refreshCompleted();
+                                //
+                                //
                                 // },
                                 controller: _controller,
                                 // header: ClassicHeader(
@@ -722,6 +730,7 @@ class _HomeState extends State<Home> {
                                 child:
                                 Container(
                                     height: MediaQuery.of(context).size.height,
+                                    margin: EdgeInsets.all(5.0),
                                     child:
                                     Column(
                                       children: [
@@ -1075,7 +1084,7 @@ class _HomeState extends State<Home> {
                                                     ))),
                                       ],
                                     ))
-                            ),
+                            )
                           );
     }));
 

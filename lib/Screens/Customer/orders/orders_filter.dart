@@ -17,8 +17,9 @@ class OrdersFilter extends StatefulWidget {
 class OrderStatusTimeFilter {
   String name;
   int index;
+  bool isChecked;
 
-  OrderStatusTimeFilter({this.name, this.index});
+  OrderStatusTimeFilter({this.name, this.index,this.isChecked});
 }
 
 class _OrdersFilterState extends State<OrdersFilter> {

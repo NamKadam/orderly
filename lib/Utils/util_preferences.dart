@@ -1,4 +1,9 @@
+import 'dart:io';
+
+import 'package:device_info/device_info.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:orderly/Utils/application.dart';
+import 'package:orderly/Utils/preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UtilPreferences {
@@ -75,6 +80,31 @@ class UtilPreferences {
     return Application.preferences.setStringList(key, value);
   }
 
+  static Future<String> getTokenId() async {
+    final FirebaseMessaging _fcm = FirebaseMessaging.instance;
+
+    var fcmToken = await _fcm.getToken();
+    UtilPreferences.setString(Preferences.fcmToken, fcmToken.toString());
+    var token=UtilPreferences.getString(Preferences.fcmToken);
+    print('token:-'+fcmToken.toString());
+    return token;
+  }
+
+  static Future<String> saveDeviceId() async{
+    var deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) { // import 'dart:io'
+      var androidDeviceId = await deviceInfo.androidInfo;
+      print("androiId"+androidDeviceId.androidId);
+
+      UtilPreferences.setString(Preferences.deviceId, androidDeviceId.androidId);
+     return androidDeviceId.androidId;
+    } else {
+      var iosDeviceId = await deviceInfo.iosInfo;
+      print("iosId"+ iosDeviceId.identifierForVendor);
+      UtilPreferences.setString(Preferences.deviceId, iosDeviceId.identifierForVendor);
+      return iosDeviceId.identifierForVendor;
+    }
+  }
 
 
   ///Singleton factory

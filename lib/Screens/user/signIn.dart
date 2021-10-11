@@ -451,7 +451,7 @@ class _LoginWithGoogleState extends State<LoginWithGoogle>{
                         SignUp(user:widget.user,signUpDataNavigation:widget.navigateData)));
 
                   }else{
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigation()));
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigation(userType: "0",)));
 
                   }
                 }

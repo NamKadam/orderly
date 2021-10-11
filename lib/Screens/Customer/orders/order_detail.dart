@@ -1,20 +1,27 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
+import 'package:orderly/Models/model_myOrders.dart';
 import 'package:orderly/Screens/Customer/orders/product_review.dart';
 import 'package:orderly/Screens/Customer/orders/return_replace.dart';
 import 'package:orderly/Screens/Customer/orders/track_order.dart';
+import 'package:orderly/Screens/mainNavigation.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Widgets/app_button.dart';
+import 'package:readmore/readmore.dart';
 import 'package:shimmer/shimmer.dart';
 
-class OrderDetail extends StatefulWidget{
-  _OrderDetailState createState()=> _OrderDetailState();
+class CustOrderDetail extends StatefulWidget{
+  Orders orderData;
+  CustOrderDetail({Key key,@required this.orderData}):super(key: key);
+
+  _CustOrderDetailState createState()=> _CustOrderDetailState();
 }
 
-class _OrderDetailState extends State<OrderDetail>{
+class _CustOrderDetailState extends State<CustOrderDetail>{
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -58,11 +65,11 @@ class _OrderDetailState extends State<OrderDetail>{
                     CachedNetworkImage(
                       filterQuality: FilterQuality.medium,
                       // imageUrl: Api.PHOTO_URL + widget.users.avatar,
-                      imageUrl:
-                          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
-                      // imageUrl: model.cart[index].productImg == null
-                      //     ? "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
-                      //     : model.cart[index].productImg,
+                      // imageUrl:
+                      //     "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
+                      imageUrl:widget.orderData.imgPaths == null
+                          ? "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
+                          : widget.orderData.imgPaths,
                       placeholder: (context, url) {
                         return Shimmer.fromColors(
                           baseColor: Theme.of(context).hoverColor,
@@ -118,19 +125,22 @@ class _OrderDetailState extends State<OrderDetail>{
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Producer one",
-                              // widget.users.firstName+" "+widget.users.lastName,
+                              widget.orderData.producerName,
                               style: Theme.of(context)
                                   .textTheme
                                   .caption
                                   .copyWith(
                                   fontSize: 14.0,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppTheme.textColor,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppTheme.appColor,
                                   fontFamily: "Poppins"),
                             ),
-                            Text(
-                              "50 tonnes",
+                            ReadMoreText(
+                              widget.orderData.productDesc,
+                              trimLines: 2,
+                              trimMode: TrimMode.Line,
+                              trimCollapsedText: 'Show more',
+                              trimExpandedText: 'Show less',
                               style: Theme.of(context)
                                   .textTheme
                                   .button
@@ -141,7 +151,7 @@ class _OrderDetailState extends State<OrderDetail>{
                                   fontFamily: "Poppins"),
                             ),
                             Text(
-                             "Quantity: 05",
+                             "Quantity: "+widget.orderData.qty.toString(),
                               style: Theme.of(context)
                                   .textTheme
                                   .button
@@ -168,7 +178,11 @@ class _OrderDetailState extends State<OrderDetail>{
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Order Accepted',
+                        widget.orderData.currentStatus==0
+                        ?
+                        "Order Pending"
+                            :
+                            "Order Accepted",
                               style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontFamily: 'Poppins',
@@ -178,7 +192,7 @@ class _OrderDetailState extends State<OrderDetail>{
                             ),
                             //date text
                             Text(
-                              'On Thu,8 July 2021',
+                              'On '+DateFormat('EEEE, d MMM, yyyy').format(DateTime.parse(widget.orderData.orderDate)),
                               style: TextStyle(
                                   fontWeight: FontWeight.w300,
                                   fontFamily: 'Poppins',
@@ -298,7 +312,7 @@ class _OrderDetailState extends State<OrderDetail>{
                     child:
                 GestureDetector(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>ReturnReplace()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>ReturnReplace(orderData: widget.orderData,)));
                     },
                     child: Card(
                         elevation: 5.0,
@@ -337,9 +351,13 @@ class _OrderDetailState extends State<OrderDetail>{
             Padding(
               padding: EdgeInsets.only(top: 35.0,left: 20.0,right: 20.0),
                 child:AppButton(
-              onPressed: (){},
+              onPressed: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                MainNavigation()));
+              },
               text: 'Continue Shopping',
               disableTouchWhenLoading: false,
+                  
             ))
           ],
         ),

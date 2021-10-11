@@ -24,7 +24,25 @@ class _MyOrdersState extends State<MyOrders>{
   List<Orders> _myOrderList;
   bool isconnectedToInternet = false;
   bool flagNoData=false;
+  bool _isSearching = false;
+  String _searchText = "";
+  List<Orders> searchresult=[];
 
+  _SearchListExampleState() {
+    _searchcontroller.addListener(() {
+      if (_searchcontroller.text.isEmpty) {
+        setState(() {
+          _isSearching = false;
+          _searchText = "";
+        });
+      } else {
+        setState(() {
+          _isSearching = true;
+          _searchText = _searchcontroller.text;
+        });
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -32,6 +50,7 @@ class _MyOrdersState extends State<MyOrders>{
     super.initState();
     flagNoData=false;
     _myOrdersBloc=BlocProvider.of<MyOrdersBloc>(context);
+    _isSearching = false;
 
     setBlocData();
   }
@@ -47,6 +66,41 @@ class _MyOrdersState extends State<MyOrders>{
     }
   }
 
+  void _handleSearchStart() {
+    setState(() {
+      _isSearching = true;
+    });
+  }
+
+  void _handleSearchEnd() {
+    setState(() {
+      _isSearching = false;
+      _searchcontroller.clear();
+    });
+  }
+
+  void searchOperation(String searchText) {
+    searchresult.clear();
+    if (_isSearching != null) {
+      for (int i = 0; i < _myOrderList.length; i++) {
+        Orders order=new Orders();
+        order.producerName=_myOrderList[i].producerName.toString();
+        order.productDesc=_myOrderList[i].productDesc.toString();
+        order.productName=_myOrderList[i].productName.toString();
+        order.orderDate=_myOrderList[i].orderDate.toString();
+        order.qty=_myOrderList[i].qty;
+
+        if (order.producerName.toString().toLowerCase().contains(searchText.toLowerCase())
+        ||order.orderDate.toString().toLowerCase().contains(searchText.toLowerCase())
+        ||order.qty.toString().toLowerCase().contains(searchText.toLowerCase()) ){
+          searchresult.add(order);
+        }
+      }
+      setState(() {
+
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +139,9 @@ class _MyOrdersState extends State<MyOrders>{
                             children: [
                               IconButton(
                                 icon: Image.asset(Images.search,width: 25.0,height: 25.0,),
-                                onPressed: () {},
+                                onPressed: () {
+                                  _handleSearchStart();
+                                },
                               ),
                               Container(
                                   margin: EdgeInsets.only(top:5.0),
@@ -107,6 +163,7 @@ class _MyOrdersState extends State<MyOrders>{
                                     onChanged: (value) {
                                       // this.phoneNo=value;
                                       print(value);
+                                      searchOperation(value);
                                     },
                                   )),
                             ],
@@ -145,10 +202,11 @@ class _MyOrdersState extends State<MyOrders>{
                       )
                   )
               ),
-              //for list of orders
 
+              //for list of orders
               Expanded(
-                child:
+                child: searchresult.length != 0 || _searchcontroller.text.isNotEmpty
+                    ?
                 ListView.separated(
                     controller: _scrollController,
                     physics: const AlwaysScrollableScrollPhysics(),
@@ -157,7 +215,29 @@ class _MyOrdersState extends State<MyOrders>{
                         height: 0.0,
                       );
                     },
-
+                    itemCount: searchresult!=null?searchresult.length:6,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                          onTap: (){
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                    new CustOrderDetail(orderData:searchresult[index])));
+                            },
+                          child:
+                          OrderListItem(orderList:searchresult,position:index)
+                      );
+                    })
+                    :
+                ListView.separated(
+                    controller: _scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    separatorBuilder: (context, index) {
+                      return SizedBox(
+                        height: 0.0,
+                      );
+                    },
                     itemCount: _myOrderList!=null?_myOrderList.length:6,
                     itemBuilder: (context, index) {
                       return GestureDetector(
@@ -166,17 +246,13 @@ class _MyOrdersState extends State<MyOrders>{
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                    new OrderDetail()));
-
+                                    new CustOrderDetail(orderData:_myOrderList[index])));
                           },
                           child:
-                          // CartListItem(memberlist[index])
-
                           OrderListItem(orderList:_myOrderList,position:index)
                       );
-                    }),
-                //   return MembersList(memberlist[index]);
-                // }),
+                    })
+
               )
 
             ],

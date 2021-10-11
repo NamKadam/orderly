@@ -6,6 +6,7 @@ import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Screens/Customer/orders/return_replace.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:timeline_tile/timeline_tile.dart';
 
 class TrackOrder extends StatefulWidget{
   _TrackOrderState createState()=>_TrackOrderState();
@@ -204,7 +205,7 @@ class _TrackOrderState extends State<TrackOrder>{
               SizedBox(
                 height: 8.0,
               ),
-              //order track
+              // order track
               // Container(
               //   child: Stepper(
               //     currentStep: this.current_step,
@@ -235,6 +236,134 @@ class _TrackOrderState extends State<TrackOrder>{
               //     },
               //   ),
               // ),
+              // Container(
+              //   height: MediaQuery.of(context).size.height*0.615,
+              //   child:PackageDeliveryTrackingPage(),
+              // ),
+              Container(
+              height: 460,
+              color: Colors.white,
+              child: ListView(
+              shrinkWrap: true,
+              children: <Widget>[
+                TimelineTile(
+                  alignment: TimelineAlign.manual,
+                  lineXY: 0.1,
+                  isFirst: true,
+                  indicatorStyle:  IndicatorStyle(
+                    width: 20,
+                    color: Theme.of(context)
+                        .primaryColor,
+                    padding: EdgeInsets.all(6),
+                  ),
+                  endChild: _RightChild(
+                    // asset: 'assets/images/cart.png',
+                    title: 'Order Accepted',
+                    message: 'On Thu, 8 July 2021',
+                  ),
+                  beforeLineStyle: LineStyle(
+                    thickness: 3,
+                    color: Theme.of(context)
+                        .primaryColor,
+                  ),
+                ),
+                TimelineTile(
+                  alignment: TimelineAlign.manual,
+                  lineXY: 0.1,
+                  indicatorStyle:  IndicatorStyle(
+                    width: 20,
+                    color:Theme.of(context)
+                        .primaryColor,
+                    padding: EdgeInsets.all(6),
+                  ),
+                  endChild:  _RightChild(
+                    // asset: 'assets/images/cart.png',
+                    title: 'Producer notified',
+                    message: 'On Thu, 8 July 2021',
+                  ),
+                  beforeLineStyle:  LineStyle(
+                    thickness: 3,
+                    color: Theme.of(context)
+                        .primaryColor,
+                  ),
+                ),
+                TimelineTile(
+                  alignment: TimelineAlign.manual,
+                  lineXY: 0.1,
+                  indicatorStyle:  IndicatorStyle(
+                    width: 20,
+                    color: Theme.of(context).primaryColor,
+                    padding: EdgeInsets.all(6),
+                  ),
+                  endChild: _RightChild(
+                    disabled: true,
+
+                    // asset: 'assets/images/cart.png',
+                    title: 'Vehicle reserved',
+                    message: ' ',
+                  ),
+                  beforeLineStyle:  LineStyle(
+                    thickness: 3,
+
+                    color:
+                    Theme.of(context)
+                        .primaryColor,
+                  ),
+                  afterLineStyle: const LineStyle(
+                    thickness: 3,
+                    color: Color(0xFFDADADA),
+                  ),
+                ),
+                TimelineTile(
+                  alignment: TimelineAlign.manual,
+                  lineXY: 0.1,
+                  //isLast: true,
+                  indicatorStyle: const IndicatorStyle(
+                    width: 20,
+                    color: Color(0xFFDADADA),
+                    padding: EdgeInsets.all(6),
+                  ),
+                  endChild:  _RightChild(
+                    disabled: true,
+                    // asset: 'assets/images/cart.png',
+                    title: 'Vehicle is on its way',
+                    message: ' ',
+                  ),
+                  beforeLineStyle: const LineStyle(
+                    thickness: 3,
+
+                    color: Color(0xFFDADADA),
+                  ),
+                  afterLineStyle: const LineStyle(
+                    thickness: 3,
+
+                    color: Color(0xFFDADADA),
+                  ),
+                ),
+                TimelineTile(
+                  alignment: TimelineAlign.manual,
+                  lineXY: 0.1,
+                  isLast: true,
+                  indicatorStyle: const IndicatorStyle(
+                    width: 20,
+                    color: Color(0xFFDADADA),
+                    padding: EdgeInsets.all(6),
+                  ),
+                  endChild:  _RightChild(
+                    disabled: true,
+                    // asset: 'assets/images/cart.png',
+                    title: 'Job Completed',
+                    message: ' ',
+                  ),
+                  beforeLineStyle: const LineStyle(
+                    thickness: 3,
+
+                    color: Color(0xFFDADADA),
+                  ),
+                ),
+              ],
+            ),
+          ),
               SizedBox(
                 height: 8.0,
               ),
@@ -322,12 +451,781 @@ class _TrackOrderState extends State<TrackOrder>{
                           ))),
                 ),
               )
-              
+
             ],
           ),
         ),
       ),
     );
   }
-  
+
 }
+
+class _RightChild extends StatelessWidget {
+  const _RightChild({
+    Key key,
+    // this.asset,
+    this.title,
+    this.message,
+    this.disabled = false,
+  }) : super(key: key);
+
+  //final String asset;
+  final String title;
+  final String message;
+  final bool disabled;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        children: <Widget>[
+          // Opacity(
+          //   child: Image.asset(asset, height: 50),
+          //   opacity: disabled ? 0.5 : 1,
+          // ),
+          const SizedBox(width: 16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                title,
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  color: disabled
+                      ? const Color(0xFFBABABA)
+                      : Theme.of(context).primaryColor,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                message,
+                style: TextStyle(
+                  color: disabled
+                      ? const Color(0xFFD5D5D5)
+                      : AppTheme.textColor,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+
+//
+// const kTileHeight = 50.0;
+//
+// class PackageDeliveryTrackingPage extends StatelessWidget {
+//   final data = _data(1);
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       // appBar: TitleAppBar('Package Delivery Tracking'),
+//       body: Container(
+//         width: double.maxFinite,
+//         child: Card(
+//           margin: EdgeInsets.all(20.0),
+//           child: Column(
+//             mainAxisSize: MainAxisSize.max,
+//             children: [
+//               // Padding(
+//               //   padding: const EdgeInsets.all(20.0),
+//               //   // child: _OrderTitle(
+//               //   //   orderInfo: data,
+//               //   // ),
+//               // ),
+//               // Divider(height: 1.0),
+//               _DeliveryProcesses(processes: data.deliveryProcesses),
+//               // Divider(height: 1.0),
+//               // Padding(
+//               //   padding: const EdgeInsets.all(20.0),
+//               //   child: _OnTimeBar(driver: data.driverInfo),
+//               // ),
+//             ],
+//           ),
+//         ),
+//       )
+//       // ListView.builder(
+//       //   itemCount: 2,
+//       //   itemBuilder: (context, index) {
+//       //     final data = _data(index + 1);
+//       //     return Container(
+//       //       width: 360.0,
+//       //       child: Card(
+//       //         margin: EdgeInsets.all(20.0),
+//       //         child: Column(
+//       //           mainAxisSize: MainAxisSize.min,
+//       //           children: [
+//       //             Padding(
+//       //               padding: const EdgeInsets.all(20.0),
+//       //               child: _OrderTitle(
+//       //                 orderInfo: data,
+//       //               ),
+//       //             ),
+//       //             Divider(height: 1.0),
+//       //             _DeliveryProcesses(processes: data.deliveryProcesses),
+//       //             Divider(height: 1.0),
+//       //             Padding(
+//       //               padding: const EdgeInsets.all(20.0),
+//       //               child: _OnTimeBar(driver: data.driverInfo),
+//       //             ),
+//       //           ],
+//       //         ),
+//       //       ),
+//       //     );
+//       //   },
+//       // ),
+//     );
+//   }
+// }
+//
+// class _OrderTitle extends StatelessWidget {
+//   const _OrderTitle({
+//     Key key,
+//     @required this.orderInfo,
+//   }) : super(key: key);
+//
+//   final _OrderInfo orderInfo;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       children: [
+//         Text(
+//           'Delivery #${orderInfo.id}',
+//           style: TextStyle(
+//             fontWeight: FontWeight.bold,
+//           ),
+//         ),
+//         Spacer(),
+//         Text(
+//           '${orderInfo.date.day}/${orderInfo.date.month}/${orderInfo.date.year}',
+//           style: TextStyle(
+//             color: Color(0xffb6b2b2),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+//
+// class _InnerTimeline extends StatelessWidget {
+//   const _InnerTimeline({
+//     @required this.messages,
+//   });
+//
+//   final List<_DeliveryMessage> messages;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     bool isEdgeIndex(int index) {
+//       return index == 0 || index == messages.length + 1;
+//     }
+//
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(vertical: 8.0),
+//       child: FixedTimeline.tileBuilder(
+//         theme: TimelineTheme.of(context).copyWith(
+//           nodePosition: 0,
+//           connectorTheme: TimelineTheme.of(context).connectorTheme.copyWith(
+//             thickness: 1.0,
+//           ),
+//           indicatorTheme: TimelineTheme.of(context).indicatorTheme.copyWith(
+//             size: 10.0,
+//             position: 0.5,
+//           ),
+//         ),
+//         builder: TimelineTileBuilder(
+//           indicatorBuilder: (_, index) =>
+//           !isEdgeIndex(index) ? Indicator.outlined(borderWidth: 1.0) : null,
+//           startConnectorBuilder: (_, index) => Connector.dashedLine(),
+//           endConnectorBuilder: (_, index) => Connector.dashedLine(),
+//           contentsBuilder: (_, index) {
+//             if (isEdgeIndex(index)) {
+//               return null;
+//             }
+//
+//             return Padding(
+//               padding: EdgeInsets.only(left: 8.0),
+//               child: Text(messages[index - 1].toString()),
+//             );
+//           },
+//           itemExtentBuilder: (_, index) => isEdgeIndex(index) ? 10.0 : 30.0,
+//           nodeItemOverlapBuilder: (_, index) =>
+//           isEdgeIndex(index) ? true : null,
+//           itemCount: messages.length + 2,
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// class _DeliveryProcesses extends StatelessWidget {
+//   const _DeliveryProcesses({Key key, @required this.processes})
+//       : super(key: key);
+//
+//   final List<_DeliveryProcess> processes;
+//   @override
+//   Widget build(BuildContext context) {
+//     return DefaultTextStyle(
+//       style: TextStyle(
+//         color: Color(0xff9b9b9b),
+//         fontSize: 12.5,
+//       ),
+//       child: Padding(
+//         padding: const EdgeInsets.all(20.0),
+//         child: FixedTimeline.tileBuilder(
+//           theme: TimelineThemeData(
+//             nodePosition: 0,
+//             color: Color(0xff989898),
+//             indicatorTheme: IndicatorThemeData(
+//               position: 0,
+//               size: 20.0,
+//             ),
+//             connectorTheme: ConnectorThemeData(
+//               thickness: 2.5,
+//             ),
+//           ),
+//           builder: TimelineTileBuilder.connected(
+//             connectionDirection: ConnectionDirection.before,
+//             itemCount: processes.length,
+//             contentsBuilder: (_, index) {
+//               if (processes[index].isCompleted) return null;
+//
+//               return Padding(
+//                 padding: EdgeInsets.only(left: 8.0),
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   mainAxisSize: MainAxisSize.min,
+//                   children: [
+//                     Text(
+//                       processes[index].name,
+//                       style: DefaultTextStyle.of(context).style.copyWith(
+//                         fontSize: 18.0,
+//                       ),
+//                     ),
+//                     _InnerTimeline(messages: processes[index].messages),
+//                     // Text(processes[index].messages.toString())
+//                   ],
+//                 ),
+//               );
+//             },
+//             indicatorBuilder: (_, index) {
+//               if (processes[index].isCompleted) {
+//                 return DotIndicator(
+//                   color: Theme.of(context).primaryColor,
+//                   // child: Icon(
+//                   //   Icons.check,
+//                   //   color: Colors.white,
+//                   //   size: 12.0,
+//                   // ),
+//                 );
+//               } else {
+//                 return OutlinedDotIndicator(
+//                   borderWidth: 2.5,
+//                 );
+//               }
+//             },
+//             connectorBuilder: (_, index, ___) => SolidLineConnector(
+//               color: processes[index].isCompleted ? Theme.of(context).primaryColor : Colors.blue,
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// class _OnTimeBar extends StatelessWidget {
+//   const _OnTimeBar({Key key, @required this.driver}) : super(key: key);
+//
+//   final _DriverInfo driver;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       children: [
+//         MaterialButton(
+//           onPressed: () {
+//             ScaffoldMessenger.of(context).showSnackBar(
+//               SnackBar(
+//                 content: Text('On-time!'),
+//               ),
+//             );
+//           },
+//           elevation: 0,
+//           shape: StadiumBorder(),
+//           color: Color(0xff66c97f),
+//           textColor: Colors.white,
+//           child: Text('On-time'),
+//         ),
+//         Spacer(),
+//         Text(
+//           'Driver\n${driver.name}',
+//           textAlign: TextAlign.center,
+//         ),
+//         SizedBox(width: 12.0),
+//         Container(
+//           width: 40.0,
+//           height: 40.0,
+//           decoration: BoxDecoration(
+//             shape: BoxShape.circle,
+//             image: DecorationImage(
+//               fit: BoxFit.fitWidth,
+//               image: NetworkImage(
+//                 driver.thumbnailUrl,
+//               ),
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+//
+// _OrderInfo _data(int id) => _OrderInfo(
+//   id: id,
+//   date: DateTime.now(),
+//   driverInfo: _DriverInfo(
+//     name: 'Philipe',
+//     thumbnailUrl:
+//     'https://i.pinimg.com/originals/08/45/81/084581e3155d339376bf1d0e17979dc6.jpg',
+//   ),
+//   deliveryProcesses: [
+//     _DeliveryProcess(
+//       'Order Accepted',
+//       messages: [
+//         _DeliveryMessage('On Thu, 8 July 2021'),
+//         // _DeliveryMessage('11:30am', 'Reached halfway mark'),
+//       ],
+//     ),
+//     _DeliveryProcess(
+//       'Producer notified',
+//       messages: [
+//         _DeliveryMessage('On Thu, 8 July 2021'),
+//         // _DeliveryMessage('11:35am', 'Package delivered by m.vassiliades'),
+//       ],
+//     ),
+//     _DeliveryProcess(
+//       'Vehicle reserved',
+//       messages: [
+//         _DeliveryMessage(' '),// delivery message will come from API
+//       ],
+//     ),
+//     _DeliveryProcess(
+//       'Vehicle is on its way',
+//       messages: [
+//         _DeliveryMessage(' '),// delivery message will come from API
+//       ],
+//     ),
+//     _DeliveryProcess(
+//       'Job Complete',
+//       messages: [
+//         _DeliveryMessage(' '),// delivery message will come from API
+//       ],
+//     ),
+//     _DeliveryProcess.complete(),
+//   ],
+// );
+//
+// class _OrderInfo {
+//   const _OrderInfo({
+//     @required this.id,
+//     @required this.date,
+//     @required this.driverInfo,
+//     @required this.deliveryProcesses,
+//   });
+//
+//   final int id;
+//   final DateTime date;
+//   final _DriverInfo driverInfo;
+//   final List<_DeliveryProcess> deliveryProcesses;
+// }
+//
+// class _DriverInfo {
+//   const _DriverInfo({
+//     @required this.name,
+//     @required this.thumbnailUrl,
+//   });
+//
+//   final String name;
+//   final String thumbnailUrl;
+// }
+//
+// class _DeliveryProcess {
+//   const _DeliveryProcess(
+//       this.name, {
+//         this.messages = const [],
+//       });
+//
+//   const _DeliveryProcess.complete()
+//       : this.name = 'Done',
+//         this.messages = const [];
+//
+//   final String name;
+//   final List<_DeliveryMessage> messages;
+//
+//   bool get isCompleted => name == 'Done';
+// }
+//
+// class _DeliveryMessage {
+//   const _DeliveryMessage(this.message);
+//
+//   // final String createdAt; // final DateTime createdAt;
+//   final String message;
+//
+//   @override
+//   String toString() {
+//     return '$message';
+//   }
+// }
+
+//
+// import 'package:flutter/material.dart';
+// import 'package:flutter_showcase/flutter_showcase.dart';
+// import 'package:timeline_tile/timeline_tile.dart';
+//
+// class ShowcaseDeliveryTimeline extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Showcase(
+//       title: 'Delivery Timeline',
+//       app: _DeliveryTimelineApp(),
+//       description:
+//       'A simple timeline with few steps to show the current status of '
+//           'an order.',
+//       template: SimpleTemplate(reverse: false),
+//       theme: TemplateThemeData(
+//         frameTheme: FrameThemeData(
+//           statusBarBrightness: Brightness.dark,
+//           frameColor: const Color(0xFF215C3F),
+//         ),
+//         flutterLogoColor: FlutterLogoColor.original,
+//         brightness: Brightness.dark,
+//         backgroundColor: const Color(0xFFE9E9E9),
+//         titleTextStyle: GoogleFonts.neuton(
+//           fontSize: 80,
+//           fontWeight: FontWeight.bold,
+//           color: const Color(0xFF2C7B54),
+//         ),
+//         descriptionTextStyle: GoogleFonts.yantramanav(
+//           fontSize: 24,
+//           height: 1.2,
+//           color: const Color(0xFF2C7B54),
+//         ),
+//         buttonTextStyle: const TextStyle(
+//           color: Colors.white,
+//           fontWeight: FontWeight.bold,
+//           letterSpacing: 2,
+//         ),
+//         buttonIconTheme: const IconThemeData(color: Colors.white),
+//         buttonTheme: ButtonThemeData(
+//           buttonColor: const Color(0xFF2C7B54),
+//           shape: RoundedRectangleBorder(
+//             borderRadius: BorderRadius.circular(50),
+//           ),
+//           padding: const EdgeInsets.all(16),
+//         ),
+//       ),
+//       links: [
+//         LinkData.github('https://github.com/JHBitencourt/timeline_tile'),
+//       ],
+//       logoLink: LinkData(
+//         icon: Image.asset(
+//           'assets/built_by_jhb_black.png',
+//           fit: BoxFit.fitHeight,
+//         ),
+//         url: 'https://github.com/JHBitencourt',
+//       ),
+//     );
+//   }
+// }
+//
+// class _DeliveryTimelineApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       title: 'Delivery TimelineTile',
+//       builder: Frame.builder,
+//       home: _DeliveryTimeline(),
+//     );
+//   }
+// }
+//
+// class _DeliveryTimeline extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       color: const Color(0xFF379A69),
+//       child: Theme(
+//         data: Theme.of(context).copyWith(
+//           accentColor: const Color(0xFF27AA69).withOpacity(0.2),
+//         ),
+//         child: SafeArea(
+//           child: Scaffold(
+//             appBar: _AppBar(),
+//             backgroundColor: Colors.white,
+//             body: Column(
+//               children: <Widget>[
+//                 _Header(),
+//                 Expanded(child: _TimelineDelivery()),
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// class _TimelineDelivery extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Center(
+//       child: ListView(
+//         shrinkWrap: true,
+//         children: <Widget>[
+//           TimelineTile(
+//             alignment: TimelineAlign.manual,
+//             lineXY: 0.1,
+//             isFirst: true,
+//             indicatorStyle: const IndicatorStyle(
+//               width: 20,
+//               color: Color(0xFF27AA69),
+//               padding: EdgeInsets.all(6),
+//             ),
+//             endChild: const _RightChild(
+//               asset: 'assets/delivery/order_placed.png',
+//               title: 'Order Placed',
+//               message: 'We have received your order.',
+//             ),
+//             beforeLineStyle: const LineStyle(
+//               color: Color(0xFF27AA69),
+//             ),
+//           ),
+//           TimelineTile(
+//             alignment: TimelineAlign.manual,
+//             lineXY: 0.1,
+//             indicatorStyle: const IndicatorStyle(
+//               width: 20,
+//               color: Color(0xFF27AA69),
+//               padding: EdgeInsets.all(6),
+//             ),
+//             endChild: const _RightChild(
+//               asset: 'assets/delivery/order_confirmed.png',
+//               title: 'Order Confirmed',
+//               message: 'Your order has been confirmed.',
+//             ),
+//             beforeLineStyle: const LineStyle(
+//               color: Color(0xFF27AA69),
+//             ),
+//           ),
+//           TimelineTile(
+//             alignment: TimelineAlign.manual,
+//             lineXY: 0.1,
+//             indicatorStyle: const IndicatorStyle(
+//               width: 20,
+//               color: Color(0xFF2B619C),
+//               padding: EdgeInsets.all(6),
+//             ),
+//             endChild: const _RightChild(
+//               asset: 'assets/delivery/order_processed.png',
+//               title: 'Order Processed',
+//               message: 'We are preparing your order.',
+//             ),
+//             beforeLineStyle: const LineStyle(
+//               color: Color(0xFF27AA69),
+//             ),
+//             afterLineStyle: const LineStyle(
+//               color: Color(0xFFDADADA),
+//             ),
+//           ),
+//           TimelineTile(
+//             alignment: TimelineAlign.manual,
+//             lineXY: 0.1,
+//             isLast: true,
+//             indicatorStyle: const IndicatorStyle(
+//               width: 20,
+//               color: Color(0xFFDADADA),
+//               padding: EdgeInsets.all(6),
+//             ),
+//             endChild: const _RightChild(
+//               disabled: true,
+//               asset: 'assets/delivery/ready_to_pickup.png',
+//               title: 'Ready to Pickup',
+//               message: 'Your order is ready for pickup.',
+//             ),
+//             beforeLineStyle: const LineStyle(
+//               color: Color(0xFFDADADA),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+//
+// class _RightChild extends StatelessWidget {
+//   const _RightChild({
+//     Key key,
+//     this.asset,
+//     this.title,
+//     this.message,
+//     this.disabled = false,
+//   }) : super(key: key);
+//
+//   final String asset;
+//   final String title;
+//   final String message;
+//   final bool disabled;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.all(16.0),
+//       child: Row(
+//         children: <Widget>[
+//           Opacity(
+//             child: Image.asset(asset, height: 50),
+//             opacity: disabled ? 0.5 : 1,
+//           ),
+//           const SizedBox(width: 16),
+//           Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             mainAxisSize: MainAxisSize.min,
+//             children: <Widget>[
+//               Text(
+//                 title,
+//                 style: GoogleFonts.yantramanav(
+//                   color: disabled
+//                       ? const Color(0xFFBABABA)
+//                       : const Color(0xFF636564),
+//                   fontSize: 18,
+//                   fontWeight: FontWeight.w500,
+//                 ),
+//               ),
+//               const SizedBox(height: 6),
+//               Text(
+//                 message,
+//                 style: GoogleFonts.yantramanav(
+//                   color: disabled
+//                       ? const Color(0xFFD5D5D5)
+//                       : const Color(0xFF636564),
+//                   fontSize: 16,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+//
+// class _Header extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       decoration: const BoxDecoration(
+//         color: Color(0xFFF9F9F9),
+//         border: Border(
+//           bottom: BorderSide(
+//             color: Color(0xFFE9E9E9),
+//             width: 3,
+//           ),
+//         ),
+//       ),
+//       child: Padding(
+//         padding: const EdgeInsets.all(10),
+//         child: Row(
+//           children: <Widget>[
+//             Expanded(
+//               child: Column(
+//                 mainAxisSize: MainAxisSize.min,
+//                 children: <Widget>[
+//                   Text(
+//                     'ESTIMATED TIME',
+//                     style: GoogleFonts.yantramanav(
+//                       color: const Color(0xFFA2A2A2),
+//                       fontSize: 16,
+//                     ),
+//                   ),
+//                   Text(
+//                     '30 minutes',
+//                     style: GoogleFonts.yantramanav(
+//                       color: const Color(0xFF636564),
+//                       fontSize: 16,
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             Expanded(
+//               child: Column(
+//                 mainAxisSize: MainAxisSize.min,
+//                 children: <Widget>[
+//                   Text(
+//                     'ORDER NUMBER',
+//                     style: GoogleFonts.yantramanav(
+//                       color: const Color(0xFFA2A2A2),
+//                       fontSize: 16,
+//                     ),
+//                   ),
+//                   Text(
+//                     '#2482011',
+//                     style: GoogleFonts.yantramanav(
+//                       color: const Color(0xFF636564),
+//                       fontSize: 16,
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// class _AppBar extends StatelessWidget implements PreferredSizeWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return AppBar(
+//       backgroundColor: const Color(0xFF27AA69),
+//       leading: const Icon(Icons.menu),
+//       actions: <Widget>[
+//         Center(
+//           child: Padding(
+//             padding: const EdgeInsets.only(right: 16),
+//             child: Text(
+//               'CANCEL',
+//               style: GoogleFonts.neuton(
+//                 color: Colors.white,
+//                 fontSize: 16,
+//               ),
+//             ),
+//           ),
+//         ),
+//       ],
+//       title: Text(
+//         'Track Order',
+//         style: GoogleFonts.neuton(
+//             color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+//       ),
+//     );
+//   }
+//
+//   @override
+//   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+// }

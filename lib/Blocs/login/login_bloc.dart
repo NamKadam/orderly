@@ -99,6 +99,36 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       // }
     }
 
+     //for fleet
+    if (event is OnFleetLogin) {
+      ///Notify loading to UI
+      yield LoginLoading();
+
+      ///Fetch API via repository
+      final ResultApiModel result = await userRepository.fleetlogin(
+          fbId: event.fbId,
+          mobile:event.mobile,
+        fcmId: event.fcmId,
+        deviceId: event.deviceId
+
+      );
+      ///Case API fail but not have token
+      // if (result.msg=="Success") {
+      ///Login API success
+      final User user = User.fromJson(result.user);
+      try {
+        ///Begin start AuthBloc Event AuthenticationSave
+        AppBloc.authBloc.add(OnSaveUser(user));
+        yield LoginSuccess(userModel: user);
+      } catch (error) {
+        ///Notify loading to UI
+        yield LoginFail(msg: result.msg);
+      }
+      // } else {
+      //   ///Notify loading to UI
+      //   yield LoginFail(msg:result.msg);
+      // }
+    }
 
     ///Event for logout
     if (event is OnLogout) {

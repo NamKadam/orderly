@@ -25,19 +25,20 @@ import 'package:orderly/Utils/translate.dart';
 // import 'package:orderly/flutterexample.dart';
 
 class MainNavigation extends StatefulWidget {
-  String flagOrder="";
-  MainNavigation({Key key,@required this.flagOrder}):super(key: key);
+  String flagOrder="",userType;
+  MainNavigation({Key key,@required this.flagOrder,this.userType}):super(key: key);
 
   _MainNavigationState createState() => _MainNavigationState();
 }
 
 class _MainNavigationState extends State<MainNavigation> {
   int _selectedIndex = 0;
-  String title = "";
+  String title = "",userType="";
 
   ///List bottom menu
   List<BottomNavigationBarItem> _bottomBarItem(BuildContext context) {
-    // if(Application.user.userType=="0"){
+
+    if(userType=="0"){
       return [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
@@ -95,76 +96,76 @@ class _MainNavigationState extends State<MainNavigation> {
           ),
         ),
       ];
-    // }
-    // else{
-    //   //for fleet
-    //   return [
-    //     BottomNavigationBarItem(
-    //       icon: Image.asset(
-    //         Images.order,
-    //         width: 25.0,
-    //         height: 25.0,
-    //       ),
-    //       activeIcon: Image.asset(
-    //         Images.orderActive,
-    //         width: 25.0,
-    //         height: 25.0,
-    //       ),
-    //       title: Padding(
-    //         padding: EdgeInsets.only(top: 3),
-    //         child: Text(Translate.of(context).translate('orders')),
-    //       ),
-    //     ),
-    //     BottomNavigationBarItem(
-    //       icon: Image.asset(
-    //         Images.inventory,
-    //         width: 25.0,
-    //         height: 25.0,
-    //       ),
-    //       activeIcon: Image.asset(
-    //         Images.inventoryActive,
-    //         width: 25.0,
-    //         height: 25.0,
-    //       ),
-    //       title: Padding(
-    //         padding: EdgeInsets.only(top: 3),
-    //         child: Text(Translate.of(context).translate('inventory')),
-    //       ),
-    //     ),
-    //     BottomNavigationBarItem(
-    //       icon: Image.asset(
-    //         Images.claim,
-    //         width: 25.0,
-    //         height: 25.0,
-    //       ),
-    //       activeIcon: Image.asset(
-    //         Images.claimActive,
-    //         width: 25.0,
-    //         height: 25.0,
-    //       ),
-    //       title: Padding(
-    //         padding: EdgeInsets.only(top: 3),
-    //         child: Text(Translate.of(context).translate('claims')),
-    //       ),
-    //     ),
-    //     BottomNavigationBarItem(
-    //       icon: Image.asset(
-    //         Images.profile,
-    //         width: 25.0,
-    //         height: 25.0,
-    //       ),
-    //       activeIcon: Image.asset(
-    //         Images.profileActive,
-    //         width: 25.0,
-    //         height: 25.0,
-    //       ),
-    //       title: Padding(
-    //         padding: EdgeInsets.only(top: 3),
-    //         child: Text(Translate.of(context).translate('profile')),
-    //       ),
-    //     ),
-    //   ];
-    // }
+    }
+    else{
+      //for fleet
+      return [
+        BottomNavigationBarItem(
+          icon: Image.asset(
+            Images.order,
+            width: 25.0,
+            height: 25.0,
+          ),
+          activeIcon: Image.asset(
+            Images.orderActive,
+            width: 25.0,
+            height: 25.0,
+          ),
+          title: Padding(
+            padding: EdgeInsets.only(top: 3),
+            child: Text(Translate.of(context).translate('orders')),
+          ),
+        ),
+        BottomNavigationBarItem(
+          icon: Image.asset(
+            Images.inventory,
+            width: 25.0,
+            height: 25.0,
+          ),
+          activeIcon: Image.asset(
+            Images.inventoryActive,
+            width: 25.0,
+            height: 25.0,
+          ),
+          title: Padding(
+            padding: EdgeInsets.only(top: 3),
+            child: Text(Translate.of(context).translate('inventory')),
+          ),
+        ),
+        BottomNavigationBarItem(
+          icon: Image.asset(
+            Images.claim,
+            width: 25.0,
+            height: 25.0,
+          ),
+          activeIcon: Image.asset(
+            Images.claimActive,
+            width: 25.0,
+            height: 25.0,
+          ),
+          title: Padding(
+            padding: EdgeInsets.only(top: 3),
+            child: Text(Translate.of(context).translate('claims')),
+          ),
+        ),
+        BottomNavigationBarItem(
+          icon: Image.asset(
+            Images.profile,
+            width: 25.0,
+            height: 25.0,
+          ),
+          activeIcon: Image.asset(
+            Images.profileActive,
+            width: 25.0,
+            height: 25.0,
+          ),
+          title: Padding(
+            padding: EdgeInsets.only(top: 3),
+            child: Text(Translate.of(context).translate('profile')),
+          ),
+        ),
+      ];
+    }
 
   }
 
@@ -172,8 +173,8 @@ class _MainNavigationState extends State<MainNavigation> {
   void _onItemTapped(int index) async {
     setState(() {
       _selectedIndex = index;
-      // if(Application.user.userType=="0")
-      //   {
+      if(userType=="0")
+        {
           //for customer
           if (_selectedIndex == 0) {
             title = "Home";
@@ -182,17 +183,17 @@ class _MainNavigationState extends State<MainNavigation> {
           } else if (_selectedIndex == 2) {
             title = "My Orders";
           }
-        // }
-      // else{
-      //   //for fleet
-      //   if (_selectedIndex == 0) {
-      //     title = "Orders";
-      //   } else if (_selectedIndex == 1) {
-      //     title = "Inventory";
-      //   } else if (_selectedIndex == 2) {
-      //     title = "Claims";
-      //   }
-      // }
+        }
+      else{
+        //for fleet
+        if (_selectedIndex == 0) {
+          title = "Orders";
+        } else if (_selectedIndex == 1) {
+          title = "Inventory";
+        } else if (_selectedIndex == 2) {
+          title = "Claims";
+        }
+      }
 
     });
   }
@@ -201,15 +202,20 @@ class _MainNavigationState extends State<MainNavigation> {
     // TODO: implement initState
     super.initState();
     // print("userType="+Application.user.userType);
+    if(Application.user!=null){
+      userType=Application.user.userType;
+    }else{
+      userType=widget.userType;
+    }
     if(widget.flagOrder=="1"){ //from place order to redirect to orders
       _selectedIndex=2;
       title = "My Orders";
     }else {
-      // if (Application.user.userType == "0") { //for customer
+      if (userType == "0") { //for customer
         title = "Home";
-      // } else { //for fleet manager
-      //   title = "Orders";
-      // }
+      } else { //for fleet manager
+        title = "Orders";
+      }
     }
     setState(() {
 
@@ -358,23 +364,23 @@ class _MainNavigationState extends State<MainNavigation> {
         body: IndexedStack(
           index: _selectedIndex,
           children: <Widget>[
-            // Application.user.userType=="0" //for customer
-            // ?
-              Home(),
-            // :  //for fleet manager
-            //   FleetOrders(),
+            userType=="0" //for customer
+            ?
+              Home()
+            :  //for fleet manager
+              FleetOrders(),
             //   // HomeUpdated(model: CartModel()),
             //   // FlutterExample(),
-            // Application.user.userType=="0"
-            //   ?
-              Producers(model: CartModel()),
-              // :
-              // Inventory(),
-            // Application.user.userType=="0"
-            //   ?
-              MyOrders(),
-              // :
-              // Claims(),
+            userType=="0"
+              ?
+              Producers(model: CartModel())
+              :
+              Inventory(),
+            userType=="0"
+              ?
+              MyOrders()
+              :
+              Claims(),
               Profile(),
           ],
         ),

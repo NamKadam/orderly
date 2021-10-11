@@ -23,6 +23,13 @@ class Update_AddressSuccess extends AddressState {
   Update_AddressSuccess();
 }
 
+class AddressDeleteSuccess extends AddressState {
+  final List<Address> addressList;
+  AddressDeleteSuccess({this.addressList});
+}
+
 class Add_AddressLoadFail extends AddressState {}
 class Update_AddressLoadFail extends AddressState {}
 class AddressListLoadFail extends AddressState {}
+class AddressDeleteFail extends AddressState {}
+

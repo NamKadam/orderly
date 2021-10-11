@@ -236,22 +236,21 @@ class _OrderListItemState extends State<OrderListItem>{
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          widget.orderList[widget.position].productName,
+                                          widget.orderList[widget.position].producerName,
                                           // widget.users.firstName+" "+widget.users.lastName,
                                           style: Theme.of(context).textTheme.caption.copyWith(
                                               fontSize: 14.0,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppTheme.textColor,
+                                              fontWeight: FontWeight.w500,
+                                              color: AppTheme.appColor,
                                               fontFamily: "Poppins"),
                                         ),
 
                                         ReadMoreText(
-
                                           widget.orderList[widget.position].productDesc,
                                           style: Theme.of(context).textTheme.button.copyWith(
                                               fontSize: 12.0,
                                               color: AppTheme.textColor,
-                                              fontWeight: FontWeight.w300,
+                                              fontWeight: FontWeight.w600,
                                               fontFamily: "Poppins"),
                                           trimLines: 2,
                                           trimMode: TrimMode.Line,
@@ -265,7 +264,7 @@ class _OrderListItemState extends State<OrderListItem>{
                                           style: Theme.of(context).textTheme.button.copyWith(
                                               fontSize: 12.0,
                                               color: AppTheme.textColor,
-                                              fontWeight: FontWeight.w500,
+                                              fontWeight: FontWeight.w400,
                                               fontFamily: "Poppins"),
                                         ),
                                       ],
@@ -282,7 +281,9 @@ class _OrderListItemState extends State<OrderListItem>{
 
                         GestureDetector(
                           onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductReview()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductReview(
+                           order:widget.orderList[widget.position]
+                            )));
                           },
                             child:Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

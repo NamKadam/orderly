@@ -452,7 +452,9 @@ class _SignUpState extends State<SignUp>{
                   Navigator.of(context).pop();
 
                 }else{
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigation()));
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigation(
+                    userType: "0", //for cutomer
+                  )));
 
                 }
               },

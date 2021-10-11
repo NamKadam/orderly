@@ -1,4 +1,5 @@
 import 'package:orderly/Blocs/address/address_bloc.dart';
+import 'package:orderly/Blocs/fleetOrders/bloc.dart';
 import 'package:orderly/Blocs/home/bloc.dart';
 import 'package:orderly/Blocs/login/login_bloc.dart';
 import 'package:orderly/Blocs/mycart/bloc.dart';
@@ -17,11 +18,15 @@ class AppBloc {
 
   static final authBloc = AuthBloc(userRepository: userRepository);
   static final loginBloc = LoginBloc(userRepository: userRepository);
+  //customer
   static final userRegBloc = UserRegBloc(userRepository: userRepository);
   static final homeBloc = HomeBloc(homeRepository: userRepository);
   static final cartBloc = CartBloc(cartRepository: userRepository);
   static final addressBloc=AddressBloc(addressRepo:userRepository);
-  static final myOrdersBloc=MyOrdersBloc(ordersRepo:userRepository);
+  static final myOrdersBloc=MyOrdersBloc(ordersRepo:userRepository)
+  ;
+  //fleet manager
+  static final fleetOrdersBloc=FleetOrdersBloc(fleetOrdersRepo:userRepository);
 
 
   static final List<BlocProvider> providers = [
@@ -40,6 +45,8 @@ class AppBloc {
     BlocProvider<LoginBloc>(
       create: (context) => loginBloc,
     ),
+
+    //customer
     BlocProvider<UserRegBloc>(
       create: (context) => userRegBloc,
     ),
@@ -52,11 +59,14 @@ class AppBloc {
     BlocProvider<AddressBloc>(
       create: (context) => addressBloc,
     ),
-
     BlocProvider<MyOrdersBloc>(
       create: (context) => myOrdersBloc,
     ),
 
+    //fleet manager
+    BlocProvider<FleetOrdersBloc>(
+      create: (context) => fleetOrdersBloc,
+    ),
 
   ];
 
@@ -71,6 +81,7 @@ class AppBloc {
     cartBloc.close();
     addressBloc.close();
     myOrdersBloc.close();
+    fleetOrdersBloc.close();
   }
 
   ///Singleton factory

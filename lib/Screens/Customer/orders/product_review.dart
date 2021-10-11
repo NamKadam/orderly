@@ -3,15 +3,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
+import 'package:orderly/Models/model_myOrders.dart';
 import 'package:orderly/Screens/Customer/orders/return_replace.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Utils/validate.dart';
 import 'package:orderly/Widgets/app_button.dart';
 import 'package:orderly/Widgets/app_star_rating.dart';
 import 'package:orderly/Widgets/app_text_input.dart';
+import 'package:readmore/readmore.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ProductReview extends StatefulWidget {
+  Orders order;
+  ProductReview({Key key,@required this.order}):super(key: key);
+
   _ProductReviewState createState() => _ProductReviewState();
 }
 
@@ -83,11 +88,11 @@ class _ProductReviewState extends State<ProductReview> {
                                   CachedNetworkImage(
                                     filterQuality: FilterQuality.medium,
                                     // imageUrl: Api.PHOTO_URL + widget.users.avatar,
-                                    imageUrl:
-                                        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
-                                    // imageUrl: widget.users.avatar == null
-                                    //     ? "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
-                                    //     : Api.PHOTO_URL + widget.users.avatar,
+                                    // imageUrl:
+                                    //     "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
+                                    imageUrl: widget.order.imgPaths == null
+                                        ? "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
+                                        : widget.order.imgPaths,
                                     placeholder: (context, url) {
                                       return Shimmer.fromColors(
                                         baseColor: Theme.of(context).hoverColor,
@@ -147,8 +152,7 @@ class _ProductReviewState extends State<ProductReview> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "Producer one",
-                                        // widget.users.firstName+" "+widget.users.lastName,
+                                        widget.order.producerName,
                                         style: Theme.of(context)
                                             .textTheme
                                             .caption
@@ -159,25 +163,24 @@ class _ProductReviewState extends State<ProductReview> {
                                                     .primaryColor,
                                                 fontFamily: "Poppins"),
                                       ),
-                                      Text(
-                                        // widget.users.address != null
-                                        //     ? widget.users.address
-                                        //     : "",
-                                        "50 tonnes Vanilla Icecream",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .button
-                                            .copyWith(
-                                                fontSize: 12.0,
-                                                color: AppTheme.textColor,
-                                                fontWeight: FontWeight.w500,
-                                                fontFamily: "Poppins"),
+
+                                      ReadMoreText(
+                                        widget.order.productDesc.toString(),
+                                        style: Theme.of(context).textTheme.button.copyWith(
+                                            fontSize: 12.0,
+                                            color: AppTheme.textColor,
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: "Poppins"),
+                                        trimLines: 2,
+                                        trimMode: TrimMode.Line,
+                                        trimCollapsedText: 'Show more',
+                                        trimExpandedText: 'Show less',
                                       ),
                                       Text(
                                         // widget.users.address != null
                                         //     ? widget.users.address
                                         //     : "",
-                                        "Quantity: 05",
+                                        "Quantity: "+widget.order.qty.toString(),
                                         style: Theme.of(context)
                                             .textTheme
                                             .button
@@ -309,7 +312,7 @@ class _ProductReviewState extends State<ProductReview> {
                     //add review
                     GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>ReturnReplace()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>ReturnReplace(orderData:widget.order)));
                         },
                         child: Card(
                             elevation: 5.0,

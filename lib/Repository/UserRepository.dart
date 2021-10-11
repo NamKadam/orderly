@@ -15,6 +15,11 @@ class UserRepository {
     final params = {"fb_id":fbId};
     return await Api.login(params);
   }
+  //fleet login
+  Future<dynamic> fleetlogin({String fbId,String mobile,String fcmId,String deviceId}) async {
+    final params = {"fb_id":fbId,"mobile":mobile,"fcm_id":fcmId,"device_id":deviceId};
+    return await Api.fleetlogin(params);
+  }
 
   Future<dynamic> userReg({String api_token,String mobile, String otp}) async {
     final params = {"api_token":api_token,"mobile": mobile, "otp": otp};
@@ -66,6 +71,18 @@ class UserRepository {
   {
     final params = {"userid":fbId};
     return await Api.getOrdersList(params);
+  }
+
+  Future<dynamic> fetchFleetOrdersList({String producerId,String status}) async
+  {
+    final params = {"producerid":producerId,"status":status};
+    return await Api.getFleetOrdersList(params);
+  }
+
+  Future<dynamic> fetchFleetOrdersDet({String orderId,String status,String producerId}) async
+  {
+    final params = {"orderid":orderId,"status":status,"producerid":producerId};
+    return await Api.getFleetOrdersDet(params);
   }
 
   ///Get from Storage

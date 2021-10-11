@@ -67,6 +67,7 @@ dependencies:
   flutter_stripe: any
   stripe_platform_interface: ^1.2.0
   intl: ^0.17.0
+  timeline_tile: ^1.0.0
   readmore: ^2.1.0
 
 dev_dependencies:

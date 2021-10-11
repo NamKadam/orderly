@@ -7,6 +7,10 @@ class OnLoadingAddressList extends AddressEvent {
   String fbId;
   OnLoadingAddressList({this.fbId});
 }
+class OnDeleteAddress extends AddressEvent {
+  String addressId;
+  OnDeleteAddress({this.addressId});
+}
 
 class OnAddAdress extends AddressEvent {
   String fullName,mobile,email,address,zipcode,city,state,country;
@@ -17,5 +21,7 @@ class OnEditAdress extends AddressEvent {
   String fullName,mobile,email,address,zipcode,city,state,country,addressId;
   OnEditAdress({this.fullName,this.mobile,this.email,this.address,this.zipcode,this.city,this.state,this.country,this.addressId});
 }
+
+
 
 

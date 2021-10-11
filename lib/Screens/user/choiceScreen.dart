@@ -146,7 +146,7 @@ class _ChoiceScreenState extends State<ChoiceScreen>{
                                   Image.asset(Images.managerActive,height: 100.0,width: 100.0,)
                               ),
 
-                              Text('Manager',
+                              Text('Fleet Manager',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(fontFamily: 'Poppins',
                                     fontWeight: FontWeight.w400,
@@ -172,11 +172,11 @@ class _ChoiceScreenState extends State<ChoiceScreen>{
                  }
                  else if(flagClickManager==true){
                    flagRoleType="1";//for fleet manager
-                   _showMessage("Functionality under development");
+                   // _showMessage("Functionality under development");
 
-                   // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
-                   //     VerifyPhone()
-                   // ));
+                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+                       VerifyPhone(flagRoleType:flagRoleType)
+                   ));
 
                  }
                },

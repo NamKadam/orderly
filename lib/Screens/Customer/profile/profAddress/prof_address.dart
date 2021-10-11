@@ -258,7 +258,7 @@ class _ProfAddressState extends State<ProfAddress> {
                   ],
                 )
                ),
-           // secondary:setDeleteButton(index, _addressList),
+           secondary:setDeleteButton(index, _addressList),
            // IconButton(
            //  onPressed: () {},
            //  icon: Image.asset(Images.delete,
@@ -282,7 +282,7 @@ class _ProfAddressState extends State<ProfAddress> {
   Widget setUpdateButton(int index,List<Address> _addressList){
       if(_addressList[index].ischecked==true)
        {
-         _addressList[index].ischecked=false;
+         // _addressList[index].ischecked=false;
         return ElevatedButton(
           style: ElevatedButton.styleFrom(
             side: BorderSide(color: Theme.of(context).disabledColor, width: 1),
@@ -316,7 +316,11 @@ class _ProfAddressState extends State<ProfAddress> {
       _addressList[index].ischecked=false;
        return IconButton(
           onPressed: () {
-
+           _addressBloc.add(OnDeleteAddress(addressId: _addressList[index].uaId.toString()));
+            print('deleted');
+           setState(() {
+             _addressList.removeAt(index);
+           });
           },
           icon: Image.asset(Images.delete,
               height: 16.0, width:16.0));
@@ -372,6 +376,13 @@ class _ProfAddressState extends State<ProfAddress> {
           }
           if (state is AddressListLoadFail) {
             flagNoDataAvail=true;
+          }
+
+          if (state is AddressDeleteSuccess) {
+            if(_addressList.length<=0)
+              {
+                flagNoDataAvail=true;
+              }
           }
           return SafeArea(
               child: SmartRefresher(
@@ -435,9 +446,6 @@ class _ProfAddressState extends State<ProfAddress> {
                                   //   ),
                                   // ),
                                   ),
-
-
-
                             ],
                           ))
                               :
