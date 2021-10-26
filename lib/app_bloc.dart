@@ -1,5 +1,6 @@
 import 'package:orderly/Blocs/address/address_bloc.dart';
 import 'package:orderly/Blocs/fleetOrders/bloc.dart';
+import 'package:orderly/Blocs/custorderDet/bloc.dart';
 import 'package:orderly/Blocs/home/bloc.dart';
 import 'package:orderly/Blocs/login/login_bloc.dart';
 import 'package:orderly/Blocs/mycart/bloc.dart';
@@ -23,8 +24,9 @@ class AppBloc {
   static final homeBloc = HomeBloc(homeRepository: userRepository);
   static final cartBloc = CartBloc(cartRepository: userRepository);
   static final addressBloc=AddressBloc(addressRepo:userRepository);
-  static final myOrdersBloc=MyOrdersBloc(ordersRepo:userRepository)
-  ;
+  static final myOrdersBloc=MyOrdersBloc(ordersRepo:userRepository);
+  static final custOrdersDetBloc=CustOrderDetBloc(custOrdersDetRepo:userRepository);
+
   //fleet manager
   static final fleetOrdersBloc=FleetOrdersBloc(fleetOrdersRepo:userRepository);
 
@@ -68,6 +70,11 @@ class AppBloc {
       create: (context) => fleetOrdersBloc,
     ),
 
+    //fleet order det
+    BlocProvider<CustOrderDetBloc>(
+      create: (context) => custOrdersDetBloc,
+    ),
+
   ];
 
   static void dispose() {
@@ -82,6 +89,7 @@ class AppBloc {
     addressBloc.close();
     myOrdersBloc.close();
     fleetOrdersBloc.close();
+    custOrdersDetBloc.close();
   }
 
   ///Singleton factory

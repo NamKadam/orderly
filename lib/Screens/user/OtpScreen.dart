@@ -566,14 +566,14 @@ class _OtpScreenState extends State<OtpScreen>{
                   );
                 }
                 if (state is LoginSuccess) {
+                print("isRegistered:-"+state.userModel.isRegistered);
                   if(state.userModel.isRegistered=="false"){
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
-                        SignUp(user:authResult.user,signUpDataNavigation:widget.navigateData,phone: widget.otpVerify.phone.toString(),)));
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+                  SignUp(user:authResult.user,signUpDataNavigation:widget.navigateData,phone: widget.otpVerify.phone.toString(),)));
                   }
                   else {
                     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
                         MainNavigation(userType: widget.otpVerify.flagRoleType)));
-
                   }
                 }
               },

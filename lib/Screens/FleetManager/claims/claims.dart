@@ -19,9 +19,10 @@ class _ClaimsState extends State<Claims> {
   @override
   Widget build(BuildContext context) {
     var _searchcontroller = TextEditingController();
-    return SafeArea(
-      child: Scaffold(
-          body: Column(
+    return Scaffold(
+      body: SafeArea(
+         child:
+          Column(
         children: [
           Padding(
               padding: EdgeInsets.only(
@@ -101,15 +102,94 @@ class _ClaimsState extends State<Claims> {
                       )
                     ],
                   ))),
-          Stack(
-            children: [
-              Column(
-                children: [
-                  SizedBox(
-                    height: 200,
-                  ),
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.518,
+          Container(
+            color: Colors.transparent,
+            height: 180,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('\$250,000.50',
+                    style: TextStyle(
+                        fontSize: 20.0,
+                        fontFamily: "Poppins",
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.textColor)),
+                SizedBox(
+                  height: 10.0,
+                ),
+                Text('Total Transaction last 30 Days',
+                    style: TextStyle(
+                        fontSize: 14.0,
+                        fontFamily: "Poppins",
+                        fontWeight: FontWeight.normal,
+                        color: AppTheme.textColor)),
+                SizedBox(
+                  height: 20.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.3,
+                      height: 70.0,
+                      decoration: BoxDecoration(
+                        color: Colors.white70,
+                        borderRadius: BorderRadius.circular(6.0),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('\$350,000.50',
+                              style: TextStyle(
+                                  fontSize: 14.0,
+                                  fontFamily: "Poppins",
+                                  fontWeight: FontWeight.w500,
+                                  color: AppTheme.textColor)),
+                          Text('Recieved',
+                              style: TextStyle(
+                                  fontSize: 14.0,
+                                  fontFamily: "Poppins",
+                                  fontWeight: FontWeight.w500,
+                                  color: AppTheme.pinkColor))
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      width: 50.0,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.3,
+                      height: 70.0,
+                      decoration: BoxDecoration(
+                        color: Colors.white70,
+                        borderRadius: BorderRadius.circular(6.0),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('\$100,00.00',
+                              style: TextStyle(
+                                  fontSize: 14.0,
+                                  fontFamily: "Poppins",
+                                  fontWeight: FontWeight.w500,
+                                  color: AppTheme.textColor)),
+                          Text('Refunded',
+                              style: TextStyle(
+                                  fontSize: 14.0,
+                                  fontFamily: "Poppins",
+                                  fontWeight: FontWeight.w500,
+                                  color: AppTheme.appColor))
+                        ],
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+          Expanded(
+              child:Container(
+                    // height: MediaQuery.of(context).size.height * 0.518,
                     child: ListView.builder(
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
@@ -204,96 +284,7 @@ class _ClaimsState extends State<Claims> {
                             ),
                           );
                         }),
-                  )
-                ],
-              ),
-              Container(
-                color: Colors.transparent,
-                height: 200,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('\$250,000.50',
-                        style: TextStyle(
-                            fontSize: 20.0,
-                            fontFamily: "Poppins",
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.textColor)),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Text('Total Transaction last 30 Days',
-                        style: TextStyle(
-                            fontSize: 14.0,
-                            fontFamily: "Poppins",
-                            fontWeight: FontWeight.normal,
-                            color: AppTheme.textColor)),
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.3,
-                          height: 70.0,
-                          decoration: BoxDecoration(
-                            color: Colors.white70,
-                            borderRadius: BorderRadius.circular(6.0),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('\$350,000.50',
-                                  style: TextStyle(
-                                      fontSize: 14.0,
-                                      fontFamily: "Poppins",
-                                      fontWeight: FontWeight.w500,
-                                      color: AppTheme.textColor)),
-                              Text('Recieved',
-                                  style: TextStyle(
-                                      fontSize: 14.0,
-                                      fontFamily: "Poppins",
-                                      fontWeight: FontWeight.w500,
-                                      color: AppTheme.pinkColor))
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          width: 50.0,
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.3,
-                          height: 70.0,
-                          decoration: BoxDecoration(
-                            color: Colors.white70,
-                            borderRadius: BorderRadius.circular(6.0),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('\$100,00.00',
-                                  style: TextStyle(
-                                      fontSize: 14.0,
-                                      fontFamily: "Poppins",
-                                      fontWeight: FontWeight.w500,
-                                      color: AppTheme.textColor)),
-                              Text('Refunded',
-                                  style: TextStyle(
-                                      fontSize: 14.0,
-                                      fontFamily: "Poppins",
-                                      fontWeight: FontWeight.w500,
-                                      color: AppTheme.appColor))
-                            ],
-                          ),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              )
-            ],
-          )
+                  ))
         ],
       )),
     );

@@ -172,11 +172,12 @@ class _ChoiceScreenState extends State<ChoiceScreen>{
                  }
                  else if(flagClickManager==true){
                    flagRoleType="1";//for fleet manager
-                   // _showMessage("Functionality under development");
 
                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
                        VerifyPhone(flagRoleType:flagRoleType)
                    ));
+
+
 
                  }
                },

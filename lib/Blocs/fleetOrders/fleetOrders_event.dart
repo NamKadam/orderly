@@ -18,5 +18,11 @@ class UpdateFleetOrdersStatus extends FleetOrdersEvent {
   UpdateFleetOrdersStatus({this.orderid,this.status});
 }
 
+//fleet orders return replace
+class FleetOrdersReturnReplace extends FleetOrdersEvent {
+  String producerId;
+  FleetOrdersReturnReplace({this.producerId});
+}
+
 
 

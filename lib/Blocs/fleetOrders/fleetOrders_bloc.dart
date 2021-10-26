@@ -107,6 +107,32 @@ class FleetOrdersBloc extends Bloc<FleetOrdersEvent,FleetOrdersState> {
       }
     }
 
+    //fleet orders return replace
+    if (event is FleetOrdersReturnReplace) {
+      yield FleetOrdersLoading();
+
+      final FleetOrderDetResp response = await fleetOrdersRepo.fetchFleetReturnReplace(
+          producerId: event.producerId,
+      );
+      try {
+        // if (response.msg == "Success") {
+        final Iterable refactorCategory = response.ordersDet ?? [];
+        final listRetReplace = refactorCategory.map((item) {
+          return FleetOrdersDet.fromJson(item);
+        }).toList();
+
+        ///Sync UI
+        yield FleetOrdersRetReplaceSuccess(fleetOrderRetReplaceList: listRetReplace);
+        // } else {
+        //   yield ProductListLoadFail();
+        // }
+      } catch (e) {
+        print(e);
+        yield FleetOrdersRetReplaceFail();
+      }
+    }
+
+
 
   }
 }

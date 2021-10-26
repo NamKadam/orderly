@@ -85,13 +85,21 @@ class _MyOrdersState extends State<MyOrders>{
       for (int i = 0; i < _myOrderList.length; i++) {
         Orders order=new Orders();
         order.producerName=_myOrderList[i].producerName.toString();
+        order.orderNumber=_myOrderList[i].orderNumber.toString();
+        order.orderId=_myOrderList[i].orderId;
+        order.orderDetailsId=_myOrderList[i].orderDetailsId;
         order.productDesc=_myOrderList[i].productDesc.toString();
         order.productName=_myOrderList[i].productName.toString();
         order.orderDate=_myOrderList[i].orderDate.toString();
         order.qty=_myOrderList[i].qty;
+        order.imgPaths=_myOrderList[i].imgPaths.toString();
+        order.productId=_myOrderList[i].productId;
+        order.currentStatus=_myOrderList[i].currentStatus;
 
         if (order.producerName.toString().toLowerCase().contains(searchText.toLowerCase())
-        ||order.orderDate.toString().toLowerCase().contains(searchText.toLowerCase())
+        ||order.productName.toString().toLowerCase().contains(searchText.toLowerCase())
+        ||order.productDesc.toString().toLowerCase().contains(searchText.toLowerCase())
+            ||order.orderDate.toString().toLowerCase().contains(searchText.toLowerCase())
         ||order.qty.toString().toLowerCase().contains(searchText.toLowerCase()) ){
           searchresult.add(order);
         }

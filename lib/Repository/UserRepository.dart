@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:orderly/Api/api.dart';
+import 'package:orderly/Blocs/custorderDet/bloc.dart';
 import 'package:orderly/Models/model_scoped_cart.dart';
 import 'package:orderly/Models/model_user.dart';
 import 'package:orderly/Models/model_view_cart.dart';
@@ -46,6 +47,7 @@ class UserRepository {
   Future<dynamic> fetchProducerCat() async {
     return await Api.getProducerList();
   }
+
   //api for product list as per producer
   Future<dynamic> fetchProduct({String producerId,String type, String offset}) async {
     final params = {"producer_id":producerId,"type":type,"offset":offset};
@@ -85,6 +87,13 @@ class UserRepository {
     return await Api.getFleetOrdersDet(params);
   }
 
+  //fleet return Replace
+  Future<dynamic> fetchFleetReturnReplace({String producerId}) async
+  {
+    final params = {"producerid":producerId};
+    return await Api.getFleetReturnReplace(params);
+  }
+
   ///Get from Storage
   dynamic getUser() {
     return UtilPreferences.getString(Preferences.user);
@@ -105,3 +114,4 @@ class UserRepository {
     return await UtilPreferences.remove(Preferences.cart);
   }
 }
+

@@ -33,6 +33,10 @@ class Api {
   static const String GET_FLEET_ORDER=HOST_URL+"fleet_manager_orders";
   static const String GET_FLEET_ORDER_DET=HOST_URL+"fleet_manager_orders_details";
   static const String UPDATE_FLEET_STATUS=HOST_URL+"update_order_status";
+  static const String CUST_PROD_REVIEW=HOST_URL+"product_review";
+  static const String CUST_RETURN_REPLACE=HOST_URL+"product_return";
+  static const String GET_RETURN_REASONS=HOST_URL+"return_order_reasons";
+  static const String GET_FLEET_RETURN_REPLACE=HOST_URL+"fleet_manager_order_return";
 
   ///Login api
   static Future<dynamic> login(params) async {
@@ -144,6 +148,18 @@ class Api {
   static Future<dynamic> getFleetOrdersDet(params) async {
     final response = await http.post(
       Uri.parse(GET_FLEET_ORDER_DET),
+      body: params,
+    );
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+      return FleetOrderDetResp.fromJson(responseJson);
+    }
+  }
+
+  //fleet return replace list
+  static Future<dynamic> getFleetReturnReplace(params) async {
+    final response = await http.post(
+      Uri.parse(GET_FLEET_RETURN_REPLACE),
       body: params,
     );
     if (response.statusCode == 200) {

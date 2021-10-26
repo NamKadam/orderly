@@ -69,6 +69,7 @@ dependencies:
   intl: ^0.17.0
   timeline_tile: ^1.0.0
   readmore: ^2.1.0
+  floor: ^1.1.0
 
 dev_dependencies:
   flutter_test:

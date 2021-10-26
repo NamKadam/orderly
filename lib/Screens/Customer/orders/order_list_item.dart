@@ -236,7 +236,7 @@ class _OrderListItemState extends State<OrderListItem>{
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          widget.orderList[widget.position].producerName,
+                                          widget.orderList[widget.position].productName,
                                           // widget.users.firstName+" "+widget.users.lastName,
                                           style: Theme.of(context).textTheme.caption.copyWith(
                                               fontSize: 14.0,

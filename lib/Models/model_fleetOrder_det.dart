@@ -39,6 +39,14 @@ class FleetOrdersDet {
   String producerName;
   bool isChecked=false;
 
+  //for return replace list part
+  int returnId;
+  int returnType;
+  String returnTitle;
+  String review;
+  String userId;
+
+
 
   FleetOrdersDet(
       {this.orderDetailsId,
@@ -54,7 +62,13 @@ class FleetOrdersDet {
         this.currentStatus,
         this.orderDate,
         this.producerName,
-      this.isChecked});
+      this.isChecked,
+      //for return replace part
+     this.returnId,
+      this.returnType,
+      this.returnTitle,
+      this.review,
+      this.userId});
 
   FleetOrdersDet.fromJson(Map<String, dynamic> json) {
     orderDetailsId = json['order_details_id'];
@@ -70,6 +84,12 @@ class FleetOrdersDet {
     currentStatus = json['current_status'];
     orderDate = json['order_date'];
     producerName = json['producer_name'];
+    //for return and replace part
+    returnId = json['return_id'];
+    returnType = json['return_type'];
+    returnTitle = json['return_title'];
+    review = json['review'];
+    userId = json['user_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -87,6 +107,13 @@ class FleetOrdersDet {
     data['current_status'] = this.currentStatus;
     data['order_date'] = this.orderDate;
     data['producer_name'] = this.producerName;
+    //for return and replace part
+    data['return_id'] = this.returnId;
+    data['return_type'] = this.returnType;
+    data['return_title'] = this.returnTitle;
+    data['review'] = this.review;
+    data['user_id'] = this.userId;
+
     return data;
   }
 }

@@ -53,7 +53,7 @@ class FleetOrderModel {
     orderNumber = json['order_number'];
     noOfItems = json['cnt'];
     producerId = json['producer_id'];
-    date = json['date'];
+    date = json['order_date'];
     orderImage = json['producer_image_url'];
     isSelected = json['isSelected'];
 
@@ -66,7 +66,7 @@ class FleetOrderModel {
     data['order_number'] = this.orderNumber;
     data['cnt'] = this.noOfItems;
     data['producer_id'] = this.producerId;
-    data['date'] = this.date;
+    data['order_date'] = this.date;
     data['producer_image_url'] = this.orderImage;
     data['isSelected'] = this.isSelected;
 

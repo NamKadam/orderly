@@ -1,10 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:orderly/Blocs/custorderDet/bloc.dart';
 import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/model_myOrders.dart';
 import 'package:orderly/Screens/Customer/orders/return_replace.dart';
+import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Utils/validate.dart';
 import 'package:orderly/Widgets/app_button.dart';
@@ -30,6 +33,16 @@ class _ProductReviewState extends State<ProductReview> {
   final _textAddReviewController = TextEditingController();
   final _focusReview = FocusNode();
   String _validAddReview = "";
+  int status;
+  CustOrderDetBloc _custOrderDetBloc;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    status=widget.order.currentStatus;
+    _custOrderDetBloc=BlocProvider.of<CustOrderDetBloc>(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +165,7 @@ class _ProductReviewState extends State<ProductReview> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        widget.order.producerName,
+                                        widget.order.productName,
                                         style: Theme.of(context)
                                             .textTheme
                                             .caption
@@ -163,7 +176,6 @@ class _ProductReviewState extends State<ProductReview> {
                                                     .primaryColor,
                                                 fontFamily: "Poppins"),
                                       ),
-
                                       ReadMoreText(
                                         widget.order.productDesc.toString(),
                                         style: Theme.of(context).textTheme.button.copyWith(
@@ -224,7 +236,15 @@ class _ProductReviewState extends State<ProductReview> {
                       //app experience
                       RatingExperience(
                           title: Translate.of(context).translate('app_exp'),
-                          rate: _rateApp),
+                          rate: _rateApp,
+                        ratingChangeCallback: (value){
+                            setState(() {
+                              _rateApp = value;
+                              print("rate:-"+_rateApp.toString());
+                            });
+
+                        },
+                      ),
                       SizedBox(
                         height: 5.0,
                       ),
@@ -232,28 +252,53 @@ class _ProductReviewState extends State<ProductReview> {
                       RatingExperience(
                           title: Translate.of(context)
                               .translate('vehicle_quality'),
-                          rate: _rateVehicle),
+                          rate: _rateVehicle,
+                        ratingChangeCallback: (value){
+                          setState(() {
+                            _rateVehicle = value;
+                          });
+
+                        },),
                       SizedBox(
                         height: 5.0,
                       ),
                       //drive
                       RatingExperience(
                           title: Translate.of(context).translate('drive_exp'),
-                          rate: _rateDrive),
+                          rate: _rateDrive,
+                        ratingChangeCallback: (value){
+                          setState(() {
+                            _rateDrive = value;
+                          });
+
+                        },
+                      ),
                       SizedBox(
                         height: 5.0,
                       ),
                       //payment
                       RatingExperience(
                           title: Translate.of(context).translate('pay_exp'),
-                          rate: _ratePay),
+                          rate: _ratePay,
+                        ratingChangeCallback: (value){
+                          setState(() {
+                            _ratePay = value;
+                          });
+
+                        },),
                       SizedBox(
                         height: 5.0,
                       ),
                       //overall
                       RatingExperience(
                           title: Translate.of(context).translate('overall'),
-                          rate: _rateOverall),
+                          rate: _rateOverall,
+                        ratingChangeCallback: (value){
+                          setState(() {
+                            _rateOverall = value;
+                          });
+
+                        },),
                     ],
                   ),
                 )),
@@ -309,12 +354,17 @@ class _ProductReviewState extends State<ProductReview> {
                     SizedBox(
                       height: 20.0,
                     ),
+
                     //add review
+
                     GestureDetector(
                         onTap: () {
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>ReturnReplace(orderData:widget.order)));
                         },
-                        child: Card(
+                        child:
+                        widget.order.currentStatus!=4&&widget.order.currentStatus!=5
+                        ?
+                        Card(
                             elevation: 5.0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
@@ -326,9 +376,7 @@ class _ProductReviewState extends State<ProductReview> {
                             child:
                             Padding(
                               padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                              child:
-
-                              Row(
+                              child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
@@ -346,27 +394,54 @@ class _ProductReviewState extends State<ProductReview> {
                                           height: 15.0, width: 15.0))
                                 ],
                               ),
-                            ))),
-
-
+                            )):
+                       Container())
                   ],
                 ),
               ),
             ),
 
             //submit
-            Container(
-              color: Colors.white,
-              child:
-              Padding(
-                padding: EdgeInsets.all(15.0),
-                child: AppButton(
-                  shape: const RoundedRectangleBorder(
-                      borderRadius:
-                      BorderRadius.all(Radius.circular(50))),
-                  text: "SUBMIT",
-                  onPressed: () {},
-                )))
+            BlocBuilder<CustOrderDetBloc,CustOrdersDetState>(builder: (context,review){
+              return BlocListener<CustOrderDetBloc,CustOrdersDetState>(listener: (context,state){
+                if(state is ProductReviewSuccess){
+                    Navigator.pop(context);
+                }
+
+                if(state is ProductReviewFail){
+
+                }
+
+              },
+              child: Container(
+                  color: Colors.white,
+                  child:
+                  Padding(
+                      padding: EdgeInsets.all(15.0),
+                      child:
+                      AppButton(
+                        disableTouchWhenLoading: false,
+                        loading: review is CustOrdersDetLoading,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(50))),
+                        text: "SUBMIT",
+                        onPressed: () {
+                         _custOrderDetBloc.add(SendProductReview(
+                          orderNum: widget.order.orderNumber,
+                           appExp: _rateApp.toInt().toString(),
+                           VehicleQty: _rateVehicle.toInt().toString(),
+                           driveExp: _rateDrive.toInt().toString(),
+                           payExp: _ratePay.toInt().toString(),
+                           overall: _rateOverall.toInt().toString(),
+                           fbId: Application.user.fbId,
+                           prodId: widget.order.productId.toString(),
+                           comment: _textAddReviewController.text.toString()
+                         ));
+                        },
+                      ))));
+            })
+
           ],
         ),
       )),
@@ -377,8 +452,9 @@ class _ProductReviewState extends State<ProductReview> {
 class RatingExperience extends StatefulWidget {
   String title;
   double rate;
+  RatingChangeCallback ratingChangeCallback;
 
-  RatingExperience({Key key, @required this.title, @required this.rate})
+  RatingExperience({Key key, @required this.title, @required this.rate,@required this.ratingChangeCallback})
       : super(key: key);
 
   _RatingExpState createState() => _RatingExpState();
@@ -415,12 +491,14 @@ class _RatingExpState extends State<RatingExperience> {
                 size: 25.0,
                 color: AppTheme.appColor,
                 borderColor: AppTheme.appColor,
-                onRatingChanged: (value) {
-                  // _onReview(state.product);
-                  setState(() {
-                    widget.rate = value;
-                  });
-                },
+                // onRatingChanged: (value) {
+                //   // _onReview(state.product);
+                //   setState(() {
+                //     widget.rate = value;
+                //     print("rate:-"+widget.rate.toString());
+                //   });
+                // },
+                onRatingChanged: widget.ratingChangeCallback,
               ),
             ],
           ),

@@ -28,7 +28,14 @@ class FleetOrdersDetStatusSuccess extends FleetOrdersState {
   FleetOrdersDetStatusSuccess();
 }
 
+class FleetOrdersRetReplaceSuccess extends FleetOrdersState {
+  final List<FleetOrdersDet> fleetOrderRetReplaceList;
+  FleetOrdersRetReplaceSuccess({this.fleetOrderRetReplaceList});
+}
+
 
 class FleetOrdersListLoadFail extends FleetOrdersState {}
 class FleetOrdersDetLoadFail extends FleetOrdersState {}
 class FleetOrdersStatusLoadFail extends FleetOrdersState {}
+class FleetOrdersRetReplaceFail extends FleetOrdersState {}
+

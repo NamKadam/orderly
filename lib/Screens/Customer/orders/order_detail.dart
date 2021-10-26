@@ -125,7 +125,7 @@ class _CustOrderDetailState extends State<CustOrderDetail>{
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.orderData.producerName,
+                              widget.orderData.productName,
                               style: Theme.of(context)
                                   .textTheme
                                   .caption
@@ -225,7 +225,7 @@ class _CustOrderDetailState extends State<CustOrderDetail>{
                                     //product review
                                     GestureDetector(
                                         onTap: (){
-                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductReview()));
+                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductReview(order:widget.orderData)));
                                         },
                                         child:Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -314,7 +314,10 @@ class _CustOrderDetailState extends State<CustOrderDetail>{
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (context)=>ReturnReplace(orderData: widget.orderData,)));
                     },
-                    child: Card(
+                    child:
+                        widget.orderData.currentStatus!=4 &&widget.orderData.currentStatus!=5
+                    ?
+                    Card(
                         elevation: 5.0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
@@ -346,7 +349,9 @@ class _CustOrderDetailState extends State<CustOrderDetail>{
                                       height: 15.0, width: 15.0))
                             ],
                           ),
-                        ))))),
+                        ))
+                :
+                Container()))),
              //continue shopping
             Padding(
               padding: EdgeInsets.only(top: 35.0,left: 20.0,right: 20.0),
@@ -357,8 +362,7 @@ class _CustOrderDetailState extends State<CustOrderDetail>{
               },
               text: 'Continue Shopping',
               disableTouchWhenLoading: false,
-                  
-            ))
+                ))
           ],
         ),
       ),

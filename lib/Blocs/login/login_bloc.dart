@@ -118,8 +118,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       final User user = User.fromJson(result.user);
       try {
         ///Begin start AuthBloc Event AuthenticationSave
-        AppBloc.authBloc.add(OnSaveUser(user));
-        yield LoginSuccess(userModel: user);
+        if(user.userType=="1"){
+          AppBloc.authBloc.add(OnSaveUser(user));
+          yield LoginSuccess(userModel: user);
+        }else{
+          yield LoginFail(msg: "Account does not exists");
+
+        }
+
       } catch (error) {
         ///Notify loading to UI
         yield LoginFail(msg: result.msg);
