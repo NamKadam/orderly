@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:orderly/Api/api.dart';
 import 'package:orderly/Blocs/home/bloc.dart';
 import 'package:orderly/Models/ResultApiModel.dart';
@@ -10,6 +11,7 @@ import 'package:orderly/Models/model_product_List.dart';
 import 'package:orderly/Repository/UserRepository.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:http/http.dart' as http;
+import 'package:orderly/db/orderly_database.dart';
 
 
 class HomeBloc extends Bloc<HomeEvent,HomeState> {
@@ -19,6 +21,9 @@ class HomeBloc extends Bloc<HomeEvent,HomeState> {
   @override
   Stream<HomeState> mapEventToState(HomeEvent event) async* {
     Uri url=Uri.parse("http://93.188.162.210:3000/add_to_cart");
+    int countProducer=0,countProd=0;
+   const _pageSize = 10;
+
 
     // TODO: implement mapEventToState
     if (event is OnLoadingProducerList) {
@@ -29,10 +34,17 @@ class HomeBloc extends Bloc<HomeEvent,HomeState> {
         if (response.msg == "Success") {
           final Iterable refactorCategory = response.producer ?? [];
           final listCategory = refactorCategory.map((item) {
+            //for offline db
+            if(countProducer==0){
+              OrderlyDatabase.database.addProducer(Producer.fromJson(item));
+
+            }
+
             return Producer.fromJson(item);
           }).toList();
 
           ///Sync UI
+          countProducer++;
           yield ProducerListSuccess(producerList: listCategory);
         } else {
           yield ProducerListLoadFail();
@@ -56,11 +68,20 @@ class HomeBloc extends Bloc<HomeEvent,HomeState> {
         // if (response.msg == "Success") {
 
           final Iterable refactorCategory = response.product ?? [];
+          // PagingController controller=new PagingController(firstPageKey: 0);
+          // controller.appendLastPage(refactorCategory);
           final listCategory = refactorCategory.map((item) {
+            //for offlie db
+            if(countProd==0){
+              OrderlyDatabase.database.addProduct(Product.fromJson(item));
+            }
+
             return Product.fromJson(item);
+
           }).toList();
 
           ///Sync UI
+          countProd++;
           yield ProductListSuccess(productList: listCategory);
         // } else {
         //   yield ProductListLoadFail();

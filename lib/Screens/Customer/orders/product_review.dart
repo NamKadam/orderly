@@ -362,7 +362,9 @@ class _ProductReviewState extends State<ProductReview> {
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>ReturnReplace(orderData:widget.order)));
                         },
                         child:
-                        widget.order.currentStatus!=4&&widget.order.currentStatus!=5
+                        widget.order.currentStatus!=4&& widget.order.currentStatus!=5 && widget.order.currentStatus!=7
+                        && widget.order.currentStatus!=9 && widget.order.currentStatus!=10 && widget.order.currentStatus!=11
+                            && widget.order.currentStatus!=13 && widget.order.currentStatus!=14
                         ?
                         Card(
                             elevation: 5.0,

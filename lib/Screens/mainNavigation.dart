@@ -10,13 +10,14 @@ import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/model_scoped_cart.dart';
 import 'package:orderly/Models/model_product_List.dart';
 import 'package:orderly/Screens/Customer/home/home.dart';
+import 'package:orderly/Screens/Customer/home/home_old.dart';
 import 'package:orderly/Screens/Customer/home/homeUpdated.dart';
 import 'package:orderly/Screens/Customer/orders/myOrders.dart';
 import 'package:orderly/Screens/Customer/producers/producers.dart';
-import 'package:orderly/Screens/Customer/profile/profile.dart';
 import 'package:orderly/Screens/FleetManager/claims/claims.dart';
 import 'package:orderly/Screens/FleetManager/inventory/inventory_list.dart';
 import 'package:orderly/Screens/FleetManager/orders/fleet_orders.dart';
+import 'package:orderly/Screens/profile/profile.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/routes.dart';
 
@@ -239,6 +240,7 @@ class _MainNavigationState extends State<MainNavigation> {
                 ),
                 backgroundColor: Colors.transparent,
                 elevation: 0,
+
                 automaticallyImplyLeading: false,
                 actions: [
                   Row(
@@ -375,7 +377,7 @@ class _MainNavigationState extends State<MainNavigation> {
               ?
               Producers(model: CartModel())
               :
-              Inventory(),
+              InventoryList(),
             userType=="0"
               ?
               MyOrders()

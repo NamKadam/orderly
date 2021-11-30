@@ -50,8 +50,8 @@ class _ReturnReplaceState extends State<ReturnReplace> {
     if (isconnectedToInternet == true) {
       _custOrderDetBloc.add(getReturnOrderReason());
     } else {
-      CustomDialogs.showDialogCustom(
-          "Internet", "Please check your Internet Connection!", context);
+      // CustomDialogs.showDialogCustom(
+      //     "Internet", "Please check your Internet Connection!", context);
     }
   }
 

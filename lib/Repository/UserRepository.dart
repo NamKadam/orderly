@@ -94,6 +94,23 @@ class UserRepository {
     return await Api.getFleetReturnReplace(params);
   }
 
+  Future<dynamic> fetchFleetInventory({String producerId}) async
+  {
+    final params = {"producer_id":producerId};
+    return await Api.viewInventoryList(params);
+  }
+
+  Future<dynamic> fetchClaimOrdersList({String producerId,String claimType}) async
+  {
+    final params = {"producer_id":producerId,"claim_type":claimType};
+    return await Api.getClaimOrdersList(params);
+  }
+
+  //faq List
+  Future<dynamic> getFAQList() async {
+    return await Api.getFAQLIst();
+  }
+
   ///Get from Storage
   dynamic getUser() {
     return UtilPreferences.getString(Preferences.user);

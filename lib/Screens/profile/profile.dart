@@ -8,10 +8,12 @@ import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/imageFile.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
+import 'package:orderly/Screens/profile/edit_profile.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/authentication.dart';
 import 'package:orderly/Utils/routes.dart';
 import 'package:orderly/Utils/translate.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Profile extends StatefulWidget{
   _ProfileState createState()=>_ProfileState();
@@ -19,6 +21,7 @@ class Profile extends StatefulWidget{
 
 class _ProfileState extends State<Profile>{
   LoginBloc _loginBloc;
+  bool fromProf=true;
 
   @override
   void initState() {
@@ -42,8 +45,14 @@ class _ProfileState extends State<Profile>{
         automaticallyImplyLeading:false,
         actions: [
           InkWell(
-            onTap:(){
-              Navigator.pushNamed(context, Routes.editProfile);
+            onTap:() async{
+              final result=await Navigator.pushNamed(context, Routes.editProfile);
+              if(result!=null){
+
+                setState(() {
+                  
+                });
+              }
             },
             child:
             Padding(
@@ -65,7 +74,7 @@ class _ProfileState extends State<Profile>{
           children: [
             HeaderWidget(),
             SizedBox(height: 5.0,),//for spacing
-            CardViewWidget(),
+            CardViewWidget(fromProf:fromProf),
             SizedBox(height: 5.0,), //for spacing
             //logout
             Container(color: Colors.white,
@@ -192,6 +201,7 @@ class HeaderWidget extends StatelessWidget{
                   color:AppTheme.textColor),
             )),
             //email
+            if(Application.user.emailId!="null")
             Text(
               Application.user.emailId,
               style: TextStyle(fontFamily: 'Poppins',fontWeight: FontWeight.w200,
@@ -215,9 +225,31 @@ class HeaderWidget extends StatelessWidget{
 }
 
 class CardViewWidget extends StatefulWidget{
+  bool fromProf;
+  CardViewWidget({Key key,@required this.fromProf}):super(key: key);
   _CardViewWidgetState createState()=>_CardViewWidgetState();
 }
 class _CardViewWidgetState extends State<CardViewWidget>{
+
+  void openwhatsapp() async{
+    var no="9960035092";
+    var numbers = "+91"+no;
+    String url() {
+      if (Platform.isIOS) {
+        return "whatsapp://wa.me/$numbers/?text=${Uri.parse("Hello")}";
+      } else {
+        return "whatsapp://send?phone=$numbers&text=${Uri.parse("Hello")}";
+      }
+
+    }
+    if (await canLaunch(url())) {
+      await launch(url());
+    } else {
+      throw 'Could not launch ${url()}';
+    }
+
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -230,6 +262,18 @@ class _CardViewWidgetState extends State<CardViewWidget>{
           child: Column(
             children: [
               //orders
+              GestureDetector(
+          onTap: ()
+          {
+            if(Application.user.userType=="0"){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>MainNavigation(flagOrder: "1"))); //for customer my orders
+            }else{
+              Navigator.pushNamed(context,Routes.mainNavi); //for fleet orders
+
+            }
+          },
+                child:
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -244,12 +288,17 @@ class _CardViewWidgetState extends State<CardViewWidget>{
 
                   )
                 ],
-              ),
+              )),
               Divider(
                 height: 0.5,
                 color: Colors.black26,
               ),
               //help
+              InkWell(
+                onTap: (){
+                  openwhatsapp();
+                },
+                  child:
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -258,21 +307,19 @@ class _CardViewWidgetState extends State<CardViewWidget>{
                       child:Text(Translate.of(context).translate('help'),style: TextStyle(fontWeight:FontWeight.w400,
                           fontFamily: 'Poppins',color: AppTheme.textColor),
                       )),
-
-                  IconButton(onPressed: (){},
-                      icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
-
+                  IconButton(icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
                   )
                 ],
-              ),
+              )),
               Divider(
                 height: 0.5,
                 color: Colors.black26,
               ),
               //address
+              if(Application.user.userType=="0")
               InkWell(
                 onTap: (){
-                  Navigator.pushNamed(context, Routes.address);
+                  Navigator.pushNamed(context, Routes.address,arguments:widget.fromProf );
 
                 },
               child:
@@ -298,7 +345,13 @@ class _CardViewWidgetState extends State<CardViewWidget>{
                 height: 0.5,
                 color: Colors.black26,
               ),
-              Row(
+              InkWell(
+                onTap: (){
+                  print("clicked faq");
+                  Navigator.pushNamed(context, Routes.faq);
+                },
+                child:
+                Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Padding(
@@ -307,18 +360,23 @@ class _CardViewWidgetState extends State<CardViewWidget>{
                           fontFamily: 'Poppins',color: AppTheme.textColor),
                       )),
 
-                  IconButton(onPressed: (){},
+                  IconButton(
                       icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
 
                   )
                 ],
-              ),
+              )),
               Divider(
                 height: 0.5,
                 color: Colors.black26,
               ),
               //terms
-              Row(
+              GestureDetector(
+                onTap: (){
+                  Navigator.pushNamed(context, Routes.terms);
+                },
+                child:
+                Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Padding(
@@ -327,17 +385,22 @@ class _CardViewWidgetState extends State<CardViewWidget>{
                           fontFamily: 'Poppins',color: AppTheme.textColor),
                       )),
 
-                  IconButton(onPressed: (){},
+                  IconButton(
                       icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
 
                   )
                 ],
-              ),
+              )),
               Divider(
                 height: 0.5,
                 color: Colors.black26,
               ),
               //privacy
+          GestureDetector(
+            onTap: (){
+              Navigator.pushNamed(context, Routes.privacy);
+            },
+            child:
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -347,12 +410,12 @@ class _CardViewWidgetState extends State<CardViewWidget>{
                           fontFamily: 'Poppins',color: AppTheme.textColor),
                       )),
 
-                  IconButton(onPressed: (){},
+                  IconButton(
                       icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
 
                   )
                 ],
-              ),
+              )),
 
             ],
           ),

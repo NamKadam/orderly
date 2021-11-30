@@ -61,8 +61,8 @@ class _MyOrdersState extends State<MyOrders>{
     if (isconnectedToInternet == true) {
       _myOrdersBloc.add(OnLoadingOrdersList());
     } else {
-      CustomDialogs.showDialogCustom(
-          "Internet", "Please check your Internet Connection!", context);
+      // CustomDialogs.showDialogCustom(
+      //     "Internet", "Please check your Internet Connection!", context);
     }
   }
 
@@ -250,11 +250,15 @@ class _MyOrdersState extends State<MyOrders>{
                     itemBuilder: (context, index) {
                       return GestureDetector(
                           onTap: (){
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                    new CustOrderDetail(orderData:_myOrderList[index])));
+                           if( _myOrderList[index].currentStatus!=6 && _myOrderList[index].currentStatus!=8
+                            && _myOrderList[index].currentStatus!=12) {
+                             Navigator.push(
+                                 context,
+                                 MaterialPageRoute(
+                                     builder: (context) =>
+                                     new CustOrderDetail(
+                                         orderData: _myOrderList[index])));
+                           }
                           },
                           child:
                           OrderListItem(orderList:_myOrderList,position:index)

@@ -2,8 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:orderly/Screens/Customer/cart/addTime.dart';
 import 'package:orderly/Screens/Customer/cart/shopping_cart.dart';
-import 'package:orderly/Screens/Customer/profile/edit_profile.dart';
-import '../Screens/Customer/profile/profAddress/prof_address.dart';
+import 'package:orderly/Screens/mainNavigation.dart';
+import 'package:orderly/Screens/profile/edit_profile.dart';
+import 'package:orderly/Screens/profile/faq.dart';
+import 'package:orderly/Screens/profile/profAddress/prof_address.dart';
+import '../Screens/profile/privacyPolicy.dart';
+import '../Screens/profile/termsOfUse.dart';
 import 'package:orderly/Screens/user/OtpScreen.dart';
 
 import 'package:orderly/Screens/user/choiceScreen.dart';
@@ -17,16 +21,19 @@ class Routes {
 
   static const String signIn = "/signIn";
   static const String signUp = "/signUp";
+  static const String roleType='/roleType';
+  static const String mainNavi='/maninNavi';
   static const String otp = "/otp"; //added on 6/02/2021
   static const String verifyPhone = "/verifyPhone";
   static const String otpRegUser = "/otpREgUser"; //added on 9/02/2021
   static const String forgotPassword = "/forgotPassword";
   static const String editProfile = "/editProfile";
-  static const String changePassword = "/changePassword";
   static const String address = "/address";
   static const String cart = "/cart";
-  static const String roleType='/roleType';
-  static const String addTime='/addTime';
+  static const String terms='/terms';
+  static const String privacy='/privacy';
+  static const String faq='/faq';
+
 
   Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -47,6 +54,14 @@ class Routes {
           fullscreenDialog: false,
         );
 
+    case mainNavi:
+     return MaterialPageRoute(
+       builder: (context) {
+         return MainNavigation();
+       },
+       fullscreenDialog: false,
+     );
+
      // case verifyPhone:
      //  return MaterialPageRoute(
      //    builder: (context) {
@@ -63,21 +78,15 @@ class Routes {
        fullscreenDialog: false,
      );
 
-      case addTime:
-        return MaterialPageRoute(
-          builder: (context) {
-            return AddTime();
-          },
-          fullscreenDialog: false,
-        );
 
       case address:
         return MaterialPageRoute(
           builder: (context) {
-            return ProfAddress();
+            return ProfAddress(fromProf: settings.arguments,);
           },
           fullscreenDialog: false,
         );
+
         //added on 6/02/2021
       // case otp:
       //   return MaterialPageRoute(
@@ -102,14 +111,26 @@ class Routes {
         );
 
 
-      // case changePassword:
-      //   return MaterialPageRoute(
-      //     builder: (context) {
-      //       return ChangePassword();
-      //     },
-      //   );
+      case terms:
+        return MaterialPageRoute(
+          builder: (context) {
+            return TermsOfUse();
+          },
+        );
 
+      case privacy:
+        return MaterialPageRoute(
+          builder: (context) {
+            return PrivacyPolicy();
+          },
+        );
 
+      case faq:
+        return MaterialPageRoute(
+          builder: (context) {
+            return FAQ();
+          },
+        );
 
       // case changeLanguage:
       //   return MaterialPageRoute(

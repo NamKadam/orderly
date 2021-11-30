@@ -88,7 +88,8 @@ class FleetOrdersBloc extends Bloc<FleetOrdersEvent,FleetOrdersState> {
 
       Map<String,dynamic> params={
         'order_detail_id':event.orderid,
-        'status':event.status
+        'status':event.status,
+        'reject_reason':event.rejectReason
       };
       try {
         var resp=await http.post(Uri.parse(Api.UPDATE_FLEET_STATUS),body: params);

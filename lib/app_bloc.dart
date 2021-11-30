@@ -2,14 +2,17 @@ import 'package:orderly/Blocs/address/address_bloc.dart';
 import 'package:orderly/Blocs/fleetOrders/bloc.dart';
 import 'package:orderly/Blocs/custorderDet/bloc.dart';
 import 'package:orderly/Blocs/home/bloc.dart';
+import 'package:orderly/Blocs/inventory/inventory_bloc.dart';
 import 'package:orderly/Blocs/login/login_bloc.dart';
 import 'package:orderly/Blocs/mycart/bloc.dart';
+import 'package:orderly/Blocs/profile/bloc.dart';
 import 'package:orderly/Blocs/theme/theme_bloc.dart';
 import 'package:orderly/Blocs/user_reg/userReg_bloc.dart';
 import 'package:orderly/Repository/UserRepository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'Blocs/authentication/authentication_bloc.dart';
+import 'Blocs/claim/claim_bloc.dart';
 import 'Blocs/myOrders/myOrders_bloc.dart';
 
 class AppBloc {
@@ -29,6 +32,10 @@ class AppBloc {
 
   //fleet manager
   static final fleetOrdersBloc=FleetOrdersBloc(fleetOrdersRepo:userRepository);
+  static final fleetInventBloc=InventoryBloc(inventoryRepo:userRepository);
+  static final claimBloc=ClaimOrdersBloc(claimRepo:userRepository);
+
+  static final profileBloc=ProfileBloc(profileRepo:userRepository);
 
 
   static final List<BlocProvider> providers = [
@@ -65,6 +72,10 @@ class AppBloc {
       create: (context) => myOrdersBloc,
     ),
 
+    BlocProvider<ProfileBloc>(
+      create: (context) =>profileBloc ,
+    ),
+
     //fleet manager
     BlocProvider<FleetOrdersBloc>(
       create: (context) => fleetOrdersBloc,
@@ -73,6 +84,16 @@ class AppBloc {
     //fleet order det
     BlocProvider<CustOrderDetBloc>(
       create: (context) => custOrdersDetBloc,
+    ),
+
+    //fleet inventory
+    BlocProvider<InventoryBloc>(
+      create: (context) =>fleetInventBloc ,
+    ),
+
+    //fleet claim
+    BlocProvider<ClaimOrdersBloc>(
+      create: (context) =>claimBloc ,
     ),
 
   ];
@@ -89,7 +110,10 @@ class AppBloc {
     addressBloc.close();
     myOrdersBloc.close();
     fleetOrdersBloc.close();
+    claimBloc.close();
     custOrdersDetBloc.close();
+    fleetInventBloc.close();
+    profileBloc.close();
   }
 
   ///Singleton factory

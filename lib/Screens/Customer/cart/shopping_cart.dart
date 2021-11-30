@@ -18,8 +18,7 @@ import 'package:orderly/Models/model_product_List.dart';
 import 'package:orderly/Models/model_view_cart.dart';
 import 'package:orderly/Screens/Customer/cart/addTime.dart';
 import 'package:orderly/Screens/Customer/cart/cart_list_item.dart';
-import 'package:orderly/Screens/Customer/profile/profAddress/addEditAddress.dart';
-import 'package:orderly/Screens/Customer/profile/profAddress/prof_address.dart';
+import 'package:orderly/Screens/profile/profAddress/prof_address.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/connectivity_check.dart';
 import 'package:orderly/Utils/preferences.dart';
@@ -29,6 +28,7 @@ import 'package:orderly/Utils/util_preferences.dart';
 import 'package:orderly/Widgets/app_button.dart';
 import 'package:orderly/Widgets/app_dialogs.dart';
 import 'package:orderly/app_bloc.dart';
+import 'package:orderly/db/orderly_database.dart';
 import 'package:readmore/readmore.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -67,7 +67,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
   final _controller = RefreshController(initialRefresh: false);
   String flagRemove="";
   AddTimeData addTimeresult;
-
 
   Future<void> showPlaceOrderBottomDialog(BuildContext context) async {
     showModalBottomSheet<void>(
@@ -256,7 +255,15 @@ class _ShoppingCartState extends State<ShoppingCart> {
     addTimeresult=new AddTimeData();
     cartBloc = BlocProvider.of<CartBloc>(context);
     // AppBloc.authBloc.add(OnSaveCart(widget.cartModel));
-
+    // _cartList=_cartDatabase.getCartList() as List<Cart>;
+    // OrderlyDatabase.database.getCartList().then((cart) {
+    //   setState(() {
+    //     cart.forEach((cart) {
+    //       _cartList.add(cart);
+    //       print(_cartList);
+    //     });
+    //   });
+    // });
     getCurrentDate();
     // setBlocData();
     getsharedPrefData();
@@ -1086,10 +1093,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                               content: Text(
                                                                   "Please Choose Delivery time")));
                                                         }else {
-                                                          // AddTime.isCheckedfree=false;
-                                                          // AddTime.isCheckedCharged=false;
-                                                          // AddTime.radioDay='';
-                                                          // AddTime.dateTime="";
+
                                                           String cart_json = jsonEncode(widget.cartModel.cart.map((i)
                                                           => Cart.toJson(i)).toList()).toString();
                                                           // var json1 = jsonEncode(cartList.map((e) => e.toJson()).toList());

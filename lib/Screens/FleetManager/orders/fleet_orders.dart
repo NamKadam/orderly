@@ -8,7 +8,6 @@ import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/model_fleetOrder_det.dart';
 import 'package:orderly/Models/model_fleet_orders.dart';
-import 'package:orderly/Screens/Customer/profile/profile.dart';
 import 'package:orderly/Screens/FleetManager/orders/fleet_order_det_retReplace.dart';
 import 'package:orderly/Screens/FleetManager/orders/order_details.dart';
 import 'package:orderly/Utils/application.dart';
@@ -32,6 +31,7 @@ class _FleetOrdersState extends State<FleetOrders> {
   int offset=0,status=0;
   List <Map> orderCat;
   final _controller = RefreshController(initialRefresh: false);
+  String StatusName="";
 
 
   @override
@@ -39,6 +39,7 @@ class _FleetOrdersState extends State<FleetOrders> {
     // TODO: implement initState
     super.initState();
     flagNoData=false;
+    StatusName="New";
     _fleetOrdersBloc=BlocProvider.of<FleetOrdersBloc>(context);
     getOrdersCat();
 
@@ -66,7 +67,7 @@ class _FleetOrdersState extends State<FleetOrders> {
     print(Application.user.producerid);
     isconnectedToInternet = await ConnectivityCheck.checkInternetConnectivity();
     if (isconnectedToInternet == true) {
-      _fleetOrdersBloc.add(OnLoadingFleetOrdersList(producerId: "1",status: status.toString()));
+      _fleetOrdersBloc.add(OnLoadingFleetOrdersList(producerId: Application.user.producerid,status: status.toString()));
     } else {
       CustomDialogs.showDialogCustom(
           "Internet", "Please check your Internet Connection!", context);
@@ -105,6 +106,10 @@ class _FleetOrdersState extends State<FleetOrders> {
       },
       {
         "name": "Return & Replace",
+        "isSelected": false
+      },
+      {
+        "name": "Cancelled",
         "isSelected": false
       },
     ];
@@ -192,17 +197,23 @@ class _FleetOrdersState extends State<FleetOrders> {
 
                 // setState(() {
                   orderCat[index]['isSelected']=true;
-                  status=index;
-                _fleetOrderList=null;
-                if(status!=4 && status!=5){
+                  if(index==5)
+                    {
+                      status=6;
+                    }else{
+                    status=index;
+                  }
+
+                  _fleetOrderList=null;
+                // if(status!=4 && status!=5){
                   _fleetOrdersBloc.add(OnLoadingFleetOrdersList(producerId: Application.user.producerid,status: status.toString()));
 
-                }else{ //for return replace
-                  _fleetOrdersBloc.add(FleetOrdersReturnReplace(producerId: Application.user.producerid.toString()));
-                  print("status:-"+status.toString());
-                  print("producerId:-"+Application.user.producerid.toString());
-
-                }
+                // }else{ //for return replace
+                //   _fleetOrdersBloc.add(FleetOrdersReturnReplace(producerId: Application.user.producerid.toString()));
+                //   print("status:-"+status.toString());
+                //   print("producerId:-"+Application.user.producerid.toString());
+                //
+                // }
                 // });
               },
               child:
@@ -227,7 +238,7 @@ class _FleetOrdersState extends State<FleetOrders> {
 
   // to build widget as per status
   Widget buildListAsPerStatus(int status){
-    if(status!=4 && status !=5){
+    // if(status!=4 && status !=5){
       return Expanded(child:
       ListView.separated(
           controller: _scrollController,
@@ -247,63 +258,106 @@ class _FleetOrdersState extends State<FleetOrders> {
                 child: buildOrdersList(index, _fleetOrderList)
             );
           }));
-    }else{ //for return replace
-      return
-        Expanded(child:
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Container(
-              //   color: Colors.white,
-              //     child:
-              //     Row(
-              //   mainAxisAlignment: MainAxisAlignment.end,
-              //   children: [
-              //     Text(
-              //       'Filter',
-              //       style: TextStyle(
-              //           color: AppTheme.textColor,
-              //           fontSize: 14.0,
-              //           fontWeight: FontWeight.w400,
-              //           fontFamily: 'Poppins'
-              //       ),
-              //     ),
-              //     IconButton(
-              //       icon: Image.asset(Images.filter,width: 20.0,height: 20.0,),
-              //       onPressed: () {
-              //
-              //       },
-              //     ),
-              //   ],
-              // )),
+    // }
+    // else{ //for return replace
+    //   return
+    //     Expanded(child:
+    //       Column(
+    //         crossAxisAlignment: CrossAxisAlignment.start,
+    //         children: [
+    //           // Container(
+    //           //   color: Colors.white,
+    //           //     child:
+    //           //     Row(
+    //           //   mainAxisAlignment: MainAxisAlignment.end,
+    //           //   children: [
+    //           //     Text(
+    //           //       'Filter',
+    //           //       style: TextStyle(
+    //           //           color: AppTheme.textColor,
+    //           //           fontSize: 14.0,
+    //           //           fontWeight: FontWeight.w400,
+    //           //           fontFamily: 'Poppins'
+    //           //       ),
+    //           //     ),
+    //           //     IconButton(
+    //           //       icon: Image.asset(Images.filter,width: 20.0,height: 20.0,),
+    //           //       onPressed: () {
+    //           //
+    //           //       },
+    //           //     ),
+    //           //   ],
+    //           // )),
+    //
+    //           Expanded(
+    //             child: ListView.separated(
+    //                 controller: _scrollController,
+    //                 physics: const AlwaysScrollableScrollPhysics(),
+    //                 separatorBuilder: (context, index) {
+    //                   return SizedBox(
+    //                     height: 0.0,
+    //                   );
+    //                 },
+    //                 itemCount: _fleetRetReplaceList!=null?_fleetRetReplaceList.length:6,
+    //                 itemBuilder: (context, index) {
+    //                   return GestureDetector(
+    //                       onTap: ()
+    //                       {
+    //                         Navigator.push(context, MaterialPageRoute(builder: (context)=>
+    //                             FleetOrderDetRetReplace(orderData: _fleetRetReplaceList[index])));
+    //                         // print("clicked");
+    //                       },
+    //                       child: buildReturnReplaceList(index, _fleetRetReplaceList)
+    //                   );
+    //                 }),
+    //           )
+    //         ],
+    //       )
+    //
+    // );
+    // }
+  }
 
-              Expanded(
-                child: ListView.separated(
-                    controller: _scrollController,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    separatorBuilder: (context, index) {
-                      return SizedBox(
-                        height: 0.0,
-                      );
-                    },
-                    itemCount: _fleetRetReplaceList!=null?_fleetRetReplaceList.length:6,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                          onTap: ()
-                          {
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>
-                                FleetOrderDetRetReplace(orderData: _fleetRetReplaceList[index])));
-                            // print("clicked");
-                          },
-                          child: buildReturnReplaceList(index, _fleetRetReplaceList)
-                      );
-                    }),
-              )
-            ],
-          )
-
-    );
+  Widget getTextStatusName(int index, List<FleetOrderModel> _fleetOrderList){
+    if(_fleetOrderList[index].currentStatus==0){
+      StatusName="New";
     }
+    else if(_fleetOrderList[index].currentStatus==1){
+      StatusName="Ready";
+    }else if(_fleetOrderList[index].currentStatus==2){
+      StatusName="Shipped";
+    }else if(_fleetOrderList[index].currentStatus==3){
+      StatusName="Delivered";
+    }else if(_fleetOrderList[index].currentStatus==4){
+      StatusName="Return";
+    }else if(_fleetOrderList[index].currentStatus==5){
+      StatusName="Replace";
+    }else if(_fleetOrderList[index].currentStatus==6){
+      StatusName="Cancelled";
+    }else if(_fleetOrderList[index].currentStatus==7){
+      StatusName="Ready Return";
+    }else if(_fleetOrderList[index].currentStatus==8){
+      StatusName="Cancelled Return";
+    }else if(_fleetOrderList[index].currentStatus==9){
+      StatusName="Shipped Return";
+    }else if(_fleetOrderList[index].currentStatus==10){
+      StatusName="Delivered Return";
+    }else if(_fleetOrderList[index].currentStatus==11){
+      StatusName="Ready Replacement";
+    }else if(_fleetOrderList[index].currentStatus==12){
+      StatusName="Cancelled Replacement";
+    }else if(_fleetOrderList[index].currentStatus==13){
+      StatusName="Shipped Replacement";
+    }else if(_fleetOrderList[index].currentStatus==14){
+      StatusName="Delivered Replacement";
+    }
+    return Text(StatusName,
+      style: TextStyle(
+          fontWeight: FontWeight.w400,
+          fontFamily: 'Poppins',
+          fontSize: 14.0,
+          color: AppTheme.appColor
+      ),);
   }
 
   //order list
@@ -374,8 +428,10 @@ class _FleetOrdersState extends State<FleetOrders> {
         child:
         GestureDetector(
           onTap: (){
+            print(status);
             Navigator.push(context, MaterialPageRoute(builder: (context)=>
-                OrderDetails(orderId:_fleetOrderList[index].orderNumber,status:status,producerId:_fleetOrderList[index].producerId.toString())));
+                OrderDetails(orderId:_fleetOrderList[index].orderNumber,status:_fleetOrderList[index].currentStatus,
+                    statusName:StatusName, producerId:_fleetOrderList[index].producerId.toString())));
             // print("clicked");
           },
           child:Stack(
@@ -528,13 +584,8 @@ class _FleetOrdersState extends State<FleetOrders> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(orderCat[status]['name'],
-                        style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontFamily: 'Poppins',
-                            fontSize: 14.0,
-                            color: AppTheme.appColor
-                        ),),
+                      getTextStatusName(index,_orderLists),
+
                       Text("Order",
                         style: TextStyle(
                             fontWeight: FontWeight.w400,
@@ -821,14 +872,14 @@ class _FleetOrdersState extends State<FleetOrders> {
   ///On Refresh List
   Future<void> _onRefresh() async {
     await Future.delayed(Duration(milliseconds: 1000));
-     if(status!=4 && status!=5)
-     {
+     // if(status!=4 && status!=5)
+     // {
        _fleetOrderList=null;
        _fleetOrdersBloc.add(OnLoadingFleetOrdersList(producerId:Application.user.producerid,status: status.toString()));
-     }else{
-       _fleetRetReplaceList=null;
-       _fleetOrdersBloc.add(FleetOrdersReturnReplace(producerId: Application.user.producerid.toString()));
-     }
+     // }else{
+     //   _fleetRetReplaceList=null;
+     //   _fleetOrdersBloc.add(FleetOrdersReturnReplace(producerId: Application.user.producerid.toString()));
+     // }
      _controller.refreshCompleted();
   }
 

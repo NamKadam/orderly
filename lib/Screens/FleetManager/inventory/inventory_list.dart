@@ -2,52 +2,134 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:orderly/Blocs/inventory/bloc.dart';
 import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
+import 'package:orderly/Models/model_invent_list.dart';
 import 'package:orderly/Models/model_inventory.dart';
 import 'package:orderly/Screens/FleetManager/inventory/add_edit_inventory_item.dart';
+import 'package:orderly/Utils/application.dart';
+import 'package:orderly/Utils/connectivity_check.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Widgets/app_button.dart';
+import 'package:orderly/Widgets/app_dialogs.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:readmore/readmore.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_custom_switch/flutter_custom_switch.dart';
 
 
-class Inventory extends StatefulWidget{
-  _InventoryState createState()=>_InventoryState();
+class InventoryList extends StatefulWidget{
+  _InventoryListState createState()=>_InventoryListState();
 }
 
-class _InventoryState extends State<Inventory>{
+class _InventoryListState extends State<InventoryList>{
   bool isExpand=false;
-  List<InventoryModel> inventoryList=[];
+  List<Inventory> inventoryList;
   bool isSwitched=true;
   final TextEditingController _searchcontroller = TextEditingController();
+  InventoryBloc _inventoryBloc;
+  List<Inventory> searchresult=[];
+  final _controller = RefreshController(initialRefresh: false);
+
+  bool isconnectedToInternet = false,
+      flagNoData=false,_isSearching = false;
 
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getInventoryList();
+    _inventoryBloc=BlocProvider.of<InventoryBloc>(context);
+    setBlocData();
+    // getInventoryList();
   }
 
-  void getInventoryList() {
-    for (int i = 0; i < 5; i++) {
-      InventoryModel inventoryModel = new InventoryModel(
-          id: i,
-          inventoryName: "Prime Roof Truck",
-          inventoryDesc: "Lorem ipsum color sit lorem ipsum sit lorem epsum sit",
-          noOfItems: "4",
-          rate: "25 \$hr",
-          offer:"12",
-      category: "Category Name",
-      type: "TypeName",
-      size: "200kb");
-
-      inventoryList.add(inventoryModel);
+  void setBlocData() async{
+    isconnectedToInternet = await ConnectivityCheck.checkInternetConnectivity();
+    if (isconnectedToInternet == true) {
+      _inventoryBloc.add(OnLoadingInventoryList(producerId: Application.user.producerid));
+    } else {
+      CustomDialogs.showDialogCustom(
+          "Internet", "Please check your Internet Connection!", context);
     }
   }
 
-  Widget buildInventoryList(int index,List<InventoryModel> _inventoryList){
+  void _handleSearchStart() {
+    setState(() {
+      _isSearching = true;
+    });
+  }
+
+  void _handleSearchEnd() {
+    setState(() {
+      _isSearching = false;
+      _searchcontroller.clear();
+    });
+  }
+
+  void searchOperation(String searchText) {
+    searchresult.clear();
+    if (_isSearching != null && _searchcontroller.text.isNotEmpty) {
+      for (int i = 0; i < inventoryList.length; i++) {
+        Inventory inventory=new Inventory();
+        inventory.productName=inventoryList[i].productName.toString();
+        inventory.productId=inventoryList[i].productId;
+        inventory.producerName=inventoryList[i].producerName;
+        inventory.productDesc=inventoryList[i].productDesc;
+        inventory.productQty=inventoryList[i].productQty;
+        inventory.ratePerHour=inventoryList[i].ratePerHour.toString();
+        inventory.truckName=inventoryList[i].truckName.toString();
+        inventory.truckNumber=inventoryList[i].truckNumber;
+        inventory.imgPaths=inventoryList[i].imgPaths.toString();
+        inventory.displayStatus=inventoryList[i].displayStatus;
+
+        if (inventory.productName.toString().toLowerCase().contains(searchText.toLowerCase())
+            ||inventory.productDesc.toString().toLowerCase().contains(searchText.toLowerCase())
+            ||inventory.ratePerHour.toString().toLowerCase().contains(searchText.toLowerCase())
+            ||inventory.productQty.toString().toLowerCase().contains(searchText.toLowerCase()) )
+        {
+          searchresult.add(inventory);
+        }
+      }
+      setState(() {
+
+      });
+    }else{
+      _onRefresh();
+    }
+
+  }
+
+  // void getInventoryList() {
+  //   for (int i = 0; i < 5; i++) {
+  //     InventoryModel inventoryModel = new InventoryModel(
+  //         id: i,
+  //         inventoryName: "Prime Roof Truck",
+  //         inventoryDesc: "Lorem ipsum color sit lorem ipsum sit lorem epsum sit",
+  //         noOfItems: "4",
+  //         rate: "25 \$hr",
+  //         offer:"12",
+  //     category: "Category Name",
+  //     type: "TypeName",
+  //     size: "200kb");
+  //
+  //     inventoryList.add(inventoryModel);
+  //   }
+  // }
+
+  ///On Refresh List
+  Future<void> _onRefresh() async {
+    await Future.delayed(Duration(milliseconds: 1000));
+
+    inventoryList=null;
+    searchresult=[];
+    setBlocData();
+    _controller.refreshCompleted();
+  }
+
+  Widget buildInventoryList(int index,List<Inventory> _inventoryList){
     if(_inventoryList==null){
       return ListView.builder(
         padding: EdgeInsets.all(0),
@@ -133,9 +215,9 @@ class _InventoryState extends State<Inventory>{
                                 // imageUrl: Api.PHOTO_URL + widget.users.avatar,
                                 // imageUrl:
                                 //     "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
-                                imageUrl: inventoryList[index].inventoryImage == null
+                                imageUrl: _inventoryList[index].imgPaths == null
                                     ? "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
-                                    : inventoryList[index].inventoryImage,
+                                    : _inventoryList[index].imgPaths,
                                 placeholder: (context, url) {
                                   return Shimmer.fromColors(
                                     baseColor: Theme.of(context).hoverColor,
@@ -197,7 +279,7 @@ class _InventoryState extends State<Inventory>{
 
                                               child:
                                               Text(
-                                                inventoryList[index].inventoryName,
+                                                _inventoryList[index].productName,
                                                 // widget.users.firstName+" "+widget.users.lastName,
                                                 style: Theme.of(context)
                                                     .textTheme
@@ -208,17 +290,17 @@ class _InventoryState extends State<Inventory>{
                                                     color: AppTheme.textColor,
                                                     fontFamily: "Poppins"),
                                               )),
-                                          Switch(
-                                            value: isSwitched,
-                                            inactiveTrackColor: AppTheme.textColor.withOpacity(0.5),
-                                            inactiveThumbColor:AppTheme.textColor ,
-                                            activeColor: AppTheme.appColor,
-                                            onChanged: (value){
-                                              setState(() {
-                                                isSwitched=value;
-                                              });
-                                            },
-                                          )
+                                          // Switch(
+                                          //   value: isSwitched,
+                                          //   inactiveTrackColor: AppTheme.textColor.withOpacity(0.5),
+                                          //   inactiveThumbColor:AppTheme.textColor ,
+                                          //   activeColor: AppTheme.appColor,
+                                          //   onChanged: (value){
+                                          //     setState(() {
+                                          //       isSwitched=value;
+                                          //     });
+                                          //   },
+                                          // )
                                           // FlutterCustomSwitch(
                                           //   value: isSwitched,
                                           //   onChanged: (value) {
@@ -235,8 +317,9 @@ class _InventoryState extends State<Inventory>{
                                         ],
                                       ),
 
-                                      Text(
-                                        inventoryList[index].inventoryDesc,
+                                      ReadMoreText(
+
+                                          _inventoryList[index].productDesc,
                                         style: Theme.of(context)
                                             .textTheme
                                             .button
@@ -245,6 +328,10 @@ class _InventoryState extends State<Inventory>{
                                             color: AppTheme.textColor,
                                             fontWeight: FontWeight.w400,
                                             fontFamily: "Poppins"),
+                                        trimLines: 2,
+                                          trimMode: TrimMode.Line,
+                                          trimCollapsedText: 'Show more',
+                                          trimExpandedText: 'Show less'
                                       ),
                                       SizedBox(height: 15.0,),
 
@@ -267,7 +354,7 @@ class _InventoryState extends State<Inventory>{
                                     fontWeight: FontWeight.w500,
                                     color:AppTheme.appColor
                                 ),),
-                              Text(_inventoryList[index].rate+" \$ hr",style: TextStyle(
+                              Text(_inventoryList[index].ratePerHour+" \$ hr",style: TextStyle(
                                   fontSize: 12.0,
                                   fontFamily: "Poppins",
                                   fontWeight: FontWeight.w600,
@@ -286,7 +373,7 @@ class _InventoryState extends State<Inventory>{
                                     fontWeight: FontWeight.w500,
                                     color:AppTheme.appColor
                                 ),),
-                              Text(_inventoryList[index].noOfItems,
+                              Text(_inventoryList[index].productQty.toString(),
                                 style: TextStyle(
                                     fontSize: 12.0,
                                     fontFamily: "Poppins",
@@ -295,26 +382,48 @@ class _InventoryState extends State<Inventory>{
                                 ),)
                             ],
                           ),
+                          //producer name
                           Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Offer in %",
+                              Text("Category",
                                 style: TextStyle(
-                                    fontSize: 14.0,
+                                    fontSize: 12.0,
                                     fontFamily: "Poppins",
                                     fontWeight: FontWeight.w500,
                                     color:AppTheme.appColor
                                 ),),
-                              Text(_inventoryList[index].offer,
-                                style: TextStyle(
-                                    fontSize: 12.0,
-                                    fontFamily: "Poppins",
-                                    fontWeight: FontWeight.w600,
-                                    color:AppTheme.textColor
-                                ),)
+
+                              Text(_inventoryList[index].producerName,style: TextStyle(
+                                  fontSize: 12.0,
+                                  fontFamily: "Poppins",
+                                  fontWeight: FontWeight.w600,
+                                  color:AppTheme.textColor
+                              ),)
                             ],
-                          )
+                          ),
+                          //offer
+                          // Column(
+                          //   mainAxisAlignment: MainAxisAlignment.start,
+                          //   crossAxisAlignment: CrossAxisAlignment.start,
+                          //   children: [
+                          //     Text("Offer in %",
+                          //       style: TextStyle(
+                          //           fontSize: 14.0,
+                          //           fontFamily: "Poppins",
+                          //           fontWeight: FontWeight.w500,
+                          //           color:AppTheme.appColor
+                          //       ),),
+                          //     Text(_inventoryList[index].offer,
+                          //       style: TextStyle(
+                          //           fontSize: 12.0,
+                          //           fontFamily: "Poppins",
+                          //           fontWeight: FontWeight.w600,
+                          //           color:AppTheme.textColor
+                          //       ),)
+                          //   ],
+                          // )
                         ],
                       )
 
@@ -377,73 +486,73 @@ class _InventoryState extends State<Inventory>{
               Padding(
                   padding: EdgeInsets.only(left:15.0,top:10.0,bottom:8.0,right: 10.0),
                   child:
-                  Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Category",
-                                style: TextStyle(
-                                    fontSize: 12.0,
-                                    fontFamily: "Poppins",
-                                    fontWeight: FontWeight.w500,
-                                    color:AppTheme.appColor
-                                ),),
-                              Text(_inventoryList[index].category,style: TextStyle(
-                                  fontSize: 12.0,
-                                  fontFamily: "Poppins",
-                                  fontWeight: FontWeight.w600,
-                                  color:AppTheme.textColor
-                              ),)
-                            ],
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Type",
-                                style: TextStyle(
-                                    fontSize: 12.0,
-                                    fontFamily: "Poppins",
-                                    fontWeight: FontWeight.w500,
-                                    color:AppTheme.appColor
-                                ),),
-                              Text(_inventoryList[index].type,
-                                style: TextStyle(
-                                    fontSize: 12.0,
-                                    fontFamily: "Poppins",
-                                    fontWeight: FontWeight.w600,
-                                    color:AppTheme.textColor
-                                ),)
-                            ],
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Size",
-                                style: TextStyle(
-                                    fontSize: 12.0,
-                                    fontFamily: "Poppins",
-                                    fontWeight: FontWeight.w500,
-                                    color:AppTheme.appColor
-                                ),),
-                              Text(_inventoryList[index].size,
-                                style: TextStyle(
-                                    fontSize: 12.0,
-                                    fontFamily: "Poppins",
-                                    fontWeight: FontWeight.w600,
-                                    color:AppTheme.textColor
-                                ),)
-                            ],
-                          )
-                        ],
-                      ),
-                      Padding(
+                  // Column(
+                  //   children: [
+                  //     Row(
+                  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //       children: [
+                  //         Column(
+                  //           mainAxisAlignment: MainAxisAlignment.start,
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             Text("Category",
+                  //               style: TextStyle(
+                  //                   fontSize: 12.0,
+                  //                   fontFamily: "Poppins",
+                  //                   fontWeight: FontWeight.w500,
+                  //                   color:AppTheme.appColor
+                  //               ),),
+                  //             Text(_inventoryList[index].producerName,style: TextStyle(
+                  //                 fontSize: 12.0,
+                  //                 fontFamily: "Poppins",
+                  //                 fontWeight: FontWeight.w600,
+                  //                 color:AppTheme.textColor
+                  //             ),)
+                  //           ],
+                  //         ),
+                  //         Column(
+                  //           mainAxisAlignment: MainAxisAlignment.start,
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             Text("Type",
+                  //               style: TextStyle(
+                  //                   fontSize: 12.0,
+                  //                   fontFamily: "Poppins",
+                  //                   fontWeight: FontWeight.w500,
+                  //                   color:AppTheme.appColor
+                  //               ),),
+                  //             Text(_inventoryList[index].type,
+                  //               style: TextStyle(
+                  //                   fontSize: 12.0,
+                  //                   fontFamily: "Poppins",
+                  //                   fontWeight: FontWeight.w600,
+                  //                   color:AppTheme.textColor
+                  //               ),)
+                  //           ],
+                  //         ),
+                  //         Column(
+                  //           mainAxisAlignment: MainAxisAlignment.start,
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             Text("Size",
+                  //               style: TextStyle(
+                  //                   fontSize: 12.0,
+                  //                   fontFamily: "Poppins",
+                  //                   fontWeight: FontWeight.w500,
+                  //                   color:AppTheme.appColor
+                  //               ),),
+                  //             Text(_inventoryList[index].size,
+                  //               style: TextStyle(
+                  //                   fontSize: 12.0,
+                  //                   fontFamily: "Poppins",
+                  //                   fontWeight: FontWeight.w600,
+                  //                   color:AppTheme.textColor
+                  //               ),)
+                  //           ],
+                  //         )
+                  //       ],
+                  //     ),
+                  Padding(
                           padding: EdgeInsets.all(20.0),
                           child:
                           Row(
@@ -465,10 +574,20 @@ class _InventoryState extends State<Inventory>{
                                                   Radius.circular(50)),
                                             )),
                                         // shape: shape,
-                                        onPressed: (){
-                                          Navigator.push(context, MaterialPageRoute(builder: (context)
-                                          =>AddEditInventoryItem(flagAddEdit: "1",)) //for edit
+                                        onPressed: () async{
+                                          final result=await Navigator.push(context, MaterialPageRoute(builder: (context)
+                                          =>AddEditInventoryItem(flagAddEdit: "1",inventoryData:inventoryList[index])) //for edit
                                           );
+                                          if(result!=null) {
+                                            setState(() {
+                                              inventoryList = null;
+                                              searchresult = [];
+                                              _inventoryBloc.add(
+                                                  OnLoadingInventoryList(
+                                                      producerId: Application
+                                                          .user.producerid));
+                                            });
+                                          }
 
                                         },
                                         child: Row(
@@ -488,6 +607,22 @@ class _InventoryState extends State<Inventory>{
                               SizedBox(width: 10.0,),
                               Expanded(child:AppButton(
                                 onPressed: () {
+                                  if(searchresult.length != 0 || _searchcontroller.text.isNotEmpty) {
+                                    _inventoryBloc.add(OnRemoveInventoryItem(
+                                        productId: searchresult[index]
+                                            .productId.toString()));
+                                    setState(() {
+                                         inventoryList.removeWhere((item) => item.productId == searchresult[index].productId);
+                                         searchresult.removeAt(index);
+                                    });
+                                  }else{
+                                    _inventoryBloc.add(OnRemoveInventoryItem(
+                                        productId: inventoryList[index]
+                                            .productId.toString()));
+                                    setState(() {
+                                      inventoryList.removeAt(index);
+                                    });
+                                  }
 
                                 },
                                 shape: const RoundedRectangleBorder(
@@ -498,8 +633,9 @@ class _InventoryState extends State<Inventory>{
 
                             ],
                           ))
-                    ],
-                  )),
+                  //   ],
+                  // )
+           ),
             )
           ],
         ));
@@ -526,10 +662,20 @@ class _InventoryState extends State<Inventory>{
                      width: 120.0
                  ),
                  child: FloatingActionButton(
-                    onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)
+                    onPressed: () async{
+                      final result=await Navigator.push(context, MaterialPageRoute(builder: (context)
                       =>AddEditInventoryItem(flagAddEdit: "0") //for add
                       ));
+                      if(result!=null){
+                        setState(() {
+                          inventoryList = null;
+                          searchresult = [];
+                          _inventoryBloc.add(
+                              OnLoadingInventoryList(
+                                  producerId: Application
+                                      .user.producerid));
+                        });
+                      }
                     },
                    child:  Container(
                      constraints: new BoxConstraints.expand(
@@ -583,104 +729,167 @@ class _InventoryState extends State<Inventory>{
           ),
         ),
       body:
-      SafeArea(child:Column(
-        children: [
-          //search with filter
-          Padding(padding: EdgeInsets.only(left: 15.0,right: 15.0,top:10.0,bottom: 10.0),
-              child:Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Colors.white,
-                  ),
-                  child:
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: Image.asset(Images.search,width: 25.0,height: 25.0,),
-                            onPressed: () {
+          BlocBuilder<InventoryBloc,InventoryState>(builder: (context,state){
+            if(state is InventoryListSuccess){
+              inventoryList=state.inventoryList;
+              flagNoData=false;
+            }
+            if(state is InventoryLoading){
+              flagNoData=false;
+            }
 
-                            },
-                          ),
-                          Container(
-                              margin: EdgeInsets.only(top:5.0),
-                              width: 200.0,
-                              height: 45.0,
-                              child:TextFormField(
-                                controller:_searchcontroller,
-                                style: TextStyle(
-                                    fontFamily: 'Poppins',color: AppTheme.textColor,fontSize: 14.0,fontWeight: FontWeight.w400
+            if(state is InventoryListLoadFail){
+              flagNoData=true;
+            }
+
+            if(state is InventoryRemovedSuccess){
+              print("deleted");
+              // if(inventoryList.isEmpty){
+              //   flagNoData=true;
+              // }
+              // if(searchresult.isNotEmpty) {
+              //   _onRefresh();
+              // }
+
+              // if(searchresult.isNotEmpty){
+              //   searchresult.length=0;
+              //   _searchcontroller.text.isEmpty;
+              //   inventoryList=null;
+              //   _inventoryBloc.add(OnLoadingInventoryList(producerId: Application.user.producerid));
+              // }
+
+            }
+
+            return SafeArea(
+                child:
+                SmartRefresher(
+                enablePullDown: true,
+                onRefresh: _onRefresh,
+                controller: _controller,
+                child:
+                flagNoData==false
+                    ?
+                Column(
+              children: [
+                //search with filter
+                Padding(padding: EdgeInsets.only(left: 15.0,right: 15.0,top:10.0,bottom: 5.0),
+                    child:Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.white,
+                        ),
+                        child:
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                IconButton(
+                                  icon: Image.asset(Images.search,width: 25.0,height: 25.0,),
+                                  onPressed: () {
+                                    _handleSearchStart();
+
+                                  },
                                 ),
-                                keyboardType: TextInputType.text,
-                                decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: "Search for all filters",
-                                    hintStyle: TextStyle(
-                                        color: AppTheme.textColor
-                                    )
-                                ),
-                                onChanged: (value) {
-                                  // this.phoneNo=value;
-                                  print(value);
-                                },
-                              )),
-                        ],
-                      ),
-                      // Row(
-                      //   children: [
-                      //     Container(
-                      //       margin: EdgeInsets.only(right: 10.0),
-                      //       width: 1,
-                      //       height: 20.0,
-                      //       color: AppTheme.textColor,
-                      //     ),
-                      //     Text(
-                      //       'Filters',
-                      //       style: TextStyle(
-                      //           color: AppTheme.textColor,
-                      //           fontSize: 14.0,
-                      //           fontWeight: FontWeight.w400,
-                      //           fontFamily: 'Poppins'
-                      //       ),
-                      //     ),
-                      //     IconButton(
-                      //       icon: Image.asset(Images.filter,width: 20.0,height: 20.0,),
-                      //       onPressed: () {
-                      //         // Navigator.push(
-                      //         //     context,
-                      //         //     MaterialPageRoute(
-                      //         //         builder: (context) =>
-                      //         //         new OrdersFilter())
-                      //         // );
-                      //       },
-                      //     ),
-                      //
-                      //   ],
-                      // )
+                                Container(
+                                    margin: EdgeInsets.only(top:5.0),
+                                    width: 200.0,
+                                    height: 45.0,
+                                    child:TextFormField(
+                                      controller:_searchcontroller,
+                                      style: TextStyle(
+                                          fontFamily: 'Poppins',color: AppTheme.textColor,fontSize: 14.0,fontWeight: FontWeight.w400
+                                      ),
+                                      keyboardType: TextInputType.text,
+                                      decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          hintText: "Search for all filters",
+                                          hintStyle: TextStyle(
+                                              color: AppTheme.textColor
+                                          )
+                                      ),
+                                      onChanged: (value) {
+                                        // this.phoneNo=value;
+                                        print(value);
+                                        searchOperation(value);
+                                      },
+                                    )),
+                              ],
+                            ),
+                            // Row(
+                            //   children: [
+                            //     Container(
+                            //       margin: EdgeInsets.only(right: 10.0),
+                            //       width: 1,
+                            //       height: 20.0,
+                            //       color: AppTheme.textColor,
+                            //     ),
+                            //     Text(
+                            //       'Filters',
+                            //       style: TextStyle(
+                            //           color: AppTheme.textColor,
+                            //           fontSize: 14.0,
+                            //           fontWeight: FontWeight.w400,
+                            //           fontFamily: 'Poppins'
+                            //       ),
+                            //     ),
+                            //     IconButton(
+                            //       icon: Image.asset(Images.filter,width: 20.0,height: 20.0,),
+                            //       onPressed: () {
+                            //         // Navigator.push(
+                            //         //     context,
+                            //         //     MaterialPageRoute(
+                            //         //         builder: (context) =>
+                            //         //         new OrdersFilter())
+                            //         // );
+                            //       },
+                            //     ),
+                            //
+                            //   ],
+                            // )
 
 
-                      //text
-                    ],
-                  )
-              )
-          ),
-          Expanded(
-                 child:
-                     Container(
-                       // margin: EdgeInsets.only(bottom: 3.0),
-                       child:
-                       ListView.builder(
-                scrollDirection: Axis.vertical,
-                padding: EdgeInsets.only( top: 10,),
-                itemBuilder: (context, index) {
-                  return buildInventoryList(index,inventoryList);
-                },
-                itemCount: inventoryList!=null?inventoryList.length:6,
-              )))
-        ],
-      ))
+                            //text
+                          ],
+                        )
+                    )
+                ),
+
+                Expanded(
+                    child:
+                    Container(
+                      // margin: EdgeInsets.only(bottom: 3.0),
+                        child:searchresult.length != 0 || _searchcontroller.text.isNotEmpty
+                            ?
+                        ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          padding: EdgeInsets.only( top: 10,),
+                          itemBuilder: (context, index) {
+                            return buildInventoryList(index,searchresult);
+                          },
+                          itemCount: searchresult!=null?searchresult.length:6,
+                        )
+                    :
+                        ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          padding: EdgeInsets.only( top: 10,),
+                          itemBuilder: (context, index) {
+                            return buildInventoryList(index,inventoryList);
+                          },
+                          itemCount: inventoryList!=null?inventoryList.length:6,
+                        )))
+
+              ],
+            )
+            :
+                Center(
+            child: Text("No Data Available",
+            style:
+            TextStyle(fontWeight: FontWeight.w600,fontFamily: 'Poppins',fontSize: 16.0,color: AppTheme.textColor),),
+            ))
+            );
+          })
+
     );
   }
 

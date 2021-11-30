@@ -45,6 +45,7 @@ class FleetOrdersDet {
   String returnTitle;
   String review;
   String userId;
+  String rejectReason;
 
 
 
@@ -68,7 +69,8 @@ class FleetOrdersDet {
       this.returnType,
       this.returnTitle,
       this.review,
-      this.userId});
+      this.userId,
+      this.rejectReason});
 
   FleetOrdersDet.fromJson(Map<String, dynamic> json) {
     orderDetailsId = json['order_details_id'];
@@ -90,6 +92,7 @@ class FleetOrdersDet {
     returnTitle = json['return_title'];
     review = json['review'];
     userId = json['user_id'];
+    rejectReason=json['reject_reason'];
   }
 
   Map<String, dynamic> toJson() {
@@ -113,7 +116,7 @@ class FleetOrdersDet {
     data['return_title'] = this.returnTitle;
     data['review'] = this.review;
     data['user_id'] = this.userId;
-
+    data['reject_reason']=this.rejectReason;
     return data;
   }
 }

@@ -34,6 +34,7 @@ class User {
   dynamic zipcode;
   dynamic address;
   dynamic producerid;
+  dynamic signUpType;
 
 
   User(
@@ -47,7 +48,8 @@ class User {
         this.isRegistered,
       this.zipcode,
       this.address,
-      this.producerid});
+      this.producerid,
+      this.signUpType});
 
   User.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'];
@@ -58,9 +60,10 @@ class User {
     mobile = json['mobile'];
     userType = json['user_type'];
     isRegistered = json['is_registered'];
-    zipcode = json['zipcode'];
+    zipcode = json['zip_code'];
     address = json['address'];
     producerid = json['producerid'];
+    signUpType = json['signup_type'];
   }
 
   Map<String, dynamic> toJson() {
@@ -73,9 +76,10 @@ class User {
     data['mobile'] = this.mobile;
     data['user_type'] = this.userType;
     data['is_registered'] = this.isRegistered;
-    data['zipcode'] = this.zipcode;
+    data['zip_code'] = this.zipcode;
     data['address'] = this.address;
     data['producerid'] = this.producerid;
+    data['signup_type'] = this.signUpType;
     return data;
   }
 }

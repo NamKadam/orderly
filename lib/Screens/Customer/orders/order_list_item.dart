@@ -48,6 +48,60 @@ class _OrderListItemState extends State<OrderListItem>{
 
   @override
   Widget build(BuildContext context) {
+    String StatusName="";
+
+    Widget getTextStatus(int currentStatus){
+      if(widget.orderList[widget.position].currentStatus==0){
+        StatusName="Order Pending";
+      }
+      else if(widget.orderList[widget.position].currentStatus==1)
+      {
+        StatusName="Order Accepted";
+      }else if(widget.orderList[widget.position].currentStatus==2){
+        StatusName="Order Shipped";
+      }else if(widget.orderList[widget.position].currentStatus==3){
+        StatusName="Order Delivered";
+      }
+      else if(widget.orderList[widget.position].currentStatus==4){
+        StatusName="Order Returned";
+      }
+      else if(widget.orderList[widget.position].currentStatus==5){
+        StatusName="Order Replaced";
+
+      }else if(widget.orderList[widget.position].currentStatus==6)
+        {
+          StatusName="Order Cancelled";
+        }
+      else if(widget.orderList[widget.position].currentStatus==7){
+        StatusName="Order Return Confirmed";
+      }
+      else if(widget.orderList[widget.position].currentStatus==8){
+        StatusName="Order Return Rejected";
+      } else if(widget.orderList[widget.position].currentStatus==9){
+        StatusName="Order Return Shipped";
+      }else if(widget.orderList[widget.position].currentStatus==10){
+        StatusName="Order Return Delivered";
+      }
+      else if(widget.orderList[widget.position].currentStatus==11){
+        StatusName="Order Replace Confirmed";
+      } else if(widget.orderList[widget.position].currentStatus==12){
+        StatusName="Order Replace Rejected";
+      }else if(widget.orderList[widget.position].currentStatus==13){
+        StatusName="Order Replace Shipped";
+      }else if(widget.orderList[widget.position].currentStatus==13){
+        StatusName="Order Replace Delivered";
+      }
+
+      return  Text(
+       StatusName,
+        style: TextStyle(
+            fontWeight: FontWeight.w600,
+            fontFamily: 'Poppins',
+            fontSize: 14.0,
+            color: Theme.of(context).primaryColor
+        ),
+      );
+    }
     // TODO: implement build
     if(widget.orderList==null){
       return ListView.builder(
@@ -120,19 +174,7 @@ class _OrderListItemState extends State<OrderListItem>{
                Row(
              mainAxisAlignment: MainAxisAlignment.spaceBetween,
              children: [
-               Text(
-                 widget.orderList[widget.position].currentStatus==0
-                 ?
-                 "Order Pending"
-                 :
-                 "Order Accepted",
-                 style: TextStyle(
-                     fontWeight: FontWeight.w600,
-                     fontFamily: 'Poppins',
-                     fontSize: 14.0,
-                     color: Theme.of(context).primaryColor
-                 ),
-               ),
+              getTextStatus(widget.orderList[widget.position].currentStatus),
                //date text
                Text(
                  "On "+DateFormat('EEEE, d MMM, yyyy').format(DateTime.parse(widget.orderList[widget.position].orderDate)),
@@ -273,79 +315,90 @@ class _OrderListItemState extends State<OrderListItem>{
 
                               ],
                             )),
-                        Divider(
-                          height: 1.0,
-                          color: Colors.grey,
-                        ),
-                        //product review
-
-                        GestureDetector(
-                          onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductReview(
-                           order:widget.orderList[widget.position]
-                            )));
-                          },
-                            child:Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        widget.orderList[widget.position].currentStatus!=6 &&
+                            widget.orderList[widget.position].currentStatus!=8
+                        && widget.orderList[widget.position].currentStatus!=12
+                        ?
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Padding(
-                                padding: EdgeInsets.only(left:15.0),
-                                child:Text(Translate.of(context).translate('product_review'),style: TextStyle(fontWeight:FontWeight.w400,
-                                    fontFamily: 'Poppins',color: AppTheme.textColor),
+                            Divider(
+                              height: 1.0,
+                              color: Colors.grey,
+                            ),
+                            //product review
+
+                            GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductReview(
+                                      order:widget.orderList[widget.position]
+                                  )));
+                                },
+                                child:Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                        padding: EdgeInsets.only(left:15.0),
+                                        child:Text(Translate.of(context).translate('product_review'),style: TextStyle(fontWeight:FontWeight.w400,
+                                            fontFamily: 'Poppins',color: AppTheme.textColor),
+                                        )),
+
+                                    IconButton(
+                                        icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
+
+                                    )
+                                  ],
                                 )),
+                            Divider(
+                              height: 1.0,
+                              color: Colors.grey,
+                            ),
 
-                            IconButton(
-                                icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
+                            //track order
+                            GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>TrackOrder()));
+                                  // Navigator.push(context, MaterialPageRoute(builder: (context)=>Payment()));
+                                },
+                                child:Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                        padding: EdgeInsets.only(left:15.0),
+                                        child:Text(Translate.of(context).translate('track_order'),style: TextStyle(fontWeight:FontWeight.w400,
+                                            fontFamily: 'Poppins',color: AppTheme.textColor),
+                                        )),
 
-                            )
-                          ],
-                        )),
-                        Divider(
-                          height: 1.0,
-                          color: Colors.grey,
-                        ),
+                                    IconButton(
+                                        icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
 
-                        //track order
-                        GestureDetector(
-                          onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>TrackOrder()));
-                            // Navigator.push(context, MaterialPageRoute(builder: (context)=>Payment()));
-                          },
-                            child:Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                                padding: EdgeInsets.only(left:15.0),
-                                child:Text(Translate.of(context).translate('track_order'),style: TextStyle(fontWeight:FontWeight.w400,
-                                    fontFamily: 'Poppins',color: AppTheme.textColor),
+                                    )
+                                  ],
                                 )),
+                            Divider(
+                              height: 1.0,
+                              color: Colors.grey,
+                            ),
+                            //download invoice
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                    padding: EdgeInsets.only(left:15.0),
+                                    child:Text(Translate.of(context).translate('invoice'),style: TextStyle(fontWeight:FontWeight.w400,
+                                        fontFamily: 'Poppins',color: AppTheme.textColor),
+                                    )),
 
-                            IconButton(
-                                icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
+                                IconButton(onPressed: (){},
+                                    icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
 
-                            )
+                                )
+                              ],
+                            ),
+
                           ],
-                        )),
-                        Divider(
-                          height: 1.0,
-                          color: Colors.grey,
-                        ),
-                        //download invoice
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                                padding: EdgeInsets.only(left:15.0),
-                                child:Text(Translate.of(context).translate('invoice'),style: TextStyle(fontWeight:FontWeight.w400,
-                                    fontFamily: 'Poppins',color: AppTheme.textColor),
-                                )),
-
-                            IconButton(onPressed: (){},
-                                icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
-
-                            )
-                          ],
-                        ),
+                        )
+                            :Container()
 
                       ],
                     )

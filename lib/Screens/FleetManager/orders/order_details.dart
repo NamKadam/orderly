@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:orderly/Blocs/fleetOrders/fleetOrders_bloc.dart';
 import 'package:orderly/Blocs/fleetOrders/fleetOrders_event.dart';
 import 'package:orderly/Blocs/fleetOrders/fleetOrders_state.dart';
@@ -12,15 +13,20 @@ import 'package:orderly/Screens/Customer/orders/orders_filter.dart';
 import 'package:orderly/Screens/FleetManager/orders/fleet_orders.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
 import 'package:orderly/Utils/connectivity_check.dart';
+import 'package:orderly/Utils/other.dart';
+import 'package:orderly/Utils/routes.dart';
+import 'package:orderly/Utils/translate.dart';
+import 'package:orderly/Utils/validate.dart';
 import 'package:orderly/Widgets/app_button.dart';
 import 'package:orderly/Widgets/app_dialogs.dart';
+import 'package:orderly/Widgets/app_text_input.dart';
 import 'package:readmore/readmore.dart';
 import 'package:shimmer/shimmer.dart';
 
 class OrderDetails extends StatefulWidget {
-  String orderId,producerId;
+  String orderId,producerId,statusName;
   int status;
-  OrderDetails({Key key,@required this.orderId,@required this.status,@required this.producerId}):super(key: key);
+  OrderDetails({Key key,@required this.orderId,@required this.status,@required this.producerId,@required this.statusName}):super(key: key);
 
   _OrderDetailsState createState() => _OrderDetailsState();
 }
@@ -38,7 +44,10 @@ class _OrderDetailsState extends State<OrderDetails> {
   bool flagNoData = false;
   List<FleetOrdersDet> _fleetOrderDetList;
   int offset = 0, Orderstatus = 0;
-  String formattedString="";
+  String formattedString="",_validCancel="";
+  final _textCancelController = TextEditingController();
+  final _focusCancel = FocusNode();
+
 
   @override
   void initState() {
@@ -46,6 +55,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     super.initState();
     flagNoData = false;
     _fleetOrdersBloc = BlocProvider.of<FleetOrdersBloc>(context);
+
     getDataAsPerStatus(widget.status);
 
     setBlocData();
@@ -102,7 +112,82 @@ class _OrderDetailsState extends State<OrderDetails> {
     );
   }
 
+  //show CancelledPopup
+  Future<void> _showCancelledPopUp(int orderstatus) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+              "Order Status",
+              style:TextStyle(
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w400,
+                  color: AppTheme.textColor
+              )
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+              AppTextInput(
+              enabled: true,
+                hintText: Translate.of(context).translate('input_reason'),
+                // errorText: Translate.of(context).translate(_validCancel),
+              icon: Icon(Icons.clear),
+              controller: _textCancelController,
+              focusNode: _focusCancel,
+              textInputAction: TextInputAction.next,
+              onChanged: (text) {
+                setState(() {
+                  _validCancel = UtilValidator.validate(
+                    data: _textCancelController.text,
+                  );
+                });
+              },
+                onTapIcon: () async {
+                  await Future.delayed(Duration(milliseconds: 100));
+                  _textCancelController.clear();
+                },
+              ),
+
+          ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              height: 30.0,
+              minWidth: 60.0,
+              color: AppTheme.appColor,
+              child: Text(
+                "OK",
+                style: TextStyle(fontSize: 14.0,fontWeight: FontWeight.w500,fontFamily: "Poppins",
+                color: Colors.white),
+              ),
+              onPressed: () {
+        UtilOther.hiddenKeyboard(context);
+        if(_textCancelController.text.isEmpty){
+          Fluttertoast.showToast(msg: "Please enter reason");
+        }else {
+          _fleetOrdersBloc.add(
+              UpdateFleetOrdersStatus(
+                  orderid: formattedString,
+                  status: orderstatus.toString(),
+                rejectReason:_textCancelController.text
+              ));
+        }
+
+        },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
   void getDataAsPerStatus(int status){
+    print(widget.status);
     if(widget.status==0){
 
       dropdownValue='Ready';
@@ -110,17 +195,56 @@ class _OrderDetailsState extends State<OrderDetails> {
         'Ready',
         'Shipped',
         'Delivered',
+        'Cancel'
       ];
     }else if(widget.status==1){
       dropdownValue='Shipped';
       spinnerItems= [
         'Shipped',
         'Delivered',
+        'Cancel'
+
       ];
     }else if(widget.status==2){
       dropdownValue='Delivered';
       spinnerItems= [
         'Delivered',
+        'Cancel'
+      ];
+    }else if(widget.status==4){ //Return
+      dropdownValue='Return Confirmed';
+      spinnerItems= [
+        'Return Confirmed',
+        'Return Rejected'
+      ];
+    }else if(widget.status==5){ //Replace
+      dropdownValue='Replace Confirmed';
+      spinnerItems= [
+        'Replace Confirmed',
+        'Replace Rejected'
+      ];
+    }else if(widget.status==7){ //Return from ready(same as below)
+      dropdownValue='Return Shipped';
+      spinnerItems= [
+        'Return Shipped',
+        'Return Delivered'
+      ];
+    }else if(widget.status==9){ //Replace from ready(once it is confirmed from return and replace list)
+      dropdownValue='Return Delivered';
+      spinnerItems= [
+        'Return Delivered',
+      ];
+    }
+    else if(widget.status==11){ //Replace from ready(once it is confirmed from return and replace list)
+      dropdownValue='Replace Shipped';
+      spinnerItems= [
+        'Replace Shipped',
+        'Replace Delivered'
+      ];
+    }else if(widget.status==13){ //Replace from ready(once it is confirmed from return and replace list)
+      dropdownValue='Replace Delivered';
+      spinnerItems= [
+        'Replace Delivered',
       ];
     }
     setState(() {
@@ -214,210 +338,352 @@ class _OrderDetailsState extends State<OrderDetails> {
             unselectedWidgetColor: Theme.of(context).primaryColor,
           ),
           child:
-              widget.status==3
+              widget.status==3 || widget.status==10||widget.status==14 ||widget.status==6
+              ||widget.status==8 ||widget.status==12
             ?
               Padding(
                   padding: EdgeInsets.all(5.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child:Column(
                     children: [
-                      CachedNetworkImage(
-                        filterQuality: FilterQuality.medium,
-                        // imageUrl: Api.PHOTO_URL + widget.users.avatar,
-                        // imageUrl:
-                        //     "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
-                        imageUrl: fleetOrderDetList[index].imgPaths == null
-                            ? "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
-                            : fleetOrderDetList[index].imgPaths,
-                        placeholder: (context, url) {
-                          return Shimmer.fromColors(
-                            baseColor: Theme.of(context).hoverColor,
-                            highlightColor: Theme.of(context).highlightColor,
-                            enabled: true,
-                            child: Container(
-                              height: 100,
-                              width: 100,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                          );
-                        },
-                        imageBuilder: (context, imageProvider) {
-                          return Container(
-                            height: 100,
-                            width: 100,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.cover,
-                              ),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          );
-                        },
-                        errorWidget: (context, url, error) {
-                          return Shimmer.fromColors(
-                            baseColor: Theme.of(context).hoverColor,
-                            highlightColor: Theme.of(context).highlightColor,
-                            enabled: true,
-                            child: Container(
-                              height: 100,
-                              width: 100,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Icon(Icons.error),
-                            ),
-                          );
-                        },
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CachedNetworkImage(
+                            filterQuality: FilterQuality.medium,
+                            // imageUrl: Api.PHOTO_URL + widget.users.avatar,
+                            // imageUrl:
+                            //     "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
+                            imageUrl: fleetOrderDetList[index].imgPaths == null
+                                ? "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
+                                : fleetOrderDetList[index].imgPaths,
+                            placeholder: (context, url) {
+                              return Shimmer.fromColors(
+                                baseColor: Theme.of(context).hoverColor,
+                                highlightColor: Theme.of(context).highlightColor,
+                                enabled: true,
+                                child: Container(
+                                  height: 100,
+                                  width: 100,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              );
+                            },
+                            imageBuilder: (context, imageProvider) {
+                              return Container(
+                                height: 100,
+                                width: 100,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: imageProvider,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              );
+                            },
+                            errorWidget: (context, url, error) {
+                              return Shimmer.fromColors(
+                                baseColor: Theme.of(context).hoverColor,
+                                highlightColor: Theme.of(context).highlightColor,
+                                enabled: true,
+                                child: Container(
+                                  height: 100,
+                                  width: 100,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(Icons.error),
+                                ),
+                              );
+                            },
+                          ),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "${fleetOrderDetList[index].productName}",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14.0,
+                                        fontFamily: 'Poppins',
+                                        color: AppTheme.textColor),
+                                    // )
+                                  ),
+                                  ReadMoreText(
+                                      fleetOrderDetList[index].productDesc,
+                                      style: Theme.of(context).textTheme.button.copyWith(
+                                          fontSize: 12.0,
+                                          color: AppTheme.textColor,
+                                          fontWeight: FontWeight.w400,
+                                          fontFamily: "Poppins"),
+                                      trimLines: 2,
+                                      trimMode: TrimMode.Line,
+                                      trimCollapsedText: 'Show more',
+                                      trimExpandedText: 'Show less'),
+                                  Text(
+                                    fleetOrderDetList[index].ratePerHour.toString()+" \$ hr",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 13.0,
+                                        fontFamily: 'Poppins',
+                                        color: AppTheme.appColor),
+                                    // )
+                                  ),
+                                ],
+                              )),
+                        ],
                       ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
-                      Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "${fleetOrderDetList[index].productName}",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14.0,
-                                    fontFamily: 'Poppins',
-                                    color: AppTheme.textColor),
-                                // )
-                              ),
-                              ReadMoreText(
-                                  fleetOrderDetList[index].productDesc,
-                                  style: Theme.of(context).textTheme.button.copyWith(
-                                      fontSize: 12.0,
-                                      color: AppTheme.textColor,
-                                      fontWeight: FontWeight.w400,
-                                      fontFamily: "Poppins"),
-                                  trimLines: 2,
-                                  trimMode: TrimMode.Line,
-                                  trimCollapsedText: 'Show more',
-                                  trimExpandedText: 'Show less'),
-                              Text(
-                                fleetOrderDetList[index].ratePerHour.toString()+" \$ hr",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 13.0,
-                                    fontFamily: 'Poppins',
-                                    color: AppTheme.appColor),
-                                // )
-                              ),
-                            ],
-                          )),
+                      if(widget.status==6 ||widget.status==8 || widget.status==12)
+                        Column(
+                          children: [
+                            //for order type
+                            Card(
+                                elevation: 2.0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  side: BorderSide(
+                                    color: Colors.white,
+                                    width: 0.5,
+                                  ),
+                                ),
+                                child:
+                                Padding(
+                                  padding: EdgeInsets.all(12.0),
+                                  child:
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Order Type : ",
+                                        style: TextStyle(
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w400,
+                                            fontFamily: 'Poppins',
+                                            color: AppTheme.textColor),
+                                      ),
+                                      Expanded(child:Text(
+                                        widget.statusName,
+                                        style: TextStyle(
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w400,
+                                            fontFamily: 'Poppins',
+                                            color: AppTheme.appColor),
+                                      )),
+                                    ],
+                                  ),
+                                )),
+                            SizedBox(height: 0.5,),
+                            //for cancel reason
+                            Card(
+                                elevation: 2.0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  side: BorderSide(
+                                    color: Colors.white,
+                                    width: 0.5,
+                                  ),
+                                ),
+                                child:
+                                Padding(
+                                  padding: EdgeInsets.all(12.0),
+                                  child:
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Cancel Reason : ",
+                                        style: TextStyle(
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w400,
+                                            fontFamily: 'Poppins',
+                                            color: AppTheme.textColor),
+                                      ),
+                                      Expanded(child:Text(
+                                        fleetOrderDetList[index].rejectReason==null?"":fleetOrderDetList[index].rejectReason,
+                                        style: TextStyle(
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w400,
+                                            fontFamily: 'Poppins',
+                                            color: AppTheme.appColor),
+                                      )),
+                                    ],
+                                  ),
+                                ))
+                          ],
+                        )
                     ],
-                  ))
+                  )
+                )
               :
           CheckboxListTile(
             activeColor: Theme.of(context).primaryColor,
             title:
             Padding(
                 padding: EdgeInsets.all(5.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CachedNetworkImage(
-                      filterQuality: FilterQuality.medium,
-                      // imageUrl: Api.PHOTO_URL + widget.users.avatar,
-                      // imageUrl:
-                      //     "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
-                      imageUrl: fleetOrderDetList[index].imgPaths == null
-                          ? "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
-                          : fleetOrderDetList[index].imgPaths,
-                      placeholder: (context, url) {
-                        return Shimmer.fromColors(
-                          baseColor: Theme.of(context).hoverColor,
-                          highlightColor: Theme.of(context).highlightColor,
-                          enabled: true,
-                          child: Container(
-                            height: 100,
-                            width: 100,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                        );
-                      },
-                      imageBuilder: (context, imageProvider) {
-                        return Container(
-                          height: 100,
-                          width: 100,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        );
-                      },
-                      errorWidget: (context, url, error) {
-                        return Shimmer.fromColors(
-                          baseColor: Theme.of(context).hoverColor,
-                          highlightColor: Theme.of(context).highlightColor,
-                          enabled: true,
-                          child: Container(
-                            height: 100,
-                            width: 100,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(Icons.error),
-                          ),
-                        );
-                      },
-                    ),
-                    SizedBox(
-                      width: 10.0,
-                    ),
-                    Expanded(
-                        child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                child:
+                    Column(
                       children: [
-                        Text(
-                          "${fleetOrderDetList[index].productName}",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14.0,
-                              fontFamily: 'Poppins',
-                              color: AppTheme.textColor),
-                          // )
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CachedNetworkImage(
+                              filterQuality: FilterQuality.medium,
+                              // imageUrl: Api.PHOTO_URL + widget.users.avatar,
+                              // imageUrl:
+                              //     "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
+                              imageUrl: fleetOrderDetList[index].imgPaths == null
+                                  ? "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
+                                  : fleetOrderDetList[index].imgPaths,
+                              placeholder: (context, url) {
+                                return Shimmer.fromColors(
+                                  baseColor: Theme.of(context).hoverColor,
+                                  highlightColor: Theme.of(context).highlightColor,
+                                  enabled: true,
+                                  child: Container(
+                                    height: 100,
+                                    width: 100,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                );
+                              },
+                              imageBuilder: (context, imageProvider) {
+                                return Container(
+                                  height: 100,
+                                  width: 100,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                );
+                              },
+                              errorWidget: (context, url, error) {
+                                return Shimmer.fromColors(
+                                  baseColor: Theme.of(context).hoverColor,
+                                  highlightColor: Theme.of(context).highlightColor,
+                                  enabled: true,
+                                  child: Container(
+                                    height: 100,
+                                    width: 100,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Icon(Icons.error),
+                                  ),
+                                );
+                              },
+                            ),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "${fleetOrderDetList[index].productName}",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14.0,
+                                          fontFamily: 'Poppins',
+                                          color: AppTheme.textColor),
+                                      // )
+                                    ),
+                                    ReadMoreText(
+                                        fleetOrderDetList[index].productDesc,
+                                        style: Theme.of(context).textTheme.button.copyWith(
+                                            fontSize: 12.0,
+                                            color: AppTheme.textColor,
+                                            fontWeight: FontWeight.w400,
+                                            fontFamily: "Poppins"),
+                                        trimLines: 2,
+                                        trimMode: TrimMode.Line,
+                                        trimCollapsedText: 'Show more',
+                                        trimExpandedText: 'Show less'),
+                                    Text(
+                                      fleetOrderDetList[index].ratePerHour.toString()+" \$ hr",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 13.0,
+                                          fontFamily: 'Poppins',
+                                          color: AppTheme.appColor),
+                                      // )
+                                    ),
+                                  ],
+                                )),
+                          ],
                         ),
-                        ReadMoreText(
-                            fleetOrderDetList[index].productDesc,
-                            style: Theme.of(context).textTheme.button.copyWith(
-                                fontSize: 12.0,
-                                color: AppTheme.textColor,
-                                fontWeight: FontWeight.w400,
-                                fontFamily: "Poppins"),
-                            trimLines: 2,
-                            trimMode: TrimMode.Line,
-                            trimCollapsedText: 'Show more',
-                            trimExpandedText: 'Show less'),
-                        Text(
-                          fleetOrderDetList[index].ratePerHour.toString()+" \$ hr",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 13.0,
-                              fontFamily: 'Poppins',
-                              color: AppTheme.appColor),
-                          // )
-                        ),
+                        if(widget.status==4 ||widget.status==5)
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  "Order Reason : ",
+                                  style: TextStyle(
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: 'Poppins',
+                                      color: AppTheme.textColor),
+                                ),
+                                Expanded(child:Text(
+                                  fleetOrderDetList[index].returnTitle,
+                                  style: TextStyle(
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: 'Poppins',
+                                      color: AppTheme.appColor),
+                                )),
+                              ],
+                            ),
+                            SizedBox(height: 5.0,),
+                            Row(
+                              children: [
+                                Text(
+                                  "Reviews : ",
+                                  style: TextStyle(
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: 'Poppins',
+                                      color: AppTheme.textColor),
+                                ),
+                                Expanded(child:ReadMoreText(
+                                  fleetOrderDetList[index].review==""?"No Reviews Found":fleetOrderDetList[index].review,
+                                  trimLines: 2,
+                                  trimMode: TrimMode.Line,
+                                  trimCollapsedText: 'Show more',
+                                  trimExpandedText: 'Show less',
+                                  style: TextStyle(
+                                      fontSize: 12.0,
+                                      fontFamily: 'Poppins',
+                                      color: AppTheme.textColor,
+                                      fontWeight: FontWeight.w400),
+
+                                ))
+                              ],
+                            )
+                          ],
+                        )
+
                       ],
-                    )),
-                  ],
-                )),
+                    )
+
+            ),
             // secondary:setDeleteButton(index, _addressList),
             // IconButton(
             //  onPressed: () {},
@@ -440,6 +706,7 @@ class _OrderDetailsState extends State<OrderDetails> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    print("buildStatus:-"+widget.status.toString());
     return Scaffold(
         key: _scaffoldKey,
         appBar: new AppBar(
@@ -477,9 +744,16 @@ class _OrderDetailsState extends State<OrderDetails> {
                 if(state is FleetOrdersDetLoadFail){
                   flagNoData=true;
                 }
+
                 //for update status
                 if(state is FleetOrdersDetStatusSuccess){
-                  _showMessage("Order Status Updated successfully.");
+                  if(Orderstatus==6||Orderstatus==12||Orderstatus==8){
+                    Navigator.pop(context);
+                    Fluttertoast.showToast(msg: "Order Status Updated successfully.");
+                    Navigator.pushNamed(context, Routes.mainNavi);
+                  }else{
+                    _showMessage("Order Status Updated successfully.");
+                  }
                 }
                 if(state is FleetOrdersStatusLoadFail){
                   _showMessage("Order Status Failed.");
@@ -489,7 +763,11 @@ class _OrderDetailsState extends State<OrderDetails> {
               Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            child: Stack(
+            child:
+                widget.status!=3 && widget.status!=10 && widget.status!=14 && widget.status!=6
+                && widget.status!=8 && widget.status!=12
+                  ?
+            Stack(
               children: [
                 Padding(
                     padding: EdgeInsets.only(bottom: 150.0),
@@ -498,8 +776,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                         itemBuilder: (context, index) {
                           return buildOrderList(index,_fleetOrderDetList);
                         })),
-                if(widget.status!=3)
-                Align(
+
+                    Align(
                     alignment: Alignment.bottomCenter,
                     child: Container(
                         height: 200.0,
@@ -582,11 +860,46 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     Orderstatus=2;
                                   }else if(dropdownValue=="Delivered"){
                                     Orderstatus=3;
+                                  }else if(dropdownValue=="Cancel"){
+                                    Orderstatus=6;
                                   }
-                                  _fleetOrdersBloc.add(UpdateFleetOrdersStatus(
-                                      orderid: formattedString,
-                                      status: Orderstatus.toString()
-                                  ));
+                                  else if(dropdownValue=="Return Confirmed"){
+                                    Orderstatus=7;
+
+                                  }else if(dropdownValue=="Return Shipped"){
+                                    Orderstatus=9;
+
+                                  }
+                                  else if(dropdownValue=="Return Rejected"){
+                                    Orderstatus=8;
+
+                                  }else if(dropdownValue=="Return Delivered"){
+                                    Orderstatus=10;
+
+                                  }else if(dropdownValue=="Replace Confirmed"){
+                                    Orderstatus=11;
+
+                                  }
+                                  else if(dropdownValue=="Replace Rejected"){
+                                    Orderstatus=12;
+
+                                  }else if(dropdownValue=="Replace Shipped"){
+                                    Orderstatus=13;
+
+                                  }else if(dropdownValue=="Replace Delivered"){
+                                    Orderstatus=14;
+
+                                  }
+                                  if(Orderstatus==6 || Orderstatus==8 ||Orderstatus==12){
+                                    _showCancelledPopUp(Orderstatus);
+                                  }else {
+                                    _fleetOrdersBloc.add(
+                                        UpdateFleetOrdersStatus(
+                                            orderid: formattedString,
+                                            status: Orderstatus.toString(),
+                                          rejectReason:""
+                                        ));
+                                  }
                                 }
 
                               },
@@ -602,7 +915,13 @@ class _OrderDetailsState extends State<OrderDetails> {
                           ],
                         ))),
               ],
-            ),
+            )
+                    :
+                ListView.builder(
+                    itemCount:_fleetOrderDetList!=null?_fleetOrderDetList.length:6,
+                    itemBuilder: (context, index) {
+                      return buildOrderList(index,_fleetOrderDetList);
+                    }),
           ));
         }));
   }

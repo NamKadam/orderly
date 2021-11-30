@@ -319,7 +319,7 @@ class _OtpScreenState extends State<OtpScreen>{
    // Returns "Otp" keyboard
    get _getOtpKeyboard {
      return Container(
-       margin: EdgeInsets.only(top:30.0),
+       margin: EdgeInsets.only(top:5.0),
          height: MediaQuery.of(context).size.width-100,
          child: Column(
            children: <Widget>[
@@ -398,7 +398,7 @@ class _OtpScreenState extends State<OtpScreen>{
                      maintainSize: true,
                      maintainAnimation: true,
                      maintainState: true,
-                     visible: _fourthDigit != null,
+                     visible: _sixthDigit != null,
                      child: _otpKeyboardActionButton(
                          label: Icon(
                            Icons.check_circle,
@@ -533,6 +533,7 @@ class _OtpScreenState extends State<OtpScreen>{
             ),)
       ),
       body: Container(
+        height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage(Images.bg),

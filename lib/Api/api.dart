@@ -2,8 +2,11 @@ import 'dart:async';
 import 'package:orderly/Models/ResultApiModel.dart';
 import 'package:http/http.dart' as http;
 import 'package:orderly/Models/model_address.dart';
+import 'package:orderly/Models/model_claim.dart';
+import 'package:orderly/Models/model_faqList.dart';
 import 'package:orderly/Models/model_fleetOrder_det.dart';
 import 'package:orderly/Models/model_fleet_orders.dart';
+import 'package:orderly/Models/model_invent_list.dart';
 import 'package:orderly/Models/model_myOrders.dart';
 import 'package:orderly/Models/model_producer_list.dart';
 import 'package:orderly/Models/model_product_List.dart';
@@ -33,10 +36,20 @@ class Api {
   static const String GET_FLEET_ORDER=HOST_URL+"fleet_manager_orders";
   static const String GET_FLEET_ORDER_DET=HOST_URL+"fleet_manager_orders_details";
   static const String UPDATE_FLEET_STATUS=HOST_URL+"update_order_status";
+  static const String GET_CLAIM_ORDER=HOST_URL+"fetch_claims_details";
+
   static const String CUST_PROD_REVIEW=HOST_URL+"product_review";
   static const String CUST_RETURN_REPLACE=HOST_URL+"product_return";
   static const String GET_RETURN_REASONS=HOST_URL+"return_order_reasons";
   static const String GET_FLEET_RETURN_REPLACE=HOST_URL+"fleet_manager_order_return";
+  static const String VIEW_INVENTORY_LIST=HOST_URL+"view_inventory";
+  static const String DEL_INVENTORY_ITEM=HOST_URL+"remove_inventory";
+  static const String ADD_INVENTORY_ITEM=HOST_URL+"add_inventory";
+  static const String EDIT_INVENTORY_ITEM=HOST_URL+"update_inventory";
+  static const String EDIT_PROFILE=HOST_URL+"update_fleet_profile"; //both for cust and fleet applicable
+  static const String TERMS_URL=HOST_URL+"terms_condition";
+  static const String PRIVACY_URL=HOST_URL+"privacy_policy";
+  static const String FAQ=HOST_URL+"faq_list";
 
   ///Login api
   static Future<dynamic> login(params) async {
@@ -46,6 +59,7 @@ class Api {
     );
     if (response.statusCode == 200) {
       final responseJson = json.decode(response.body);
+      print(responseJson);
       return ResultApiModel.fromJson(responseJson);
     }
   }
@@ -165,6 +179,38 @@ class Api {
     if (response.statusCode == 200) {
       final responseJson = json.decode(response.body);
       return FleetOrderDetResp.fromJson(responseJson);
+    }
+  }
+  //fetch claim list
+  static Future<dynamic> getClaimOrdersList(params) async {
+    final response = await http.post(
+      Uri.parse(GET_CLAIM_ORDER),
+      body: params,
+    );
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+      return ClaimResp.fromJson(responseJson);
+    }
+  }
+
+  //view inventory list
+  static Future<dynamic> viewInventoryList(params) async {
+    final response = await http.post(Uri.parse(VIEW_INVENTORY_LIST),
+    body: params);
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+
+      return InventResp.fromJson(responseJson);
+    }
+  }
+
+  //faqList
+  static Future<dynamic> getFAQLIst() async {
+    final response = await http.get(Uri.parse(Api.FAQ));
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+
+      return FAQResp.fromJson(responseJson);
     }
   }
 

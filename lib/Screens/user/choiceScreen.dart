@@ -173,7 +173,7 @@ class _ChoiceScreenState extends State<ChoiceScreen>{
                  else if(flagClickManager==true){
                    flagRoleType="1";//for fleet manager
 
-                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+                   Navigator.push(context, MaterialPageRoute(builder: (context) =>
                        VerifyPhone(flagRoleType:flagRoleType)
                    ));
 

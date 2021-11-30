@@ -3,11 +3,17 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:orderly/Api/api.dart';
+import 'package:orderly/Blocs/profile/bloc.dart';
+import 'package:orderly/Blocs/profile/profile_bloc.dart';
 import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/imageFile.dart';
+import 'package:orderly/Models/zipcode/postalcode.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/translate.dart';
@@ -15,9 +21,12 @@ import 'package:orderly/Utils/utilOther.dart';
 import 'package:orderly/Utils/validate.dart';
 import 'package:orderly/Widgets/app_button.dart';
 import 'package:orderly/Widgets/app_text_input.dart';
+import 'package:http/http.dart' as http;
 
 class EditProfile extends StatefulWidget{
+
   _EditProfileState createState()=>_EditProfileState();
+
 }
 
 class _EditProfileState extends State<EditProfile>{
@@ -35,23 +44,56 @@ class _EditProfileState extends State<EditProfile>{
   final _focusEmail = FocusNode();
   final _focusMobile = FocusNode();
   final _focusZip = FocusNode();
+  dynamic postResultList = <Result>[];
 
   var _validFirstName,_validLastName,_validEmail,_validMobile,_validZip;
+  ProfileBloc _profileBloc;
+  var address;
+  bool _apiCall = false;
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _profileBloc=BlocProvider.of<ProfileBloc>(context);
     getUserData();
   }
 
   void getUserData(){
     _textFirstNameController.text=Application.user.firstName.toString();
     _textLastNameController.text=Application.user.lastName.toString();
-    _textEmailController.text=Application.user.emailId.toString();
+    _textEmailController.text=Application.user.emailId.toString()=="null"?"":Application.user.emailId.toString();
     _textMobileController.text=Application.user.mobile.toString();
-    // _textFirstNameController.text=Application.user.firstName.toString();
+    address=Application.user.address;
+    _textZipController.text=Application.user.zipcode.toString()!="null"?Application.user.zipcode.toString():"";
 
+  }
+  void _callAPIForPincode() {
+    Api.fetchPincode(http.Client(), _textZipController.text).then(
+            (value) => {
+          setState(() {
+            print('Value' + value.status.toString());
+            // postOfficeList = value.postOffice;
+            postResultList = value.result;
+            if(postResultList.length<=0){
+              _validZip='Please enter valid Zipcode';
+
+            }else{
+              _validZip="";
+              address='${postResultList[0].postalCode}, ${postResultList[0].state},${postResultList[0].country}, ${postResultList[0].postalLocation}';
+
+            }
+            print(value.result);
+
+          })
+        }, onError: (error) {
+      setState(() {
+        _apiCall=false;
+        print('Value $error');
+        postResultList = [];
+      });
+    });
   }
 
 
@@ -209,7 +251,6 @@ class _EditProfileState extends State<EditProfile>{
         });
   }
 
-
   //method to open gallery
   _openGallery(BuildContext context) async {
     final image = await picker.getImage(source: ImageSource.gallery,imageQuality: 25);
@@ -261,20 +302,75 @@ class _EditProfileState extends State<EditProfile>{
     }
   }
 
+  void _ValidateProf() {
+    UtilOther.hiddenKeyboard(context);
+    setState(() {
+      _validFirstName = UtilValidator.validate(
+        data: _textFirstNameController.text,
+      );
+      _validLastName = UtilValidator.validate(
+        data: _textLastNameController.text,
+      );
+      _validZip = UtilValidator.validate(
+        data: _textZipController.text,
+      );
+      _validEmail = UtilValidator.validate(
+          data: _textEmailController.text,
+          type:ValidateType.email
+      );
+      _validMobile = UtilValidator.validate(
+        data: _textMobileController.text,
+        type: ValidateType.phone,
+      );
+
+
+    });
+    // if(imageFile==null){
+    //   _showMessage("Please upload your image ");
+    // }else
+    //  if(Application.user.userType!="0"){ //for fleet
+    //    if (_validFirstName == null && _validLastName==null&&_validEmail==null) {
+    //
+    //      _profileBloc.add(EditFleetProf(
+    //          firstName: _textFirstNameController.text.toString(),
+    //          lastName: _textLastNameController.text.toString(),
+    //          email: _textEmailController.text.toString(),
+    //
+    //      ));
+    //    }
+    //
+    //  }else{ //for customer
+       if (_validFirstName == null && _validLastName==null&&_validZip==null&&_validEmail==null&&_validMobile==null) {
+
+         _profileBloc.add(EditProf(
+                      firstName: _textFirstNameController.text.toString(),
+                      lastName: _textLastNameController.text.toString(),
+                      email: _textEmailController.text.toString(),
+                      address:address,
+                      zipcode: _textZipController.text,
+                      mobile: _textMobileController.text
+           ));
+       // }
+     }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text('Edit Profile'
-          ,style: TextStyle(
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w600,
+    return
+      Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            title: Text('Edit Profile'
+              , style: TextStyle(
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
-        ),
-      ),
-      body: Container(
+          body:
+      Container(
           padding: EdgeInsets.only(left: 20, right: 20),
           child: SingleChildScrollView(
             child:Column(
@@ -357,41 +453,86 @@ class _EditProfileState extends State<EditProfile>{
                 Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
                     child:
                     AppTextInput(
+                      enabled: true,
                       hintText: Translate.of(context).translate('input_zipcode'),
                       errorText: Translate.of(context).translate(_validZip),
                       icon: Icon(Icons.clear),
                       controller: _textZipController,
                       focusNode: _focusZip,
-                      maxLength: 6,
+                      maxLength: 5,
                       keyboardType: TextInputType.number,
                       inputFormatters: <TextInputFormatter>[
                         FilteringTextInputFormatter.digitsOnly
                       ],
                       textInputAction: TextInputAction.next,
                       onChanged: (text) {
-                        setState(() {
-                          _validZip = UtilValidator.validate(
-                            data: _textZipController.text,
-                          );
-                        });
+                        if(text.length>=5){
+                          _apiCall=true;
+                          _callAPIForPincode();
+                        }
+
+                        // setState(() {
+                        _validZip = UtilValidator.validate(
+                          data: _textZipController.text,
+                        );
+                        //
+                        // });
+
                       },
+
                       onSubmitted: (text) {
                         UtilOther.fieldFocusChange(context, _focusZip, _focusEmail);
+                        print('submitted zip');
                       },
                       onTapIcon: () async {
                         await Future.delayed(Duration(milliseconds: 100));
                         _textZipController.clear();
+                        setState(() {
+                          _apiCall=false;
+                          postResultList=[];
+                          _validZip = UtilValidator.validate(
+                            data: _textZipController.text,
+                          );
+                        });
+
                       },
                     )),
+                //address from zipcode
+                if(address!=null)
+                  Padding(
+                      padding:EdgeInsets.only(top:postResultList.length>0?0:10
+                        ,left:20.0,right: 20.0,),
+                      child:
 
+                      Container(
+                          height: 50.0,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Theme.of(context).primaryColor),
+                            color: AppTheme.verifyPhone.withOpacity(0.4),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child:Align(
+                            alignment: Alignment.centerLeft,
+                            child:
+                            Text(
+                            "  "+address
+                              ,
+
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontWeight: FontWeight.w400,fontSize: 14.0,),),
+                          ))),
                 //email
-
+              Application.user.signUpType=="gmail"|| Application.user.signUpType=="facebook"
+                ?
                 Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
                     child:
                     AppTextInput(
                       hintText: Translate.of(context).translate('input_email'),
                       errorText: Translate.of(context).translate(_validEmail),
                       icon: Icon(Icons.clear),
+                      enabled: false,
                       controller: _textEmailController,
                       focusNode: _focusEmail,
                       textInputAction: TextInputAction.next,
@@ -409,12 +550,40 @@ class _EditProfileState extends State<EditProfile>{
                         await Future.delayed(Duration(milliseconds: 100));
                         _textEmailController.clear();
                       },
-                    )),
+                    ))
+              :
+              Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
+                  child:
+                  AppTextInput(
+                    hintText: Translate.of(context).translate('input_email'),
+                    errorText: Translate.of(context).translate(_validEmail),
+                    icon: Icon(Icons.clear),
+                    enabled: true,
+                    controller: _textEmailController,
+                    focusNode: _focusEmail,
+                    textInputAction: TextInputAction.next,
+                    onChanged: (text) {
+                      setState(() {
+                        _validEmail = UtilValidator.validate(
+                          data: _textEmailController.text,
+                        );
+                      });
+                    },
+                    onSubmitted: (text) {
+                      UtilOther.fieldFocusChange(context, _focusEmail, _focusMobile);
+                    },
+                    onTapIcon: () async {
+                      await Future.delayed(Duration(milliseconds: 100));
+                      _textEmailController.clear();
+                    },
+                  )),
+
 
                 //mobile
                 Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
                     child:
                     AppTextInput(
+                      enabled: Application.user.signUpType=="phone"?false:true,
                       hintText: Translate.of(context).translate('input_mobile'),
                       errorText: Translate.of(context).translate(_validMobile),
                       icon: Icon(Icons.clear),
@@ -477,31 +646,40 @@ class _EditProfileState extends State<EditProfile>{
                             )
                         )),
                     //save
-                    Expanded(
+                  Expanded(
                       child:Padding(padding: EdgeInsets.only(left:20.0,right:20.0,top:50.0),
+                      child:  BlocBuilder<ProfileBloc,ProfileState>(builder: (context,profile){
+                        return BlocListener<ProfileBloc,ProfileState>(listener: (context,state){
+                        if(state is EditProfSuccess){Application.user.mobile=state.user.mobile;
+                        Application.user.emailId=state.user.emailId;
+                        Application.user.firstName=state.user.firstName;
+                        Application.user.lastName=state.user.lastName;
+                        Fluttertoast.showToast(msg: "Profile updated successfully.");
+
+                        Navigator.pop(context,"0");
+                        }
+                        },
                         child:
-                        AppButton(
-                          onPressed: (){
-                            // _signUp();
-                            // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainNavigation()));
-                          },
-                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),
-                          text: 'Save',
-                          // loading: login is LoginLoading,
-                          // disableTouchWhenLoading: true,
-                        )
-                    )
-                    )
+                      AppButton(
+                      onPressed: (){
+                      _ValidateProf();
+                      },
+                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),
+                      text: 'Save',
+                      loading: profile is FetchEditProf,
+                      disableTouchWhenLoading: false,
+                      )
+
+                      );
+                    })
+                ))
                   ],
                 )
-
-
-
               ],
             ),
 
-          )),
-    );
+
+    )));
   }
 
 }

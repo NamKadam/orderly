@@ -10,7 +10,6 @@ import 'package:orderly/Blocs/mycart/bloc.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/model_address.dart';
 import 'package:orderly/Models/zipcode/postalcode.dart';
-import 'package:orderly/Screens/Customer/profile/profAddress/prof_address.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Utils/utilOther.dart';

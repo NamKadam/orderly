@@ -526,7 +526,8 @@ class _SignUpState extends State<SignUp>{
                   ),
                   //first name
                   Container(margin: EdgeInsets.only(top:25.0,left:20.0,right:20.0),
-                      child:AppTextInput(
+                      child:
+                      AppTextInput(
                         enabled: true,
                         hintText: Translate.of(context).translate('input_first_name'),
                         errorText: Translate.of(context).translate(_validFirstName),
