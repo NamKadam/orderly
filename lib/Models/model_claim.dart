@@ -25,8 +25,8 @@ class ClaimResp {
 }
 
 class ClaimDetails {
-  String receivedAmount;
-  int refundedAmount;
+  dynamic receivedAmount;
+  dynamic refundedAmount;
   List<ClaimData> claimData;
 
   ClaimDetails({this.receivedAmount, this.refundedAmount, this.claimData});

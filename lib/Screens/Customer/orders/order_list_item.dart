@@ -88,7 +88,7 @@ class _OrderListItemState extends State<OrderListItem>{
         StatusName="Order Replace Rejected";
       }else if(widget.orderList[widget.position].currentStatus==13){
         StatusName="Order Replace Shipped";
-      }else if(widget.orderList[widget.position].currentStatus==13){
+      }else if(widget.orderList[widget.position].currentStatus==14){
         StatusName="Order Replace Delivered";
       }
 
@@ -357,7 +357,7 @@ class _OrderListItemState extends State<OrderListItem>{
                             //track order
                             GestureDetector(
                                 onTap: (){
-                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>TrackOrder()));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>TrackOrder(orderData:widget.orderList[widget.position])));
                                   // Navigator.push(context, MaterialPageRoute(builder: (context)=>Payment()));
                                 },
                                 child:Row(

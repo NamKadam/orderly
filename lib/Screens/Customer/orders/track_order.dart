@@ -3,12 +3,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
+import 'package:orderly/Models/model_myOrders.dart';
 import 'package:orderly/Screens/Customer/orders/return_replace.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 class TrackOrder extends StatefulWidget{
+  Orders orderData;
+  TrackOrder({Key key,@required this.orderData}):super(key: key);
+
   _TrackOrderState createState()=>_TrackOrderState();
 }
 
@@ -417,7 +421,13 @@ class _TrackOrderState extends State<TrackOrder>{
                       onTap: () {
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>ReturnReplace()));
                       },
-                      child: Card(
+                      child:
+                      widget.orderData.currentStatus!=4&& widget.orderData.currentStatus!=5 && widget.orderData.currentStatus!=7
+                          && widget.orderData.currentStatus!=9 && widget.orderData.currentStatus!=10 && widget.orderData.currentStatus!=11
+                          && widget.orderData.currentStatus!=13 && widget.orderData.currentStatus!=14
+
+                          ?
+                      Card(
                           elevation: 5.0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.0),
@@ -448,7 +458,10 @@ class _TrackOrderState extends State<TrackOrder>{
                                         height: 15.0, width: 15.0))
                               ],
                             ),
-                          ))),
+                          ))
+                  :
+                      Container())
+
                 ),
               )
 

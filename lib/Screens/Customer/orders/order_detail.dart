@@ -315,7 +315,10 @@ class _CustOrderDetailState extends State<CustOrderDetail>{
                       Navigator.push(context, MaterialPageRoute(builder: (context)=>ReturnReplace(orderData: widget.orderData,)));
                     },
                     child:
-                        widget.orderData.currentStatus!=4 &&widget.orderData.currentStatus!=5
+                    widget.orderData.currentStatus!=4&& widget.orderData.currentStatus!=5 && widget.orderData.currentStatus!=7
+                        && widget.orderData.currentStatus!=9 && widget.orderData.currentStatus!=10 && widget.orderData.currentStatus!=11
+                        && widget.orderData.currentStatus!=13 && widget.orderData.currentStatus!=14
+
                     ?
                     Card(
                         elevation: 5.0,

@@ -120,7 +120,7 @@ class _OrderDetailsState extends State<OrderDetails> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
-              "Order Status",
+              "Cancel Reason",
               style:TextStyle(
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w400,
@@ -227,7 +227,8 @@ class _OrderDetailsState extends State<OrderDetails> {
       dropdownValue='Return Shipped';
       spinnerItems= [
         'Return Shipped',
-        'Return Delivered'
+        'Return Delivered',
+        'Return Rejected'
       ];
     }else if(widget.status==9){ //Replace from ready(once it is confirmed from return and replace list)
       dropdownValue='Return Delivered';
@@ -239,7 +240,8 @@ class _OrderDetailsState extends State<OrderDetails> {
       dropdownValue='Replace Shipped';
       spinnerItems= [
         'Replace Shipped',
-        'Replace Delivered'
+        'Replace Delivered',
+        'Replace Rejected'
       ];
     }else if(widget.status==13){ //Replace from ready(once it is confirmed from return and replace list)
       dropdownValue='Replace Delivered';
@@ -438,6 +440,16 @@ class _OrderDetailsState extends State<OrderDetails> {
                                         color: AppTheme.appColor),
                                     // )
                                   ),
+                                  //quantity
+                                  Text(
+                                      "Quantity: "+fleetOrderDetList[index].qty.toString(),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 13.0,
+                                        fontFamily: 'Poppins',
+                                        color: AppTheme.textColor),
+                                    // )
+                                  ),
                                 ],
                               )),
                         ],
@@ -621,6 +633,16 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           fontSize: 13.0,
                                           fontFamily: 'Poppins',
                                           color: AppTheme.appColor),
+                                      // )
+                                    ),
+                                    //quantity
+                                    Text(
+                                      "Quantity: "+fleetOrderDetList[index].qty.toString(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 13.0,
+                                          fontFamily: 'Poppins',
+                                          color: AppTheme.textColor),
                                       // )
                                     ),
                                   ],
