@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:orderly/Screens/user/choiceScreen.dart';
 import 'package:orderly/Utils/application.dart';
 
 import 'package:orderly/Utils/authentication.dart';
+import 'package:orderly/Utils/pushNotify.dart';
 import 'package:orderly/Utils/routes.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Utils/util_preferences.dart';
@@ -43,6 +45,9 @@ class _AppState extends State<App> {
   final route = Routes();
   Future<void> _initializeFlutterFireFuture;
 
+  var locator;
+
+
   @override
   void dispose() {
     AppBloc.dispose();
@@ -68,23 +73,28 @@ class _AppState extends State<App> {
   void initState() {
     super.initState();
     // Authentication.initializeFirebase(context: context);
+    // locator.registerLazySingleton(() => PushNotify());
+
     final FirebaseMessaging _fcm = FirebaseMessaging.instance;
-    FcmNotify.registerNotification(_fcm,context);
+    getToken();
+    PushNotify.registerNotification(_fcm,context);
     //used to force for crash
     // FirebaseCrashlytics.instance.crash();
-
-
   }
 
-
-
+  getToken() async{
+    String token=await FirebaseMessaging.instance.getToken();
+    print(token);
+  }
 
   @override
   Widget build(BuildContext context) {
     return
       MultiBlocProvider(
         providers: AppBloc.providers,
-        child: MaterialApp(
+        child:
+        MaterialApp(
+          navigatorKey: PushNotify.navigatorKey, // imp nvigator key is used as navigation through context didnt worked
           debugShowCheckedModeBanner: false,
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
@@ -92,13 +102,23 @@ class _AppState extends State<App> {
 
           localizationsDelegates: [
             Translate.delegate,
+            // EasyLocalization.of(context).delegate,
+
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
           ],
+          // localizationsDelegates: <LocalizationsDelegate<dynamic>>[
+          //   GlobalMaterialLocalizations.delegate,
+          //   GlobalWidgetsLocalizations.delegate,
+          //   EasyLocalization.of(context).delegate,
+          // ],
           supportedLocales: AppLanguage.supportLanguage,
+          // supportedLocales: EasyLocalization.of(context).supportedLocales,
+          // locale: EasyLocalization.of(context).locale,
 
           onGenerateRoute: route.generateRoute,
-          home: BlocBuilder<AuthBloc, AuthenticationState>(
+          home:
+          BlocBuilder<AuthBloc, AuthenticationState>(
             builder: (context, app) {
 
               if (app is AuthenticationSuccess) {
@@ -137,8 +157,7 @@ class _AppState extends State<App> {
     //     BlocBuilder<AuthBloc, AuthenticationState>(
     //     builder: (context, app) {
     //       if (app is AuthenticationSuccess) {
-    //         // return IntroPreview();
-    //       }
+    //         return MainNavigation();          }
     //       if (app is AuthenticationFail) {
     //         return ChoiceScreen();
     //       }

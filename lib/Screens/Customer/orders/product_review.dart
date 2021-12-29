@@ -7,6 +7,7 @@ import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/model_myOrders.dart';
 import 'package:orderly/Screens/Customer/orders/return_replace.dart';
+import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Utils/validate.dart';
@@ -41,6 +42,7 @@ class _ProductReviewState extends State<ProductReview> {
     // TODO: implement initState
     super.initState();
     status=widget.order.currentStatus;
+    print(status);
     _custOrderDetBloc=BlocProvider.of<CustOrderDetBloc>(context);
   }
 
@@ -250,8 +252,7 @@ class _ProductReviewState extends State<ProductReview> {
                       ),
                       //vehicle
                       RatingExperience(
-                          title: Translate.of(context)
-                              .translate('vehicle_quality'),
+                          title: Translate.of(context).translate('vehicle_quality'),
                           rate: _rateVehicle,
                         ratingChangeCallback: (value){
                           setState(() {
@@ -346,7 +347,7 @@ class _ProductReviewState extends State<ProductReview> {
                           decoration: InputDecoration(
                             counterText: "",
                             hintText:
-                                Translate.of(context).translate('hint_review'),
+                            Translate.of(context).translate('hint_review'),
                             hintStyle: TextStyle(color: AppTheme.textColor),
                             border: InputBorder.none,
                           ),
@@ -362,9 +363,7 @@ class _ProductReviewState extends State<ProductReview> {
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>ReturnReplace(orderData:widget.order)));
                         },
                         child:
-                        widget.order.currentStatus!=4&& widget.order.currentStatus!=5 && widget.order.currentStatus!=7
-                        && widget.order.currentStatus!=9 && widget.order.currentStatus!=10 && widget.order.currentStatus!=11
-                            && widget.order.currentStatus!=13 && widget.order.currentStatus!=14
+                        status==3 || status==10 || status==14
                         ?
                         Card(
                             elevation: 5.0,
@@ -383,8 +382,7 @@ class _ProductReviewState extends State<ProductReview> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    Translate.of(context)
-                                        .translate('return_replace'),
+                                    Translate.of(context).translate('return_replace'),
                                     style: TextStyle(
                                         fontSize: 12.0,
                                         fontWeight: FontWeight.w400,

@@ -34,8 +34,9 @@ dependencies:
   image_cropper: 1.4.1
   path_provider: 2.0.2
   cached_network_image: 3.1.0
-  firebase_core: ^1.0.1
-  firebase_messaging: ^10.0.0
+#  firebase_core: ^1.0.1
+  firebase_core: ^1.10.0
+  firebase_messaging: ^11.1.0
   firebase_auth: ^1.0.1
   google_sign_in: ^5.0.0
   shimmer: 2.0.0
@@ -50,7 +51,8 @@ dependencies:
   overlay_support: ^1.2.1
   flutter_local_notifications: ^8.1.0
   expandable: 5.0.1
-#  json_annotation: 4.0.0
+  easy_localization: ^3.0.0
+  #  json_annotation: 4.0.0
   dio:
   flutter_swiper_null_safety: 1.0.2
   future_progress_dialog: 0.2.0
@@ -73,6 +75,16 @@ dependencies:
   sqflite: ^2.0.0+4
   flutter_webview_plugin: ^0.3.11
   url_launcher: ^6.0.9
+  # open pdf document
+#  open_file: ^3.1.0
+#  pdf: ^3.1.0
+#  advance_pdf_viewer:
+#  permission_handler: 6.0.0
+#  downloads_path_provider_28:
+  # save file
+#  path_provider: ^2.0.1
+
+
 
 
 

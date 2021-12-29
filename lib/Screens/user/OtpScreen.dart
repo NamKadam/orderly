@@ -9,6 +9,7 @@ import 'package:orderly/Models/otpVerifyData.dart';
 import 'package:orderly/Models/signup_navigateFields.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
 import 'package:orderly/Screens/user/signup.dart';
+import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/routes.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Utils/util_preferences.dart';

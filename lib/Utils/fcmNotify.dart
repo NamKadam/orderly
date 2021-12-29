@@ -2,20 +2,19 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:orderly/Models/push_notification.dart';
+import 'package:orderly/Screens/mainNavigation.dart';
 import 'package:overlay_support/overlay_support.dart';
 
 
 class FcmNotify{
   static var flutterLocalNotificationsPlugin;
 
-
-
   static Future<void> registerNotification(FirebaseMessaging _messaging,BuildContext context) async {
     // await Firebase.initializeApp();
     FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
     _messaging = FirebaseMessaging.instance;
-    // initialiseFlutterLocalPlugin(flutterLocalNotificationsPlugin);
+    initialiseFlutterLocalPlugin(flutterLocalNotificationsPlugin,context);
 
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     NotificationSettings settings = await _messaging.requestPermission(
@@ -29,8 +28,8 @@ class FcmNotify{
       print('User granted permission');
 
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        print(
-            'Message title: ${message.notification?.title}, body: ${message.notification?.body}, data: ${message.data}');
+
+        print('Message title: ${message.notification?.title}, body: ${message.notification?.body}, data: ${message.data}');
 
         // Parse the message received
         PushNotification notification = PushNotification(
@@ -43,30 +42,36 @@ class FcmNotify{
         if (notification != null) {
           // For displaying the notification as an overlay
           // showSimpleNotification(
-          //   Text(notification.title!),
+          //   Text(notification.title),
           //   // leading: NotificationBadge(totalNotifications: _totalNotifications),
-          //   subtitle: Text(notification.body!),
+          //   subtitle: Text(notification.body),
           //   background: Colors.cyan.shade700,
           //   duration: Duration(seconds: 10),
           // );
+          // Future.delayed(Duration(seconds: 5), () {
+            // showDialog(
+            //   context: context,
+            //   builder: (context) => AlertDialog(
+            //     content:
+            //     MaterialApp(
+            //         home:ListTile(
+            //       title: Text(notification.title),
+            //       subtitle: Text(notification.body),
+            //     )),
+            //     actions: <Widget>[
+            //       FlatButton(
+            //         child: Text('Ok'),
+            //         onPressed: () =>  Navigator.push(context, MaterialPageRoute(builder: (context)=>MainNavigation(flagOrder: "1"))),
+            //       ),
+            //     ],
+            //   ),
+            // );
 
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              content: ListTile(
-                title: Text(notification.title),
-                subtitle: Text(notification.body),
-              ),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('Ok'),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
-          );
-          // _showMyDialog(context,notification);
-          // _demoNotification(notification.title!,notification.body!);
+            // _showMyDialog(context,notification);
+            _demoNotification(notification.title,notification.body);
+
+          // });
+
 
         }
       });
@@ -91,7 +96,7 @@ class FcmNotify{
     await flutterLocalNotificationsPlugin
         .show(0, title, body, platformChannelSpecifics, payload: 'test');
   }
-  static Future<void> initialiseFlutterLocalPlugin(FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin) async{
+  static Future<void> initialiseFlutterLocalPlugin(FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin, BuildContext context) async{
     // final NotificationAppLaunchDetails? notificationAppLaunchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
     // String initialRoute = HomePage.routeName;
     // if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
@@ -110,6 +115,7 @@ class FcmNotify{
     await flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: (String payload) async {
           if (payload != null) {
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>MainNavigation(flagOrder: "1")));
             debugPrint('notification payload: $payload');
           }
 

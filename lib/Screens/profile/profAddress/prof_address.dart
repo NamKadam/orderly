@@ -14,6 +14,7 @@ import 'package:orderly/Screens/Customer/orders/order_list_item.dart';
 import 'package:orderly/Screens/Customer/orders/orders_filter.dart';
 import 'package:orderly/Screens/Customer/payment/payment.dart';
 import 'package:orderly/Screens/profile/profAddress/addEditAddress.dart';
+import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/connectivity_check.dart';
 import 'package:orderly/Utils/translate.dart';

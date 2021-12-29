@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
 import 'package:orderly/Screens/user/verify_phone.dart';
+import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/routes.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Widgets/app_button.dart';

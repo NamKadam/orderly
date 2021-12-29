@@ -4,6 +4,7 @@ import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/otpVerifyData.dart';
 import 'package:orderly/Models/signup_navigateFields.dart';
+import 'package:orderly/Utils/Utils.dart';
 import 'OtpScreen.dart';
 import 'package:orderly/Utils/routes.dart';
 import 'package:orderly/Utils/translate.dart';

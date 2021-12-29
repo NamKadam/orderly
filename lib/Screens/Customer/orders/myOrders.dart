@@ -47,16 +47,22 @@ class _MyOrdersState extends State<MyOrders> {
     });
   }
 
+
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     flagNoData = false;
+    _myOrderList=null;
+    searchresult=[];
     _myOrdersBloc = BlocProvider.of<MyOrdersBloc>(context);
     _isSearching = false;
 
     setBlocData();
   }
+
+
 
   void setBlocData() async {
     print(Application.user.fbId);
@@ -64,8 +70,8 @@ class _MyOrdersState extends State<MyOrders> {
     if (isconnectedToInternet == true) {
       _myOrdersBloc.add(OnLoadingOrdersList());
     } else {
-      // CustomDialogs.showDialogCustom(
-      //     "Internet", "Please check your Internet Connection!", context);
+      CustomDialogs.showDialogCustom(
+          "Internet", "Please check your Internet Connection!", context);
     }
   }
 

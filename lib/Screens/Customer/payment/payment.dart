@@ -17,6 +17,7 @@ import 'package:orderly/Models/model_view_cart.dart';
 import 'package:orderly/Screens/Customer/cart/addTime.dart';
 import 'package:orderly/Screens/Customer/orders/myOrders.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
+import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/preferences.dart';
 import 'package:orderly/Utils/translate.dart';
@@ -274,7 +275,7 @@ class _PaymentState extends State<Payment>{
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-               Translate.of(context).translate('pay_option'),
+              Translate.of(context).translate('pay_option'),
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontFamily: 'Poppins',

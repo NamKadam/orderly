@@ -10,6 +10,7 @@ import 'package:orderly/Models/model_invent_list.dart';
 import 'package:orderly/Models/model_myOrders.dart';
 import 'package:orderly/Models/model_producer_list.dart';
 import 'package:orderly/Models/model_product_List.dart';
+import 'package:orderly/Models/model_trackOrder.dart';
 import 'package:orderly/Models/model_view_cart.dart';
 import 'dart:convert';
 import 'package:orderly/Models/zipcode/postalcode.dart';
@@ -33,6 +34,7 @@ class Api {
   static const String DEL_ADDRESS=HOST_URL+"delete_address";
   static const String PLACE_ORDER=HOST_URL+"place_order";
   static const String GET_MYORDER=HOST_URL+"my_order";
+  static const String GET_TRACK_ORDER=HOST_URL+"track_order";
   static const String GET_FLEET_ORDER=HOST_URL+"fleet_manager_orders";
   static const String GET_FLEET_ORDER_DET=HOST_URL+"fleet_manager_orders_details";
   static const String UPDATE_FLEET_STATUS=HOST_URL+"update_order_status";
@@ -50,6 +52,7 @@ class Api {
   static const String TERMS_URL=HOST_URL+"terms_condition";
   static const String PRIVACY_URL=HOST_URL+"privacy_policy";
   static const String FAQ=HOST_URL+"faq_list";
+  static const String INVOICE=HOST_URL+"download_invoice";
 
   ///Login api
   static Future<dynamic> login(params) async {
@@ -142,6 +145,19 @@ class Api {
     if (response.statusCode == 200) {
       final responseJson = json.decode(response.body);
       return MyOrdersResp.fromJson(responseJson);
+    }
+  }
+
+  //track order
+  //fetch myorders list
+  static Future<dynamic> getTrackOrderList(params) async {
+    final response = await http.post(
+      Uri.parse(GET_TRACK_ORDER),
+      body: params,
+    );
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+      return TrackOrderResp.fromJson(responseJson);
     }
   }
 

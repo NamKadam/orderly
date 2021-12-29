@@ -14,6 +14,7 @@ import 'package:orderly/Models/imageFile.dart';
 import 'package:orderly/Models/signup_navigateFields.dart';
 import 'package:orderly/Models/zipcode/postalcode.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
+import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/other.dart';
 import 'package:orderly/Utils/preferences.dart';
 import 'package:orderly/Utils/translate.dart';
@@ -543,7 +544,7 @@ class _SignUpUpdatedState extends State<SignUpUpdated>{
                       ),
                     ),
                     AppTextInput(
-                      hintText: Translate.of(context).translate(
+                      hintText:Translate.of(context).translate(
                         'input_last_name',
                       ),
                       errorText: Translate.of(context).translate(_validLastName),

@@ -10,6 +10,7 @@ import 'package:orderly/Blocs/mycart/bloc.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/model_address.dart';
 import 'package:orderly/Models/zipcode/postalcode.dart';
+import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Utils/utilOther.dart';
@@ -219,7 +220,7 @@ class AddEditAddressState extends State<AddEditAddress> {
                   child: AppTextInput(
                     enabled: true,
                     hintText:
-                        Translate.of(context).translate('input_first_name'),
+                    Translate.of(context).translate('input_first_name'),
                     errorText: Translate.of(context).translate(_validFirstName),
                     icon: Icon(Icons.clear),
                     controller: _textFirstNameController,
@@ -248,7 +249,7 @@ class AddEditAddressState extends State<AddEditAddress> {
                   child: AppTextInput(
                     enabled: true,
                     hintText:
-                        Translate.of(context).translate('input_last_name'),
+                    Translate.of(context).translate('input_last_name'),
                     errorText: Translate.of(context).translate(_validLastName),
                     icon: Icon(Icons.clear),
                     controller: _textLastNameController,

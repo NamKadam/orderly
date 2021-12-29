@@ -75,6 +75,13 @@ class UserRepository {
     return await Api.getOrdersList(params);
   }
 
+  //track order
+  Future<dynamic> fetchTrackOrdersList({String orderId}) async
+  {
+    final params = {"order_details_id":orderId};
+    return await Api.getTrackOrderList(params);
+  }
+
   Future<dynamic> fetchFleetOrdersList({String producerId,String status}) async
   {
     final params = {"producerid":producerId,"status":status};

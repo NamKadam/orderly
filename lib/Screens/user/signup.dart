@@ -14,6 +14,7 @@ import 'package:orderly/Models/imageFile.dart';
 import 'package:orderly/Models/signup_navigateFields.dart';
 import 'package:orderly/Models/zipcode/postalcode.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
+import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/other.dart';
 import 'package:orderly/Utils/preferences.dart';
 import 'package:orderly/Utils/translate.dart';
@@ -113,7 +114,6 @@ class _SignUpState extends State<SignUp>{
 
      });
   }
-
 
 
   void _callAPIForPincode() {
@@ -471,7 +471,7 @@ class _SignUpState extends State<SignUp>{
     return BlocListener<UserRegBloc,UserRegState>(listener: (context,listen){
       if(listen is RegisterUserFail){
         _showMessage(
-          Translate.of(context).translate(listen.msg),
+            Translate.of(context).translate(listen.msg),
           "0"//for fail
         );
       }
@@ -585,7 +585,7 @@ class _SignUpState extends State<SignUp>{
                         icon: Icon(Icons.clear),
                         controller: _textZipController,
                         focusNode: _focusZip,
-                        maxLength: 5,
+                        maxLength: 6,
                         keyboardType: TextInputType.number,
                         inputFormatters: <TextInputFormatter>[
                           FilteringTextInputFormatter.digitsOnly

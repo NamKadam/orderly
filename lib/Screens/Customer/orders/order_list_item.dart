@@ -1,16 +1,32 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:orderly/Api/api.dart';
 import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
+import 'package:orderly/Models/Invoice/customer.dart';
+import 'package:orderly/Models/Invoice/invoice.dart';
+import 'package:orderly/Models/Invoice/supplier.dart';
+import 'package:orderly/Models/model_invoice.dart';
 import 'package:orderly/Models/model_myOrders.dart';
 import 'package:orderly/Screens/Customer/orders/product_review.dart';
 import 'package:orderly/Screens/Customer/orders/track_order.dart';
+import 'package:orderly/Screens/Customer/orders/track_order.dart';
 import 'package:orderly/Screens/Customer/payment/payment.dart';
+import 'package:orderly/Utils/Utils.dart';
+import 'package:orderly/Utils/application.dart';
+import 'package:orderly/Utils/connectivity_check.dart';
 import 'package:orderly/Utils/translate.dart';
+import 'package:orderly/Widgets/app_dialogs.dart';
+import 'package:orderly/Widgets/pdf_api.dart';
+import 'package:orderly/Widgets/pdf_invoice_api.dart';
 import 'package:readmore/readmore.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:http/http.dart' as http;
+
 
 class OrderListItem extends StatefulWidget{
 
@@ -25,6 +41,11 @@ class OrderListItem extends StatefulWidget{
 class _OrderListItemState extends State<OrderListItem>{
 
   var date;
+  bool isconnectedToInternet = false;
+  List<InvoiceData> mArraylistInvoice=[];
+  InvoiceDetails invoiceDet;
+  var invoice;
+
 
   @override
   void initState() {
@@ -32,6 +53,58 @@ class _OrderListItemState extends State<OrderListItem>{
     super.initState();
     // convertDate(widget.orderList[widget.position].orderDate);
   }
+
+  // void getDownloadInvoice() async {
+  //   isconnectedToInternet = await ConnectivityCheck.checkInternetConnectivity();
+  //   if (isconnectedToInternet == true) {
+  //     Map<String, String> params = {
+  //       'order_number': widget.orderList[widget.position].orderNumber
+  //     };
+  //     var response = await http.post(
+  //       Uri.parse(Api.INVOICE),
+  //       body: params,
+  //     );
+  //     try {
+  //       if (response.statusCode == 200) {
+  //         final resp = json.decode(response.body);
+  //         final InvoiceResp invoiceResp = InvoiceResp.fromJson(resp);
+  //         final Iterable refactorCategory = invoiceResp.invoiceDetails
+  //             .invoiceData ?? [];
+  //           invoiceDet=invoiceResp.invoiceDetails;
+  //           mArraylistInvoice=refactorCategory.toList();
+  //           invoice=Invoice(
+  //             // supplier: Supplier(
+  //             //   name: "dfdfdf",
+  //             //   address: "dfdfdf",
+  //             // ),
+  //               customer: Customer(
+  //                 name: Application.user.firstName+" "+Application.user.lastName,
+  //                 address: Application.user.address,
+  //               ),
+  //               info: InvoiceInfo(
+  //                   number: invoiceDet.invoiceNumber,
+  //                   totalAmt: invoiceDet.totalAmount,
+  //                   date: invoiceDet.orderDate
+  //               ),
+  //
+  //               items: mArraylistInvoice
+  //
+  //           );
+  //
+  //         final pdfFile = await PdfInvoiceApi.generate(invoice);
+  //         print(pdfFile);
+  //         PdfApi.openFile(pdfFile);
+  //
+  //       }
+  //     } catch (e) {
+  //       print(e);
+  //     }
+  //   }else{
+  //     CustomDialogs.showDialogCustom(
+  //         "Internet", "Please check your Internet Connection!", context);
+  //   }
+  // }
+
 
   void convertDate(String orderDate){
     // print(new DateFormat('yyyy/MM/dd').parse('2020/04/03')); // 2020-04-03 00:00:00.000
@@ -357,7 +430,9 @@ class _OrderListItemState extends State<OrderListItem>{
                             //track order
                             GestureDetector(
                                 onTap: (){
-                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>TrackOrder(orderData:widget.orderList[widget.position])));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                                      TrackOrderUpdated(orderData:widget.orderList[widget.position])));
+                                  // Navigator.push(context, MaterialPageRoute(builder: (context)=>TrackOrder()));
                                   // Navigator.push(context, MaterialPageRoute(builder: (context)=>Payment()));
                                 },
                                 child:Row(
@@ -385,11 +460,21 @@ class _OrderListItemState extends State<OrderListItem>{
                               children: [
                                 Padding(
                                     padding: EdgeInsets.only(left:15.0),
-                                    child:Text(Translate.of(context).translate('invoice'),style: TextStyle(fontWeight:FontWeight.w400,
+                                    child:Text(Translate.of(context).translate( 'invoice'),style: TextStyle(fontWeight:FontWeight.w400,
                                         fontFamily: 'Poppins',color: AppTheme.textColor),
                                     )),
 
-                                IconButton(onPressed: (){},
+                                IconButton(onPressed: ()
+                                async {
+                                  // final date = DateTime.now();
+                                  // getDownloadInvoice();
+                                  // Invoice invoice=await Utils.getDownloadInvoice(widget.orderList[widget.position].orderNumber);
+                                  // final pdfFile = await PdfInvoiceApi.generate(invoice);
+                                  // print(pdfFile);
+                                  // PdfApi.openFile(pdfFile);
+
+
+                                },
                                     icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
 
                                 )

@@ -12,6 +12,7 @@ import 'package:orderly/Models/model_myOrders.dart';
 import 'package:orderly/Models/model_scoped_cart.dart';
 import 'package:orderly/Models/model_producer_list.dart';
 import 'package:orderly/Models/model_product_List.dart';
+import 'package:orderly/Models/model_trackOrder.dart';
 import 'package:orderly/Models/model_view_cart.dart';
 import 'package:orderly/Repository/UserRepository.dart';
 import 'package:orderly/Utils/application.dart';
@@ -48,6 +49,35 @@ class MyOrdersBloc extends Bloc<MyOrdersEvent,MyOrdersState> {
       } catch (e) {
         print(e);
         yield MyOrdersListLoadFail();
+      }
+    }
+
+    //for track order
+    if(event is OnLoadingTrackOrderList){
+      yield TrackOrdersLoading();
+
+      final TrackOrderResp response = await ordersRepo.fetchTrackOrdersList(
+          orderId: event.orderId
+      );
+      try {
+        // if (response.msg == "Success") {
+        final Iterable refactorCategory = response.trackOrder.trackData ?? [];
+        String currentStatus=response.trackOrder.retRplc;
+        List<TrackData> listtrackOrders=refactorCategory.toList();
+
+        // final listtrackOrders = refactorCategory.map((item) {
+        //   return TrackOrder.fromJson(item);
+        // }).toList();
+         if(listtrackOrders.length>0)
+           {
+        ///Sync UI
+        yield TrackOrdersListSuccess(trackOrderList: listtrackOrders,currentstatus: currentStatus);
+        } else {
+           yield TrackOrdersListLoadFail();
+        }
+      } catch (e) {
+        print(e);
+        yield TrackOrdersListLoadFail();
       }
     }
   }

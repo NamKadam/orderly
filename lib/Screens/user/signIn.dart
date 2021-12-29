@@ -18,6 +18,7 @@ import 'package:orderly/Models/signup_navigateFields.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
 import 'package:orderly/Screens/user/signup.dart';
 import 'package:orderly/Screens/user/verify_phone.dart';
+import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/fcmNotify.dart';
 import 'package:orderly/Utils/preferences.dart';
@@ -204,124 +205,123 @@ class SignInState extends State<SignIn>{
             'Create Account',
             style: TextStyle(fontSize: 16.0),
           ),),
-        body: SafeArea(
-          child: Container(
-            padding: EdgeInsets.only(left: 20, right: 20),
-            //updated on 14/06/2021 for background image of sign in
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(Images.bg),
-                fit: BoxFit.cover,
-              ),
+        body: Container(
+
+          padding: EdgeInsets.only(left: 20, right: 20),
+          //updated on 14/06/2021 for background image of sign in
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(Images.bg),
+              fit: BoxFit.cover,
             ),
+          ),
 
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  // const SizedBox(height: 05.0),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      //for logo
-                      SizedBox(height: 20.0,),
-                  Image.asset(Images.logo,height: 200.0,width:200.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                // const SizedBox(height: 05.0),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    //for logo
+                    SizedBox(height: 20.0,),
+                Image.asset(Images.logo,height: 200.0,width:200.0),
 
-                      Text(Translate.of(context).translate('create_account'),style: TextStyle(
-                        fontFamily: 'Poppins',fontWeight: FontWeight.w400,color: AppTheme.textColor,
-                        fontSize: 14.0
-                      )),
-                     //facebook
-                      LoginWithFB(uuid:firebaseUser_id),
-                      //google
-                      LoginWithGoogle(uuid:firebaseUser_id,userLoginBloc:_userLoginBloc,
-                          user:user,
-                          navigateData:signUpDataNavigation),
-                      SizedBox(height: 20.0,),
-                      //divider
-                      _DividerORWidget(),
-                      //phone number
-                      Padding(padding: EdgeInsets.only(top:10.0,left: 20.0,right: 10.0),
-                          child:Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                width:260, //MediaQuery.of(context).size.width,
-                                height: 45,
-                                decoration: ShapeDecoration(
-                                  // shape: const BeveledRectangleBorder(
-                                  //updated on 26/10/2020
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(Radius.circular(50.0)),
-                                  ),
-                                  color: Theme.of(context).primaryColor,
-
+                    Text(Translate.of(context).translate('create_account'),style: TextStyle(
+                      fontFamily: 'Poppins',fontWeight: FontWeight.w400,color: AppTheme.textColor,
+                      fontSize: 14.0
+                    )),
+                   //facebook
+                    LoginWithFB(uuid:firebaseUser_id),
+                    //google
+                    LoginWithGoogle(uuid:firebaseUser_id,userLoginBloc:_userLoginBloc,
+                        user:user,
+                        navigateData:signUpDataNavigation),
+                    SizedBox(height: 20.0,),
+                    //divider
+                    _DividerORWidget(),
+                    //phone number
+                    Padding(padding: EdgeInsets.only(top:10.0,left: 20.0,right: 10.0),
+                        child:Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              width:260, //MediaQuery.of(context).size.width,
+                              height: 45,
+                              decoration: ShapeDecoration(
+                                // shape: const BeveledRectangleBorder(
+                                //updated on 26/10/2020
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(Radius.circular(50.0)),
                                 ),
+                                color: Theme.of(context).primaryColor,
 
-                                child:InkWell(
-                                  onTap: (){
-                                  // Navigator.pushNamed(context, Routes.verifyPhone,arguments: widget.flagRoleType,);
-                                    signUpDataNavigation.signup_type="phone";
-                                    signUpDataNavigation.userType=widget.flagRoleType.toString();
-                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
-                                      VerifyPhone(flagRoleType:widget.flagRoleType.toString(),signUpDataNavigation:signUpDataNavigation)));
-
-                                  },
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: <Widget>[
-                                      Image.asset(Images.phone,height: 45.0,width:40.0),
-
-                                      const SizedBox(
-                                        width: 14.0,
-                                      ),
-                                      Text(
-                                        Translate.of(context).translate('login_phone'),
-                                        style: TextStyle(fontFamily: 'Poppins-Regular',fontSize: 14.0,color: Colors.white),
-                                      ),
-                                    ],
-                                  ),
-                                ),
                               ),
 
-                            ],
-                          )),
-                      SizedBox(height: 20.0,),
+                              child:InkWell(
+                                onTap: (){
+                                // Navigator.pushNamed(context, Routes.verifyPhone,arguments: widget.flagRoleType,);
+                                  signUpDataNavigation.signup_type="phone";
+                                  signUpDataNavigation.userType=widget.flagRoleType.toString();
+                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+                                    VerifyPhone(flagRoleType:widget.flagRoleType.toString(),signUpDataNavigation:signUpDataNavigation)));
 
-                      //terms
-                      Text(
-                        Translate.of(context).translate('terms'),
+                                },
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: <Widget>[
+                                    Image.asset(Images.phone,height: 45.0,width:40.0),
 
-                        style:TextStyle(fontFamily: 'Poppins',fontWeight:FontWeight.w400,fontSize: 11.0,color: AppTheme.textColor),
-                      ),
-                      Text(
-                        "Terms of Use and have read and ",
-                        style:TextStyle(fontFamily: 'Poppins',fontWeight:FontWeight.w400,fontSize: 11.0,color: AppTheme.textColor),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "understood our",
-                            style:TextStyle(fontFamily: 'Poppins',fontWeight:FontWeight.w400,fontSize: 11.0,color: AppTheme.textColor),
-                          ),
-                          Text(
-                            " Privacy Policy",
-                            style:TextStyle(fontFamily: 'Poppins',fontSize: 12.0,fontWeight:FontWeight.w600,color: Theme.of(context).primaryColor),
-                          ),
-                        ],
-                      )
+                                    const SizedBox(
+                                      width: 14.0,
+                                    ),
+                                    Text(
+                                      Translate.of(context).translate('login_phone'),
+                                      style: TextStyle(fontFamily: 'Poppins-Regular',fontSize: 14.0,color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+
+                          ],
+                        )),
+                    SizedBox(height: 20.0,),
+
+                    //terms
+                    Text(
+                      Translate.of(context).translate('terms'),
+
+                      style:TextStyle(fontFamily: 'Poppins',fontWeight:FontWeight.w400,fontSize: 11.0,color: AppTheme.textColor),
+                    ),
+                    Text(
+                      "Terms of Use and have read and ",
+                      style:TextStyle(fontFamily: 'Poppins',fontWeight:FontWeight.w400,fontSize: 11.0,color: AppTheme.textColor),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "understood our",
+                          style:TextStyle(fontFamily: 'Poppins',fontWeight:FontWeight.w400,fontSize: 11.0,color: AppTheme.textColor),
+                        ),
+                        Text(
+                          " Privacy Policy",
+                          style:TextStyle(fontFamily: 'Poppins',fontSize: 12.0,fontWeight:FontWeight.w600,color: Theme.of(context).primaryColor),
+                        ),
+                      ],
+                    )
 
 
-                    ],
-                  ),
+                  ],
+                ),
 
 
 
 
-                ],
-              ),
+              ],
             ),
           ),
         ));

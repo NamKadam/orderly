@@ -8,6 +8,12 @@ class OnLoadingOrdersList extends MyOrdersEvent {
   OnLoadingOrdersList({this.fbId});
 }
 
+//track order
+class OnLoadingTrackOrderList extends MyOrdersEvent {
+  String orderId;
+  OnLoadingTrackOrderList({this.orderId});
+}
+
 
 
 

@@ -4,13 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
+import 'package:orderly/Models/Invoice/invoice.dart';
 import 'package:orderly/Models/model_myOrders.dart';
 import 'package:orderly/Screens/Customer/orders/product_review.dart';
 import 'package:orderly/Screens/Customer/orders/return_replace.dart';
 import 'package:orderly/Screens/Customer/orders/track_order.dart';
+import 'package:orderly/Screens/Customer/orders/track_order.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
+import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Widgets/app_button.dart';
+import 'package:orderly/Widgets/pdf_api.dart';
+import 'package:orderly/Widgets/pdf_invoice_api.dart';
 import 'package:readmore/readmore.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -250,7 +255,7 @@ class _CustOrderDetailState extends State<CustOrderDetail>{
                                     //track order
                                     GestureDetector(
                                         onTap: (){
-                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>TrackOrder()));
+                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>TrackOrderUpdated(orderData: widget.orderData)));
                                           // Navigator.push(context, MaterialPageRoute(builder: (context)=>Payment()));
                                         },
                                         child:Row(
@@ -282,7 +287,12 @@ class _CustOrderDetailState extends State<CustOrderDetail>{
                                                 fontFamily: 'Poppins',color: AppTheme.textColor),
                                             )),
 
-                                        IconButton(onPressed: (){},
+                                        IconButton(onPressed: () async{
+                                          // Invoice invoice=await Utils.getDownloadInvoice(widget.orderData.orderNumber);
+                                          // final pdfFile = await PdfInvoiceApi.generate(invoice);
+                                          // print(pdfFile);
+                                          // PdfApi.openFile(pdfFile);
+                                        },
                                             icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
 
                                         )
@@ -315,11 +325,13 @@ class _CustOrderDetailState extends State<CustOrderDetail>{
                       Navigator.push(context, MaterialPageRoute(builder: (context)=>ReturnReplace(orderData: widget.orderData,)));
                     },
                     child:
-                    widget.orderData.currentStatus!=4&& widget.orderData.currentStatus!=5 && widget.orderData.currentStatus!=7
-                        && widget.orderData.currentStatus!=9 && widget.orderData.currentStatus!=10 && widget.orderData.currentStatus!=11
-                        && widget.orderData.currentStatus!=13 && widget.orderData.currentStatus!=14
+                    // widget.orderData.currentStatus!=4&& widget.orderData.currentStatus!=5 && widget.orderData.currentStatus!=7
+                    //     && widget.orderData.currentStatus!=9 && widget.orderData.currentStatus!=10 && widget.orderData.currentStatus!=11
+                    //     && widget.orderData.currentStatus!=13 && widget.orderData.currentStatus!=14
+                    widget.orderData.currentStatus==3 || widget.orderData.currentStatus==10 || widget.orderData.currentStatus==14
 
-                    ?
+
+                        ?
                     Card(
                         elevation: 5.0,
                         shape: RoundedRectangleBorder(
@@ -339,8 +351,7 @@ class _CustOrderDetailState extends State<CustOrderDetail>{
                             MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                Translate.of(context)
-                                    .translate('return_replace'),
+                                Translate.of(context).translate('return_replace'),
                                 style: TextStyle(
                                     fontSize: 12.0,
                                     fontWeight: FontWeight.w400,

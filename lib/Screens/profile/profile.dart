@@ -9,6 +9,7 @@ import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/imageFile.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
 import 'package:orderly/Screens/profile/edit_profile.dart';
+import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/authentication.dart';
 import 'package:orderly/Utils/routes.dart';

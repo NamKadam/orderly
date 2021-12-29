@@ -49,8 +49,10 @@ class Producer {
   String producerName;
   String producerImageUrl;
   String producerIconUrl;
+  bool expand=false;
+  int tapcount=0;
 
-  Producer({this.producerId, this.producerName, this.producerImageUrl,this.producerIconUrl});
+  Producer({this.producerId, this.producerName, this.producerImageUrl,this.producerIconUrl,this.expand,this.tapcount});
 
   Producer.fromJson(Map<String, dynamic> json) {
     producerId = json['producer_id'];
@@ -66,5 +68,11 @@ class Producer {
     data['producer_image_url'] = this.producerImageUrl;
     data['producer_icon_url'] = this.producerIconUrl;
     return data;
+  }
+
+  static void setAllExpand(List<Producer> producerList){
+    for(int i=0;i<producerList.length;i++){
+      producerList[i].expand=false;
+    }
   }
 }

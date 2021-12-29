@@ -769,12 +769,13 @@ class _OrderDetailsState extends State<OrderDetails> {
 
                 //for update status
                 if(state is FleetOrdersDetStatusSuccess){
-                  if(Orderstatus==6||Orderstatus==12||Orderstatus==8){
+                  if(Orderstatus!=6 && Orderstatus!=12 && Orderstatus!=8){
+                    _showMessage("Order Status Updated successfully.");
+
+                  }else{
                     Navigator.pop(context);
                     Fluttertoast.showToast(msg: "Order Status Updated successfully.");
                     Navigator.pushNamed(context, Routes.mainNavi);
-                  }else{
-                    _showMessage("Order Status Updated successfully.");
                   }
                 }
                 if(state is FleetOrdersStatusLoadFail){

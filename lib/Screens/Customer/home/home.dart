@@ -210,7 +210,6 @@ class _HomeState extends State<Home> {
     //     ));
     // _homeBloc.add(OnLoadingProducerList());
     setBlocData();
-
     _controller.refreshCompleted();
   }
 
@@ -701,6 +700,8 @@ class _HomeState extends State<Home> {
                     _productList = state.productList;
                     totalProductList.addAll(_productList);
                     if (_productList.length>0 ) {
+                      flagDataNotAvailable = false;
+
                       //for pagination
                       final isLastPage = _productList.length < _pageSize;
                       if (isLastPage) {
@@ -713,7 +714,8 @@ class _HomeState extends State<Home> {
                       flagDataNotAvailable = true;
                     }
                   }else{
-                    _onRefresh();
+                    // _onRefresh();
+                    // _productList=totalProductList;
                   }
               }
 
@@ -789,16 +791,13 @@ class _HomeState extends State<Home> {
                                   //   ),
                                   // ),
                                   child:
-
-                                      Column(
+                                    Column(
                                         children: [
                                           Container(
                                             height: 120,
                                             child: buildCategory(_producerList),
                                             // )
-
                                           ),
-
                                           Container(
                                             height: 200,
                                             width: MediaQuery.of(context).size.width,

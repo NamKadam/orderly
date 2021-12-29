@@ -15,6 +15,7 @@ import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/imageFile.dart';
 import 'package:orderly/Models/zipcode/postalcode.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
+import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Utils/utilOther.dart';
@@ -427,7 +428,7 @@ class _EditProfileState extends State<EditProfile>{
                 //lastName
                 Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
                     child:AppTextInput(
-                      hintText: Translate.of(context).translate('input_last_name'),
+                      hintText:Translate.of(context).translate('input_last_name'),
                       errorText: Translate.of(context).translate(_validLastName),
                       icon: Icon(Icons.clear),
                       controller: _textLastNameController,
@@ -584,8 +585,8 @@ class _EditProfileState extends State<EditProfile>{
                     child:
                     AppTextInput(
                       enabled: Application.user.signUpType=="phone"?false:true,
-                      hintText: Translate.of(context).translate('input_mobile'),
-                      errorText: Translate.of(context).translate(_validMobile),
+                      hintText:Translate.of(context).translate('input_mobile'),
+                      errorText:Translate.of(context).translate(_validMobile),
                       icon: Icon(Icons.clear),
                       controller: _textMobileController,
                       focusNode: _focusMobile,
