@@ -92,6 +92,8 @@ class HomeBloc extends Bloc<HomeEvent,HomeState> {
       }
     }
 
+
+
     //for addTo Cart
     if(event is OnAddToCart){
        yield AddToCartLoading();

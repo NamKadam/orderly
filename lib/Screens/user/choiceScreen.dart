@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
 import 'package:orderly/Screens/user/verify_phone.dart';
@@ -178,8 +179,8 @@ class _ChoiceScreenState extends State<ChoiceScreen>{
                        VerifyPhone(flagRoleType:flagRoleType)
                    ));
 
-
-
+                 }else{
+                   Fluttertoast.showToast(msg: "Please select one option");
                  }
                },
                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),

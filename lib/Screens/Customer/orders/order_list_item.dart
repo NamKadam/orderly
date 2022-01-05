@@ -175,6 +175,7 @@ class _OrderListItemState extends State<OrderListItem>{
         ),
       );
     }
+
     // TODO: implement build
     if(widget.orderList==null){
       return ListView.builder(
@@ -233,6 +234,7 @@ class _OrderListItemState extends State<OrderListItem>{
           itemCount: 6,
         );
     }
+
     return Padding(
       padding: const EdgeInsets.only(
         top: 10,
@@ -400,32 +402,40 @@ class _OrderListItemState extends State<OrderListItem>{
                               color: Colors.grey,
                             ),
                             //product review
+                            if(widget.orderList[widget.position].currentStatus==3 ||
+                                widget.orderList[widget.position].currentStatus==10 ||
+                                widget.orderList[widget.position].currentStatus==14)
+                            Column(
+                              children: [
+                                GestureDetector(
+                                    onTap: (){
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductReview(
+                                          order:widget.orderList[widget.position]
+                                      )));
+                                    },
+                                    child:Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Padding(
+                                            padding: EdgeInsets.only(left:15.0),
+                                            child:Text(Translate.of(context).translate('product_review'),style: TextStyle(fontWeight:FontWeight.w400,
+                                                fontFamily: 'Poppins',color: AppTheme.textColor),
+                                            )),
 
-                            GestureDetector(
-                                onTap: (){
-                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductReview(
-                                      order:widget.orderList[widget.position]
-                                  )));
-                                },
-                                child:Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Padding(
-                                        padding: EdgeInsets.only(left:15.0),
-                                        child:Text(Translate.of(context).translate('product_review'),style: TextStyle(fontWeight:FontWeight.w400,
-                                            fontFamily: 'Poppins',color: AppTheme.textColor),
-                                        )),
+                                        IconButton(
+                                            icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
 
-                                    IconButton(
-                                        icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
-
-                                    )
-                                  ],
-                                )),
-                            Divider(
-                              height: 1.0,
-                              color: Colors.grey,
+                                        )
+                                      ],
+                                    )),
+                                Divider(
+                                  height: 1.0,
+                                  color: Colors.grey,
+                                ),
+                              ],
                             ),
+
+
 
                             //track order
                             GestureDetector(
@@ -450,37 +460,45 @@ class _OrderListItemState extends State<OrderListItem>{
                                     )
                                   ],
                                 )),
-                            Divider(
-                              height: 1.0,
-                              color: Colors.grey,
-                            ),
                             //download invoice
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            if(widget.orderList[widget.position].currentStatus==3 ||
+                                widget.orderList[widget.position].currentStatus==10 ||
+                                widget.orderList[widget.position].currentStatus==14)
+                            Column(
                               children: [
-                                Padding(
-                                    padding: EdgeInsets.only(left:15.0),
-                                    child:Text(Translate.of(context).translate( 'invoice'),style: TextStyle(fontWeight:FontWeight.w400,
-                                        fontFamily: 'Poppins',color: AppTheme.textColor),
-                                    )),
-
-                                IconButton(onPressed: ()
-                                async {
-                                  // final date = DateTime.now();
-                                  // getDownloadInvoice();
-                                  // Invoice invoice=await Utils.getDownloadInvoice(widget.orderList[widget.position].orderNumber);
-                                  // final pdfFile = await PdfInvoiceApi.generate(invoice);
-                                  // print(pdfFile);
-                                  // PdfApi.openFile(pdfFile);
+                                Divider(
+                                  height: 1.0,
+                                  color: Colors.grey,
+                                ),
 
 
-                                },
-                                    icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                          padding: EdgeInsets.only(left:15.0),
+                                          child:Text(Translate.of(context).translate( 'invoice'),style: TextStyle(fontWeight:FontWeight.w400,
+                                              fontFamily: 'Poppins',color: AppTheme.textColor),
+                                          )),
 
-                                )
+                                      IconButton(onPressed: ()
+                                      async {
+                                        // final date = DateTime.now();
+                                        // getDownloadInvoice();
+                                        Invoice invoice=await Utils.getDownloadInvoice(widget.orderList[widget.position].orderNumber);
+                                        final pdfFile = await PdfInvoiceApi.generate(invoice);
+                                        print(pdfFile);
+                                        PdfApi.openFile(pdfFile);
+
+
+                                      },
+                                          icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
+
+                                      )
+                                    ],
+                                  ),
                               ],
-                            ),
-
+                            )
                           ],
                         )
                             :Container()

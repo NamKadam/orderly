@@ -34,6 +34,7 @@ class FleetOrderModel {
   String orderImage;
   bool isSelected;
   int currentStatus;
+  String producerIcon;
 
 
 
@@ -46,7 +47,8 @@ class FleetOrderModel {
     this.producerId,
     this.orderImage,
     this.isSelected,
-    this.currentStatus
+    this.currentStatus,
+    this.producerIcon
     });
 
   FleetOrderModel.fromJson(Map<String, dynamic> json) {
@@ -59,6 +61,7 @@ class FleetOrderModel {
     orderImage = json['producer_image_url'];
     isSelected = json['isSelected'];
     currentStatus=json['current_status'];
+    producerIcon=json['producer_icon_url'];
 
   }
 
@@ -73,6 +76,7 @@ class FleetOrderModel {
     data['producer_image_url'] = this.orderImage;
     data['isSelected'] = this.isSelected;
     data['current_status']=this.currentStatus;
+    data['producer_icon_url']=this.producerIcon;
 
     return data;
   }

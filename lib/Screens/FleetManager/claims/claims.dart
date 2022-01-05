@@ -256,7 +256,9 @@ class _ClaimsState extends State<Claims> {
                                 FontWeight.bold,
                                 color:
                                 AppTheme.textColor)),
-                        Text(DateFormat('d MMM yyyy').format(DateTime.parse( _claimList[index].orderDate)),
+                        Text(
+                            // DateFormat('d MMM yyyy').format(DateTime.parse( _claimList[index].orderDate)),
+                             _claimList[index].orderDate,
                             style: TextStyle(
                                 fontSize: 14.0,
                                 fontFamily: "Poppins",

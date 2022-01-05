@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +30,7 @@ class _FleetOrdersState extends State<FleetOrders> {
   bool flagNoData=false;
   List<FleetOrderModel> _fleetOrderList;
   List<FleetOrdersDet> _fleetRetReplaceList;
-  int offset=0,status=0;
+  int offset=0,status=0,clickPos=0;
   List <Map> orderCat;
   final _controller = RefreshController(initialRefresh: false);
   String StatusName="";
@@ -62,6 +64,29 @@ class _FleetOrdersState extends State<FleetOrders> {
 
 
   }
+
+  Future<bool> _exitApp(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: new Text('Do you want to exit this application?'),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: new Text('No'),
+              ),
+              FlatButton(
+                // onPressed: () => Navigator.of(context).pop(true),
+                onPressed: () => exit(0), //updated on 12/02/2021
+                child: new Text('Yes'),
+              ),
+            ],
+          );
+        }) ??
+        false;
+  }
+
 
   void setBlocData() async {
     print(Application.user.producerid);
@@ -196,11 +221,14 @@ class _FleetOrdersState extends State<FleetOrders> {
                 // setBlocData();
 
                 // setState(() {
+
                   orderCat[index]['isSelected']=true;
                   if(index==5)
                     {
                       status=6;
+                      clickPos=index;
                     }else{
+                    clickPos=index;
                     status=index;
                   }
 
@@ -223,10 +251,10 @@ class _FleetOrdersState extends State<FleetOrders> {
                 width: 120.0,
                 child: Center(
                     child: Text(orderCat[index]['name'],
-                        style: TextStyle(color: status==index?Colors.white:AppTheme.textColor,fontSize: 12.0))),
+                        style: TextStyle(color: clickPos==index ?Colors.white:AppTheme.textColor,fontSize: 12.0))),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(25)),
-                    color: status==index?Theme.of(context).primaryColor:Colors.white
+                    color: clickPos==index?Theme.of(context).primaryColor:Colors.white
 
                 ))
             ));
@@ -453,9 +481,14 @@ class _FleetOrdersState extends State<FleetOrders> {
                                   // imageUrl: Api.PHOTO_URL + widget.users.avatar,
                                   // imageUrl:
                                   //     "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
-                                  imageUrl: _orderLists[index].orderImage == null
+                                  // imageUrl: _orderLists[index].orderImage == null
+                                  //     ? "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
+                                  //     : _orderLists[index].orderImage,
+
+                                  //updated on 4/01/2021
+                                  imageUrl: _orderLists[index].producerIcon == null
                                       ? "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
-                                      : _orderLists[index].orderImage,
+                                      : _orderLists[index].producerIcon,
                                   placeholder: (context, url) {
                                     return Shimmer.fromColors(
                                       baseColor: Theme.of(context).hoverColor,
@@ -886,7 +919,107 @@ class _FleetOrdersState extends State<FleetOrders> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: () => _exitApp(context),
+    child:
+      Scaffold(
+        appBar: AppBar(
+          title: Text(
+            "Orders",
+            style: TextStyle(
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w400,
+                fontSize: 18.0,
+                color: AppTheme.textColor),
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+
+          automaticallyImplyLeading: false,
+          actions: [
+            Row(
+              children: [
+                IconButton(
+                  icon: Image.asset(
+                    Images.search,
+                    width: 30.0,
+                    height: 30.0,
+                  ),
+                  onPressed: () {},
+                ),
+                InkWell(
+                    onTap: (){
+
+                    },
+                    child:Stack(children: [
+                      // IconButton(
+                      //   icon:
+                      Image.asset(
+                        Images.notiIcon,
+                        width: 35.0,
+                        height: 35.0,
+                      ),
+                      // tooltip: "Save Todo and Retrun to List",
+                      //   onPressed: () {},
+                      // ),
+                      Positioned(
+                        right: 5,
+                        top: 3,
+                        child: new Container(
+                          padding: EdgeInsets.all(1),
+                          decoration: new BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(8.5),
+                          ),
+                          constraints: BoxConstraints(
+                            minWidth: 15,
+                            minHeight: 12,
+                          ),
+                          child: Text(
+                            "0",
+                            style: new TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: 'Poppins'
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                      // if(Application.user.userType=="1")//for fleet
+                      // Positioned(
+                      //   right: 5,
+                      //   top: 5,
+                      //   child: new Container(
+                      //     padding: EdgeInsets.all(1),
+                      //     decoration: new BoxDecoration(
+                      //       color: Colors.red,
+                      //       borderRadius: BorderRadius.circular(8.5),
+                      //     ),
+                      //     constraints: BoxConstraints(
+                      //       minWidth: 17,
+                      //       minHeight: 17,
+                      //     ),
+                      //     child: Text(
+                      //       "0",
+                      //       style: new TextStyle(
+                      //           color: Colors.white,
+                      //           fontSize: 10,
+                      //           fontWeight: FontWeight.w400,
+                      //           fontFamily: 'Poppins'
+                      //       ),
+                      //       textAlign: TextAlign.center,
+                      //     ),
+                      //   ),
+                      // )
+                    ],
+                    )),
+
+              ],
+            )
+          ],
+        ),
       body:BlocBuilder<FleetOrdersBloc,FleetOrdersState>(builder: (context,state){
         if(state is FleetOrdersListSuccess){
           _fleetOrderList=state.fleetOrderList;
@@ -941,7 +1074,7 @@ class _FleetOrdersState extends State<FleetOrders> {
                   ),
                 )
             ));
-      })
+      }))
 
     );
   }

@@ -29,6 +29,62 @@ class CustOrderDetail extends StatefulWidget{
 class _CustOrderDetailState extends State<CustOrderDetail>{
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  String StatusName="";
+
+  Widget getTextStatus(int currentStatus){
+    if(widget.orderData.currentStatus==0){
+      StatusName="Order Pending";
+    }
+    else if(widget.orderData.currentStatus==1)
+    {
+      StatusName="Order Accepted";
+    }else if(widget.orderData.currentStatus==2){
+      StatusName="Order Shipped";
+    }else if(widget.orderData.currentStatus==3){
+      StatusName="Order Delivered";
+    }
+    else if(widget.orderData.currentStatus==4){
+      StatusName="Order Returned";
+    }
+    else if(widget.orderData.currentStatus==5){
+      StatusName="Order Replaced";
+
+    }else if(widget.orderData.currentStatus==6)
+    {
+      StatusName="Order Cancelled";
+    }
+    else if(widget.orderData.currentStatus==7){
+      StatusName="Order Return Confirmed";
+    }
+    else if(widget.orderData.currentStatus==8){
+      StatusName="Order Return Rejected";
+    } else if(widget.orderData.currentStatus==9){
+      StatusName="Order Return Shipped";
+    }else if(widget.orderData.currentStatus==10){
+      StatusName="Order Return Delivered";
+    }
+    else if(widget.orderData.currentStatus==11){
+      StatusName="Order Replace Confirmed";
+    } else if(widget.orderData.currentStatus==12){
+      StatusName="Order Replace Rejected";
+    }else if(widget.orderData.currentStatus==13){
+      StatusName="Order Replace Shipped";
+    }else if(widget.orderData.currentStatus==14){
+      StatusName="Order Replace Delivered";
+    }
+
+    return  Text(
+      StatusName,
+      style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontFamily: 'Poppins',
+          fontSize: 14.0,
+          color: Theme.of(context).primaryColor
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -182,19 +238,7 @@ class _CustOrderDetailState extends State<CustOrderDetail>{
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                        widget.orderData.currentStatus==0
-                        ?
-                        "Order Pending"
-                            :
-                            "Order Accepted",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14.0,
-                                  color: Theme.of(context).primaryColor
-                              ),
-                            ),
+                            getTextStatus(widget.orderData.currentStatus),
                             //date text
                             Text(
                               'On '+DateFormat('EEEE, d MMM, yyyy').format(DateTime.parse(widget.orderData.orderDate)),
@@ -273,32 +317,38 @@ class _CustOrderDetailState extends State<CustOrderDetail>{
                                             )
                                           ],
                                         )),
-                                    Divider(
-                                      height: 1.0,
-                                      color: Colors.grey,
-                                    ),
-                                    //download invoice
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    if(widget.orderData.currentStatus==3 ||
+                                        widget.orderData.currentStatus==10 ||
+                                        widget.orderData.currentStatus==14)
+                                    Column(
                                       children: [
-                                        Padding(
-                                            padding: EdgeInsets.only(left:15.0),
-                                            child:Text(Translate.of(context).translate('invoice'),style: TextStyle(fontWeight:FontWeight.w400,
-                                                fontFamily: 'Poppins',color: AppTheme.textColor),
-                                            )),
+                                        Divider(
+                                          height: 1.0,
+                                          color: Colors.grey,
+                                        ),
+                                        //download invoice
 
-                                        IconButton(onPressed: () async{
-                                          // Invoice invoice=await Utils.getDownloadInvoice(widget.orderData.orderNumber);
-                                          // final pdfFile = await PdfInvoiceApi.generate(invoice);
-                                          // print(pdfFile);
-                                          // PdfApi.openFile(pdfFile);
-                                        },
-                                            icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Padding(
+                                                  padding: EdgeInsets.only(left:15.0),
+                                                  child:Text(Translate.of(context).translate('invoice'),style: TextStyle(fontWeight:FontWeight.w400,
+                                                      fontFamily: 'Poppins',color: AppTheme.textColor),
+                                                  )),
+                                              IconButton(onPressed: () async{
+                                                Invoice invoice=await Utils.getDownloadInvoice(widget.orderData.orderNumber);
+                                                final pdfFile = await PdfInvoiceApi.generate(invoice);
+                                                print(pdfFile);
+                                                PdfApi.openFile(pdfFile);
+                                              },
+                                                  icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
 
-                                        )
+                                              )
+                                            ],
+                                          ),
                                       ],
-                                    ),
-
+                                    )
                                   ],
                                 )
 

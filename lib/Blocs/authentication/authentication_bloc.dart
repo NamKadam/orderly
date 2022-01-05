@@ -39,7 +39,7 @@ class AuthBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
         // final ResultApiModel result = await userRepository.validateToken(); //commented on 17/12/2020
 
         ///Fetch api success
-        if (userModel.fbId!=null ) {
+        if (userModel.fbId!=null && userModel.isRegistered=="true") {
           ///Set user
           Application.user = userModel;
           yield AuthenticationSuccess();
@@ -78,7 +78,11 @@ class AuthBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
         // UtilPreferences.setString(Preferences.user, Application.user.toString());
 
         ///Notify loading to UI
-        yield AuthenticationSuccess();
+        if(Application.user.fbId!=null && Application.user.isRegistered=="true") {
+          yield AuthenticationSuccess();
+        }else{
+          yield AuthenticationFail();
+        }
 
 
       } else {

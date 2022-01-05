@@ -23,6 +23,8 @@ class ProductListSuccess extends HomeState {
   ProductListSuccess({this.productList});
 }
 
+
+
 class AddToCartSuccess extends HomeState{
   String msg;
   AddToCartSuccess({this.msg});

@@ -9,6 +9,7 @@ import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/model_scoped_cart.dart';
 import 'package:orderly/Models/model_product_List.dart';
+import 'package:orderly/Screens/Customer/cart/shopping_cart.dart';
 import 'package:orderly/Screens/Customer/home/home.dart';
 import 'package:orderly/Screens/Customer/orders/myOrders.dart';
 import 'package:orderly/Screens/Customer/producers/producers.dart';
@@ -172,6 +173,7 @@ class _MainNavigationState extends State<MainNavigation> {
   void _onItemTapped(int index) async {
     setState(() {
       _selectedIndex = index;
+      print(_selectedIndex);
       if(userType=="0")
         {
           //for customer
@@ -225,140 +227,154 @@ class _MainNavigationState extends State<MainNavigation> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-        appBar: _selectedIndex != 3 //3=profile
+        appBar: _selectedIndex != 3 && _selectedIndex!=0//3=profile,0=home
             ?
         AppBar(
-                title: Text(
-                  title,
-                  style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w400,
-                      fontSize: 18.0,
-                      color: AppTheme.textColor),
-                ),
-                backgroundColor: Colors.transparent,
-                elevation: 0,
+          title: Text(
+            title,
+            style: TextStyle(
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w400,
+                fontSize: 18.0,
+                color: AppTheme.textColor),
+          ),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
 
-                automaticallyImplyLeading: false,
-                actions: [
-                  Row(
+          automaticallyImplyLeading: false,
+          actions: [
+            Row(
+              children: [
+                IconButton(
+                  icon: Image.asset(
+                    Images.search,
+                    width: 30.0,
+                    height: 30.0,
+                  ),
+                  onPressed: () {},
+                ),
+                InkWell(
+                    onTap: (){
+
+                    },
+                    child:Stack(children: [
+                      // IconButton(
+                      //   icon:
+                      Image.asset(
+                        Images.notiIcon,
+                        width: 35.0,
+                        height: 35.0,
+                      ),
+                      // tooltip: "Save Todo and Retrun to List",
+                      //   onPressed: () {},
+                      // ),
+                      Positioned(
+                        right: 5,
+                        top: 3,
+                        child: new Container(
+                          padding: EdgeInsets.all(1),
+                          decoration: new BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(8.5),
+                          ),
+                          constraints: BoxConstraints(
+                            minWidth: 15,
+                            minHeight: 12,
+                          ),
+                          child: Text(
+                            "0",
+                            style: new TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: 'Poppins'
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                      // if(Application.user.userType=="1")//for fleet
+                      // Positioned(
+                      //   right: 5,
+                      //   top: 5,
+                      //   child: new Container(
+                      //     padding: EdgeInsets.all(1),
+                      //     decoration: new BoxDecoration(
+                      //       color: Colors.red,
+                      //       borderRadius: BorderRadius.circular(8.5),
+                      //     ),
+                      //     constraints: BoxConstraints(
+                      //       minWidth: 17,
+                      //       minHeight: 17,
+                      //     ),
+                      //     child: Text(
+                      //       "0",
+                      //       style: new TextStyle(
+                      //           color: Colors.white,
+                      //           fontSize: 10,
+                      //           fontWeight: FontWeight.w400,
+                      //           fontFamily: 'Poppins'
+                      //       ),
+                      //       textAlign: TextAlign.center,
+                      //     ),
+                      //   ),
+                      // )
+                    ],
+                    )),
+                if(userType=="0") //for customer
+                InkWell(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(
+                        builder: (context)=> ShoppingCart(flagFrom:"1",cartModel: Application.cartModel,) //from main page
+                    ));
+                  },
+                  child: Stack(
                     children: [
-                      IconButton(
-                        icon: Image.asset(
-                          Images.search,
-                          width: 30.0,
-                          height: 30.0,
-                        ),
-                        onPressed: () {},
+                      Image.asset(
+                        Images.cart,
+                        width: 35.0,
+                        height: 35.0,
                       ),
-                      Stack(children: [
-                        IconButton(
-                          icon: Image.asset(
-                            Images.notiIcon,
-                            width: 30.0,
-                            height: 30.0,
+                      // tooltip: "Save Todo and Retrun to List",
+                      // onPressed: () {
+                      //   // Navigator.push(context, MaterialPageRoute(
+                      //   //     builder: (context)=> ShoppingCart()
+                      //   // ));
+                      // },
+                      // ),
+                      Positioned(
+                        right: 5,
+                        top:1,
+                        child: new Container(
+                          padding: EdgeInsets.all(1),
+                          decoration: new BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(8.5),
                           ),
-                          // tooltip: "Save Todo and Retrun to List",
-                          onPressed: () {},
-                        ),
-                        Positioned(
-                          right: 5,
-                          top: 5,
-                          child: new Container(
-                            padding: EdgeInsets.all(1),
-                            decoration: new BoxDecoration(
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(8.5),
+                          constraints: BoxConstraints(
+                            minWidth: 15,
+                            minHeight: 12,
+                          ),
+                          child: Text(
+                            Application.cartModel!=null?Application.cartModel.cart.length.toString():"0",
+
+                            style: new TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: 'Poppins'
                             ),
-                            constraints: BoxConstraints(
-                              minWidth: 17,
-                              minHeight: 17,
-                            ),
-                            child: Text(
-                              "0",
-                              style: new TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w400,
-                                  fontFamily: 'Poppins'
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
+                            textAlign: TextAlign.center,
                           ),
                         ),
-                        // if(Application.user.userType=="1")//for fleet
-                        // Positioned(
-                        //   right: 5,
-                        //   top: 5,
-                        //   child: new Container(
-                        //     padding: EdgeInsets.all(1),
-                        //     decoration: new BoxDecoration(
-                        //       color: Colors.red,
-                        //       borderRadius: BorderRadius.circular(8.5),
-                        //     ),
-                        //     constraints: BoxConstraints(
-                        //       minWidth: 17,
-                        //       minHeight: 17,
-                        //     ),
-                        //     child: Text(
-                        //       "0",
-                        //       style: new TextStyle(
-                        //           color: Colors.white,
-                        //           fontSize: 10,
-                        //           fontWeight: FontWeight.w400,
-                        //           fontFamily: 'Poppins'
-                        //       ),
-                        //       textAlign: TextAlign.center,
-                        //     ),
-                        //   ),
-                        // )
-                      ],
-                      ),
-                      // if(Application.user.userType=="0") //for customer
-                        Stack(
-                        children: [
-                          IconButton(
-                            icon: Image.asset(
-                              Images.cart,
-                              width: 30.0,
-                              height: 30.0,
-                            ),
-                            // tooltip: "Save Todo and Retrun to List",
-                            onPressed: () {
-                              Navigator.pushNamed(context, Routes.cart);
-                            },
-                          ),
-                          Positioned(
-                            right: 5,
-                            top: 5,
-                            child: new Container(
-                              padding: EdgeInsets.all(1),
-                              decoration: new BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(8.5),
-                              ),
-                              constraints: BoxConstraints(
-                                minWidth: 17,
-                                minHeight: 17,
-                              ),
-                              child: Text(
-                                "0",
-                                style: new TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w400,
-                                  fontFamily: 'Poppins'
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          )
-                        ],
                       )
                     ],
-                  )
-                ],
-              )
+                  ),
+                )
+              ],
+            )
+          ],
+        )
             : null,
         extendBody: true,
         body: IndexedStack(

@@ -30,6 +30,7 @@ class MyOrdersBloc extends Bloc<MyOrdersEvent,MyOrdersState> {
     //for addressList
     if (event is OnLoadingOrdersList) {
       yield MyOrdersLoading();
+      print("fbId"+Application.user.fbId);
 
       final MyOrdersResp response = await ordersRepo.fetchMyOrdersList(
           fbId: Application.user.fbId

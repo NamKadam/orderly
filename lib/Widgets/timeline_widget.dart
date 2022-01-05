@@ -121,11 +121,22 @@ class TimeLineState extends State<TimeLineWidget> {
                                                 Colors.black26
                                           ),),
                                           Text(
-                                              // widget.trackOrderList[index].date!=""
-                                              // ?
+                                              widget.trackOrderList[index].date!=""
+                                              ?
                                               // DateFormat('EEEE, d MMM, yyyy').format(DateTime.parse(widget.trackOrderList[index].date))
-                                              // :
-                                          ""),
+                                              widget.trackOrderList[index].date
+                                              :
+                                          "",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontFamily: 'Poppins',
+                                            fontSize: 14.0,
+                                            color: widget.trackOrderList[index].isActiveColor==true
+                                                ?
+                                            AppTheme.textColor
+                                                :
+                                            Colors.black26
+                                          ),),
                                           SizedBox(height: 30)
                                         ]))
                               ]))

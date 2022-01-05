@@ -10,6 +10,8 @@ class OnLoadingProductList extends HomeEvent {
   OnLoadingProductList({this.producerId,this.type,this.offset});
 }
 
+
+
 class OnAddToCart extends HomeEvent{
   String producerId,productId,FbId,qty,price;
   OnAddToCart({this.producerId,this.productId,this.FbId,this.qty,this.price});

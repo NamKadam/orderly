@@ -108,6 +108,7 @@ class AddEditAddressState extends State<AddEditAddress> {
       );
       _validZip = UtilValidator.validate(
         data: _textZipController.text,
+        type: ValidateType.pincode
       );
       _validEmail = UtilValidator.validate(
           data: _textEmailController.text,
@@ -282,7 +283,7 @@ class AddEditAddressState extends State<AddEditAddress> {
                     icon: Icon(Icons.clear),
                     controller: _textZipController,
                     focusNode: _focusZip,
-                    maxLength: 5,
+                    maxLength: 6,
                     keyboardType: TextInputType.number,
                     inputFormatters: <TextInputFormatter>[
                       FilteringTextInputFormatter.digitsOnly
@@ -297,6 +298,7 @@ class AddEditAddressState extends State<AddEditAddress> {
                       // setState(() {
                       _validZip = UtilValidator.validate(
                         data: _textZipController.text,
+                        type: ValidateType.pincode
                       );
                       //
                       // });

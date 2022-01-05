@@ -80,7 +80,7 @@ class _TimeDataState extends State<TimeData> {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now().subtract(Duration(days: 0)),
-      lastDate: DateTime(2022),
+      lastDate: DateTime(2025),
     );
 
     compareDates(picked);

@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:orderly/Api/api.dart';
 import 'package:orderly/Blocs/login/bloc.dart';
 import 'package:orderly/Blocs/user_reg/userReg_bloc.dart';
@@ -636,29 +637,30 @@ class _LoginWithFBState extends State<LoginWithFB>{
               child:
               InkWell(
                 onTap: () async {
-                  User user = await Authentication.signInWithFb(context: context,fblogin: facebookSignIn);
-                  setState(() {
-                    isFbLogin = false;
-                    widget.uuid=user.uid.toString();
-                  });
-
-                  if (user != null) {
-
-                    // Navigator.of(context).pushReplacement(
-                    //   MaterialPageRoute(
-                    //     builder: (context) => SignUp(
-                    //       user: user,
-                    //     ),
-                    //   ),
-                    // );
-                    // await PsProgressDialog.showProgressWithoutMsg(context);
-                    // Navigator.of(context).pushReplacement(
-                    //   MaterialPageRoute(
-                    //       builder: (context) => SignUp()
-                    //   ),
-                    // );
-                    // print(user);
-                  }
+                  // User user = await Authentication.signInWithFb(context: context,fblogin: facebookSignIn);
+                  // setState(() {
+                  //   isFbLogin = false;
+                  //   widget.uuid=user.uid.toString();
+                  // });
+                  //
+                  // if (user != null) {
+                  //
+                  //   // Navigator.of(context).pushReplacement(
+                  //   //   MaterialPageRoute(
+                  //   //     builder: (context) => SignUp(
+                  //   //       user: user,
+                  //   //     ),
+                  //   //   ),
+                  //   // );
+                  //   // await PsProgressDialog.showProgressWithoutMsg(context);
+                  //   // Navigator.of(context).pushReplacement(
+                  //   //   MaterialPageRoute(
+                  //   //       builder: (context) => SignUp()
+                  //   //   ),
+                  //   // );
+                  //   // print(user);
+                  // }
+                  Fluttertoast.showToast(msg: "Funcionality Under development");
 
                 },
                 child: Row(

@@ -1,4 +1,4 @@
-package com.orderly
+package com.orderly.pro
 
 import io.flutter.embedding.android.FlutterActivity
 //for stripe

@@ -22,6 +22,22 @@
           }
         },
         {
+          "client_id": "429686314743-k7ngv8l6cqqlr2c0rtoo6sn9lr4jtt0r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.orderly",
+            "certificate_hash": "53b9296f14f0517a8d206fd25ad9bd84ce66b268"
+          }
+        },
+        {
+          "client_id": "429686314743-s2m2egs4kiaguo1gf89g2d9j41dav94r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.orderly",
+            "certificate_hash": "cd3e455e62f4f4824d2768cac8dd914020c9d16a"
+          }
+        },
+        {
           "client_id": "429686314743-a47nnoc70o2m7tbch2l3m0rlbd4sq1af.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -37,6 +53,49 @@
             {
               "client_id": "429686314743-a47nnoc70o2m7tbch2l3m0rlbd4sq1af.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "429686314743-v8851chc1qbh73a51iucej6ocfbeq4dd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.orderlypro"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:429686314743:android:0f8c79316f5d066abd25f2",
+        "android_client_info": {
+          "package_name": "com.orderly.pro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "429686314743-a47nnoc70o2m7tbch2l3m0rlbd4sq1af.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgvwgLsR89L5zAvy16d_w6G2N0ic4zuiA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "429686314743-a47nnoc70o2m7tbch2l3m0rlbd4sq1af.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "429686314743-v8851chc1qbh73a51iucej6ocfbeq4dd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.orderlypro"
+              }
             }
           ]
         }

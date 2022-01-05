@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:orderly/Api/api.dart';
 import 'package:orderly/Blocs/authentication/bloc.dart';
@@ -18,6 +19,7 @@ import 'package:orderly/Models/model_product_List.dart';
 import 'package:orderly/Models/model_view_cart.dart';
 import 'package:orderly/Screens/Customer/cart/addTime.dart';
 import 'package:orderly/Screens/Customer/cart/cart_list_item.dart';
+import 'package:orderly/Screens/mainNavigation.dart';
 import 'package:orderly/Screens/profile/profAddress/prof_address.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/connectivity_check.dart';
@@ -38,14 +40,16 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
 class ShoppingCart extends StatefulWidget {
-  String producerId,productId,qty,price;
+  String producerId,productId,qty,price,flagFrom;
   CartModel cartModel;
+  List<Product> productList;
+
 
   // double totalCartValue;
   // ShoppingCart({Key key, @required this.producerId, @required this.model})
   //     : super(key: key);
 
-  ShoppingCart({Key key, @required this.price,@required this.cartModel})
+  ShoppingCart({Key key, @required this.price,@required this.cartModel,@required this.productList,@required this.flagFrom})
       : super(key: key);
 
   _ShoppingCartState createState() => _ShoppingCartState();
@@ -93,7 +97,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                   //delivery time
                                   Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         "Choose Delivery Time",
@@ -101,11 +105,11 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                             .textTheme
                                             .caption
                                             .copyWith(
-                                                fontSize: 14.0,
-                                                fontWeight: FontWeight.w600,
-                                                color: Theme.of(context)
-                                                    .primaryColor,
-                                                fontFamily: "Poppins"),
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w600,
+                                            color: Theme.of(context)
+                                                .primaryColor,
+                                            fontFamily: "Poppins"),
                                       ),
                                       Text(
                                         "date",
@@ -113,10 +117,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                             .textTheme
                                             .caption
                                             .copyWith(
-                                                fontSize: 14.0,
-                                                fontWeight: FontWeight.w600,
-                                                color: AppTheme.textColor,
-                                                fontFamily: "Poppins"),
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppTheme.textColor,
+                                            fontFamily: "Poppins"),
                                       ),
                                     ],
                                   ),
@@ -125,7 +129,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                       padding: EdgeInsets.only(top: 5.0),
                                       child: Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             "SubTotal",
@@ -133,10 +137,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                 .textTheme
                                                 .caption
                                                 .copyWith(
-                                                    fontSize: 14.0,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: AppTheme.textColor,
-                                                    fontFamily: "Poppins"),
+                                                fontSize: 14.0,
+                                                fontWeight: FontWeight.w600,
+                                                color: AppTheme.textColor,
+                                                fontFamily: "Poppins"),
                                           ),
                                           Text(
                                             "\$" + totalCartValue.toString(),
@@ -144,10 +148,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                 .textTheme
                                                 .caption
                                                 .copyWith(
-                                                    fontSize: 14.0,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: AppTheme.textColor,
-                                                    fontFamily: "Poppins"),
+                                                fontSize: 14.0,
+                                                fontWeight: FontWeight.w600,
+                                                color: AppTheme.textColor,
+                                                fontFamily: "Poppins"),
                                           ),
                                         ],
                                       )),
@@ -156,7 +160,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                       padding: EdgeInsets.only(top: 5.0),
                                       child: Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             "Convinience Fee",
@@ -164,10 +168,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                 .textTheme
                                                 .caption
                                                 .copyWith(
-                                                    fontSize: 12.0,
-                                                    fontWeight: FontWeight.w400,
-                                                    color: AppTheme.textColor,
-                                                    fontFamily: "Poppins"),
+                                                fontSize: 12.0,
+                                                fontWeight: FontWeight.w400,
+                                                color: AppTheme.textColor,
+                                                fontFamily: "Poppins"),
                                           ),
                                           Text(
                                             "\$ 75.00",
@@ -175,10 +179,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                 .textTheme
                                                 .caption
                                                 .copyWith(
-                                                    fontSize: 12.0,
-                                                    fontWeight: FontWeight.w400,
-                                                    color: AppTheme.textColor,
-                                                    fontFamily: "Poppins"),
+                                                fontSize: 12.0,
+                                                fontWeight: FontWeight.w400,
+                                                color: AppTheme.textColor,
+                                                fontFamily: "Poppins"),
                                           ),
                                         ],
                                       )),
@@ -188,7 +192,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                           top: 5.0, bottom: 15.0),
                                       child: Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             "Total",
@@ -196,10 +200,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                 .textTheme
                                                 .caption
                                                 .copyWith(
-                                                    fontSize: 14.0,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: AppTheme.textColor,
-                                                    fontFamily: "Poppins"),
+                                                fontSize: 14.0,
+                                                fontWeight: FontWeight.w600,
+                                                color: AppTheme.textColor,
+                                                fontFamily: "Poppins"),
                                           ),
                                           Text(
                                             "\$ 75.00",
@@ -207,10 +211,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                 .textTheme
                                                 .caption
                                                 .copyWith(
-                                                    fontSize: 14.0,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: AppTheme.textColor,
-                                                    fontFamily: "Poppins"),
+                                                fontSize: 14.0,
+                                                fontWeight: FontWeight.w600,
+                                                color: AppTheme.textColor,
+                                                fontFamily: "Poppins"),
                                           ),
                                         ],
                                       )),
@@ -330,7 +334,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
   // for cartList
   Widget buildCartList(int index, CartModel model) {
-    if (model.cart==null || model.cart.length<=0) {
+    if ( model.cart==null || model.cart.length<=0) {
       return ListView.builder(
         padding: EdgeInsets.all(0),
         shrinkWrap: true,
@@ -429,7 +433,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                 return Shimmer.fromColors(
                                   baseColor: Theme.of(context).hoverColor,
                                   highlightColor:
-                                      Theme.of(context).highlightColor,
+                                  Theme.of(context).highlightColor,
                                   enabled: true,
                                   child: Container(
                                     height: 80,
@@ -458,7 +462,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                 return Shimmer.fromColors(
                                   baseColor: Theme.of(context).hoverColor,
                                   highlightColor:
-                                      Theme.of(context).highlightColor,
+                                  Theme.of(context).highlightColor,
                                   enabled: true,
                                   child: Container(
                                     height: 80,
@@ -477,66 +481,66 @@ class _ShoppingCartState extends State<ShoppingCart> {
                             ),
                             Expanded(
                                 child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  model.cart[index].productName,
-                                  // widget.users.firstName+" "+widget.users.lastName,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .caption
-                                      .copyWith(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      model.cart[index].productName,
+                                      // widget.users.firstName+" "+widget.users.lastName,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .caption
+                                          .copyWith(
                                           fontSize: 14.0,
                                           fontWeight: FontWeight.w600,
                                           color: AppTheme.textColor,
                                           fontFamily: "Poppins"),
-                                ),
-                                ReadMoreText(
-                                  model.cart[index].productDesc == null
-                                      ? ""
-                                      : model.cart[index].productDesc,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .button
-                                      .copyWith(
-                                          fontSize: 13.0,
-                                          color: AppTheme.textColor,
-                                          fontWeight: FontWeight.w400,
-                                          fontFamily: "Poppins"),
-                                    trimLines: 2,
-                                    trimMode: TrimMode.Line,
-                                    trimCollapsedText: 'Show more',
-                                    trimExpandedText: 'Show less'
+                                    ),
+                                    ReadMoreText(
+                                        model.cart[index].productDesc == null
+                                            ? ""
+                                            : model.cart[index].productDesc,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .button
+                                            .copyWith(
+                                            fontSize: 13.0,
+                                            color: AppTheme.textColor,
+                                            fontWeight: FontWeight.w400,
+                                            fontFamily: "Poppins"),
+                                        trimLines: 2,
+                                        trimMode: TrimMode.Line,
+                                        trimCollapsedText: 'Show more',
+                                        trimExpandedText: 'Show less'
 
-                            ),
-                                Text(
-                                  model.cart[index].productName == null
-                                      ? "sold by: "
-                                      : "sold by: " +
+                                    ),
+                                    Text(
+                                      model.cart[index].productName == null
+                                          ? "sold by: "
+                                          : "sold by: " +
                                           model.cart[index].productName,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .button
-                                      .copyWith(
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .button
+                                          .copyWith(
                                           fontSize: 12.0,
                                           color: AppTheme.textColor,
                                           fontWeight: FontWeight.w300,
                                           fontFamily: "Poppins"),
-                                ),
-                                Text(
-                                  model.cart[index].ratePerHour.toString() +
-                                      " \$/Hr",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .button
-                                      .copyWith(
+                                    ),
+                                    Text(
+                                      model.cart[index].ratePerHour.toString() +
+                                          " \$/Hr",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .button
+                                          .copyWith(
                                           fontSize: 13.0,
                                           color: Theme.of(context).primaryColor,
                                           fontWeight: FontWeight.w600,
                                           fontFamily: "Poppins"),
-                                ),
-                              ],
-                            )),
+                                    ),
+                                  ],
+                                )),
                           ],
                         )),
                     //quantity
@@ -544,7 +548,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                         margin: EdgeInsets.all(15.0),
                         decoration: BoxDecoration(
                           border:
-                              Border.all(color: Theme.of(context).dividerColor),
+                          Border.all(color: Theme.of(context).dividerColor),
                           borderRadius: BorderRadius.all(
                             Radius.circular(45.0),
                           ),
@@ -576,7 +580,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                   model.cart[index],
                                                   model.cart[index].qty - 1);
 
-                                               calculateOverallTotal(model.totalCartValue, conveniencFee);
+                                              calculateOverallTotal(model.totalCartValue, conveniencFee);
 
                                               // calculateTotal(model.cart,index,flagRemove);
 
@@ -597,9 +601,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                       padding: EdgeInsets.only(left: 15.0),
                                       child: InkWell(
                                           onTap: () {
-                                            model.updateProduct(
-                                                model.cart[index],
-                                                model.cart[index].qty + 1);
+                                            if((model.cart[index].qty + 1)>widget.productList[index].qty){ //updated on 4/01/2022 for out of stock part
+                                              Fluttertoast.showToast(msg: "Out Of stock");
+                                            }else{
+                                              model.updateProduct(model.cart[index], model.cart[index].qty + 1);
+
+                                            }
                                             // calculateTotal(model.cart,index,"0");
                                             calculateOverallTotal(model.totalCartValue, conveniencFee);
                                           },
@@ -623,14 +630,14 @@ class _ShoppingCartState extends State<ShoppingCart> {
             child: Container(
               // width:30.0,height:30.0,
               decoration: BoxDecoration(
-                  // color: Colors.greenAccent,
-                  // borderRadius: BorderRadius.circular(20.0),
-                  ),
+                // color: Colors.greenAccent,
+                // borderRadius: BorderRadius.circular(20.0),
+              ),
               margin: const EdgeInsets.symmetric(horizontal: 4.0),
               child:
-                  // CircleAvatar(
-                  // child:
-                  IconButton(
+              // CircleAvatar(
+              // child:
+              IconButton(
                 // hoverColor: Theme.of(context).primaryColor,
                 splashColor: Colors.white,
                 icon: Image.asset(
@@ -647,19 +654,19 @@ class _ShoppingCartState extends State<ShoppingCart> {
                   //     flagDataNotAvailable = true;
                   //   }
                   // });
-                    model.removeProduct(_cartList[index]);
+                  model.removeProduct(_cartList[index]);
 
 
-                      // setState(() {
-                        // _cartList.removeAt(index);
-                        // model.cart.removeAt(index);
-                      //   model.cart.removeAt(index);
-                      //   if(_cartList.length==0) {
-                      //     flagDataNotAvailable = true;
-                      //   }
-                      // });
+                  // setState(() {
+                  // _cartList.removeAt(index);
+                  // model.cart.removeAt(index);
+                  //   model.cart.removeAt(index);
+                  //   if(_cartList.length==0) {
+                  //     flagDataNotAvailable = true;
+                  //   }
+                  // });
 
-                  },
+                },
               ),
               // backgroundColor: Colors.black,
               // )
@@ -693,36 +700,50 @@ class _ShoppingCartState extends State<ShoppingCart> {
     // if(_cartList.length<=0){
     //   setBlocData();
     // }
-   //  final String cartString = UtilPreferences.getString(Preferences.cart);
-   // if(cartString!=null) {
-   //
-   //    var _cart= jsonDecode(cartString).toList();
-   //    _cartList = _cart.map((cartJson) => Cart.fromJson(cartJson)).toList();
-   //    widget.cartModel.addAllProduct(_cartList);
-   //    print(_cartList);
-   //    setState(() {
-   //    });
-   //
-   // }
-   // else{
-   //   if(Application.cartModel==null){
-   //     setBlocData();
-   //   }else{
+    //  final String cartString = UtilPreferences.getString(Preferences.cart);
+    // if(cartString!=null) {
+    //
+    //    var _cart= jsonDecode(cartString).toList();
+    //    _cartList = _cart.map((cartJson) => Cart.fromJson(cartJson)).toList();
+    //    widget.cartModel.addAllProduct(_cartList);
+    //    print(_cartList);
+    //    setState(() {
+    //    });
+    //
+    // }
+    // else{
+    //   if(Application.cartModel==null){
+    //     setBlocData();
+    //   }else{
 
-       // setState(() {
-    if(Application.cartModel.cart!=null){
+    // setState(() {
+    print("cartModel:"+Application.cartModel.toString());
+    cartModel=new CartModel();
+
+    if(Application.cartModel!=null&&Application.cartModel.cart.length>0){
       _cartList=Application.cartModel.cart;
+      cartModel=Application.cartModel;
+
+    } else if(widget.flagFrom=="0"){
+      _cartList=widget.cartModel.cart;
+      cartModel=widget.cartModel;
+    }else{//from main page cart icon redirection
+
+      _cartList=Application.cartModel.cart;
+      cartModel=Application.cartModel;
     }
+    calculateOverallTotal(cartModel.totalCartValue, conveniencFee);
 
-    calculateOverallTotal(Application.cartModel.totalCartValue, conveniencFee);
+    // calculateOverallTotal(Application.cartModel.totalCartValue, conveniencFee);
 
 
-       // });
-     // }
-     // }
-   // }
 
-   print(_cartList);
+    // });
+    // }
+    // }
+    // }
+
+    print(_cartList);
 
   }
 
@@ -738,7 +759,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
     AddTime.selectedDate=null;
     AddTime.time=null;
   }
-  
+
 
 
   @override
@@ -766,8 +787,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 // }
                 clearData();
 
-                AppBloc.authBloc.add(OnSaveCart(widget.cartModel));
-                Navigator.pop(context);
+                AppBloc.authBloc.add(OnSaveCart(cartModel));
+                // AppBloc.authBloc.add(OnSaveCart(Application.cartModel));
+                Navigator.pop(context,cartModel);
+                // Navigator.push(context,MaterialPageRoute(builder: (context)=>MainNavigation(flagOrder: "0")));
                 // showPlaceOrderBottomDialog(context);
                 // setsharedPrefData();
 
@@ -794,17 +817,26 @@ class _ShoppingCartState extends State<ShoppingCart> {
               if(_cartList==null) {
                 flagDataNotAvailable = true;
               }
-                widget.cartModel.addAllProduct(_cartList);
+              // Application.cartModel.addAllProduct(_cartList);
+              cartModel.addAllProduct(_cartList);
             }
             //for delete cartList
             if(state is CartDeleteSuccess){
               print('deleted');
             }
             return ScopedModel<CartModel>(
-                model: widget.cartModel,
+              // model: Application.cartModel!=null?Application.cartModel:cartModel=new CartModel(),
+                model:  cartModel,
                 child: ScopedModelDescendant<CartModel>(
                   builder: (context, child, model) {
-                    widget.cartModel = model;
+                    // if(Application.cartModel!=null)
+                    //   {
+                    //     Application.cartModel = model;
+                    //   }else{
+                    // cartModel=new CartModel();
+                    // Application.cartModel=cartModel;
+                    // }
+                    cartModel=model;
                     print("cartModel:-"+widget.cartModel.toString());
 
                     // totalCartValue=widget.cartModel.totalCartValue;
@@ -832,25 +864,27 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                         //         builder: (context) =>
                                         //         new MemberDetails(userListData:memberlist[index])));
                                       },
-                                      child: buildCartList(index, widget.cartModel)
-                                      // ScopedModel<CartModel>(
-                                      //     model: cartModel,
-                                      //     child: ScopedModelDescendant<CartModel>(
-                                      //       builder: (context, child, model) {
-                                      //         cartModel = model;
-                                      //         print(cartModel);
-                                      //
-                                      //         totalCartValue=cartModel.totalCartValue;
-                                      //
-                                      //
-                                      //         return buildCartList(index, model);
-                                      //       },
-                                      //     ))
+                                      // child: buildCartList(index, Application.cartModel)
+                                      child: buildCartList(index, cartModel)
+                                    // ScopedModel<CartModel>(
+                                    //     model: cartModel,
+                                    //     child: ScopedModelDescendant<CartModel>(
+                                    //       builder: (context, child, model) {
+                                    //         cartModel = model;
+                                    //         print(cartModel);
+                                    //
+                                    //         totalCartValue=cartModel.totalCartValue;
+                                    //
+                                    //
+                                    //         return buildCartList(index, model);
+                                    //       },
+                                    //     ))
                                   );
                                 })),
 
                             // bottom dialog
-                            widget.cartModel.totalCartValue!=0.0
+                            cartModel.totalCartValue!=0.0
+                            // Application.cartModel!=null && Application.cartModel.totalCartValue!=0.0
                                 ?
                             Align(
                                 alignment: Alignment.bottomCenter,
@@ -895,8 +929,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                           //
                                                           //    });
                                                           // addTimeresult = await Navigator.push(context, MaterialPageRoute(builder: (context)=>
-                                                         await Navigator.push(context, MaterialPageRoute(builder: (context)=>
-                                                          AddTime()));
+                                                          await Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                                                              AddTime()));
                                                           print("result:-" + addTimeresult.toString());
                                                           print("currentDate:-" + currentDate);
 
@@ -907,21 +941,22 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                             AddTime.selectedDate=currentDate;
                                                             date=currentDate;
                                                           } else {
-                                                              date = AddTime.dateTime;
+                                                            date = AddTime.dateTime;
                                                           }
                                                           //for amt
                                                           // if(addTimeresult.chargeAmt!=null){
                                                           if(AddTime.chargedAmt!=null){
                                                             try {
-                                                              subTotal = widget.cartModel.totalCartValue.toInt() + int.parse(
-                                                                  AddTime.chargedAmt);
+                                                              // subTotal = Application.cartModel.totalCartValue.toInt() + int.parse(AddTime.chargedAmt);
+                                                              subTotal = cartModel.totalCartValue.toInt() + int.parse(AddTime.chargedAmt);
                                                               print(subTotal);
                                                             }catch(e){
                                                               print(e);
                                                             }
                                                             // widget.cartModel.totalCartValue+=int.parse(addTimeresult.chargeAmt);
                                                           }else{
-                                                            subTotal=widget.cartModel.totalCartValue.toInt();
+                                                            // subTotal=Application.cartModel.totalCartValue.toInt();
+                                                            subTotal=cartModel.totalCartValue.toInt();
                                                           }
                                                           calculateOverallTotal(subTotal.toDouble(), conveniencFee);
 
@@ -981,10 +1016,11 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                         ),
                                                         Text(
                                                           subTotal==0
-                                                           ?
-                                                          "\$" + widget.cartModel.totalCartValue.toString()
-                                                           :
-                                                             "\$" + subTotal.toString(),
+                                                              ?
+                                                          "\$" + cartModel.totalCartValue.toString()
+                                                          // "\$" + Application.cartModel.totalCartValue.toString()
+                                                              :
+                                                          "\$" + subTotal.toString(),
                                                           style: Theme.of(context)
                                                               .textTheme
                                                               .caption
@@ -1094,7 +1130,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                                   "Please Choose Delivery time")));
                                                         }else {
 
-                                                          String cart_json = jsonEncode(widget.cartModel.cart.map((i)
+                                                          String cart_json = jsonEncode(cartModel.cart.map((i)
+                                                          // String cart_json = jsonEncode(Application.cartModel.cart.map((i)
                                                           => Cart.toJson(i)).toList()).toString();
                                                           // var json1 = jsonEncode(cartList.map((e) => e.toJson()).toList());
                                                           print("cartList:-" + cart_json);
@@ -1103,15 +1140,17 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                               MaterialPageRoute(builder: (context)
                                                               =>ProfAddress(
                                                                 addTimeData: addTimeresult,
-                                                                cartDetails: widget.cartModel.cart,
-                                                                subTotal:widget.cartModel.totalCartValue.toString(),
+                                                                // cartDetails: Application.cartModel.cart,
+                                                                cartDetails: cartModel.cart,
+                                                                // subTotal:Application.cartModel.totalCartValue.toString(),
+                                                                subTotal:cartModel.totalCartValue.toString(),
                                                                 convFee:conveniencFee.toString(),
                                                                 total:OverallTotalVal.toString(),
-                                                                )
+                                                              )
                                                               )
                                                           );
-                                                         }
-                                                        },
+                                                        }
+                                                      },
                                                       shape:
                                                       const RoundedRectangleBorder(
                                                           borderRadius:

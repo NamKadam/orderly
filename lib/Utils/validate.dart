@@ -17,7 +17,7 @@ class UtilValidator {
   static const String max_phone = "Number should have atleast 10 digit";
   static const String passWordLength = "Password Should be Atleast 7 digit";
   static const String ageValid = "Please enter valid Age between 18-60 yrs";
-  static const String pincode = "Please enter 6 digit pincode";
+  static const String pincode = "Please enter valid zipcode";
 
 
   static const String error_match = "value_not_match";
@@ -84,9 +84,10 @@ class UtilValidator {
         break;
 
       case ValidateType.pincode:
-        if(data.length<6)
-          return pincode;
+        if(data.length==6)
         return null;
+        return pincode;
+
         break;
 
 

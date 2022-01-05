@@ -195,8 +195,13 @@ class HeaderWidget extends StatelessWidget{
             ),
             //name
             Padding(
-                padding:EdgeInsets.all(10.0),child:Text(
-              Application.user.firstName+" "+Application.user.lastName,
+                padding:EdgeInsets.all(10.0),
+                child:Text(
+              Application.user!=null
+                  ?
+              Application.user.firstName+" "+Application.user.lastName
+              :
+              "",
               style: TextStyle(fontFamily: 'Poppins',fontWeight: FontWeight.w600,
                   fontSize: 16.0,
                   color:AppTheme.textColor),

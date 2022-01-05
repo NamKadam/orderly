@@ -5,6 +5,7 @@ import 'package:orderly/Blocs/home/bloc.dart';
 import 'package:orderly/Blocs/inventory/inventory_bloc.dart';
 import 'package:orderly/Blocs/login/login_bloc.dart';
 import 'package:orderly/Blocs/mycart/bloc.dart';
+import 'package:orderly/Blocs/producer/producer_bloc.dart';
 import 'package:orderly/Blocs/profile/bloc.dart';
 import 'package:orderly/Blocs/theme/theme_bloc.dart';
 import 'package:orderly/Blocs/user_reg/userReg_bloc.dart';
@@ -34,6 +35,7 @@ class AppBloc {
   static final fleetOrdersBloc=FleetOrdersBloc(fleetOrdersRepo:userRepository);
   static final fleetInventBloc=InventoryBloc(inventoryRepo:userRepository);
   static final claimBloc=ClaimOrdersBloc(claimRepo:userRepository);
+  static final producerProdBloc=ProducerProdBloc(producerProdRepo:userRepository);
 
   static final profileBloc=ProfileBloc(profileRepo:userRepository);
 
@@ -95,6 +97,10 @@ class AppBloc {
     BlocProvider<ClaimOrdersBloc>(
       create: (context) =>claimBloc ,
     ),
+    //updated on 29/12/2021 for producer bottom tab
+    BlocProvider<ProducerProdBloc>(
+      create: (context) =>producerProdBloc ,
+    ),
 
   ];
 
@@ -114,6 +120,7 @@ class AppBloc {
     custOrdersDetBloc.close();
     fleetInventBloc.close();
     profileBloc.close();
+    producerProdBloc.close();
   }
 
   ///Singleton factory

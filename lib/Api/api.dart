@@ -234,7 +234,8 @@ class Api {
     print('Passing Area: $value');
     // var finalUrl = 'https://api.postalpincode.in/postoffice/$value';
     //USA has Zipcode
-    var finalUrl = Uri.parse('https://api.worldpostallocations.com/pincode?postalcode=$value&countrycode=US');
+    // var finalUrl = Uri.parse('https://api.worldpostallocations.com/pincode?postalcode=$value&countrycode=US');
+    var finalUrl = Uri.parse('https://api.worldpostallocations.com/pincode?postalcode=$value&countrycode=IN');
     print('Passing Area: $value and $finalUrl');
     final response = await client.get(finalUrl);
     final parsed = json.decode(response.body);

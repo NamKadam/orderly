@@ -401,7 +401,8 @@ class _PaymentState extends State<Payment>{
                             doPayment();
                             // placeOrder();
                           }else if(radioPay=="RazorPay"){
-                            openCheckout();
+                            // openCheckout();
+                            _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Funcionality Under development")));
                           }else if(radioPay=="Stripe")
                             {
                               makePayment();

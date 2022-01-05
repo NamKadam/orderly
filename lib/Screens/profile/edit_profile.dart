@@ -314,6 +314,7 @@ class _EditProfileState extends State<EditProfile>{
       );
       _validZip = UtilValidator.validate(
         data: _textZipController.text,
+        type: ValidateType.pincode
       );
       _validEmail = UtilValidator.validate(
           data: _textEmailController.text,
@@ -475,6 +476,7 @@ class _EditProfileState extends State<EditProfile>{
                         // setState(() {
                         _validZip = UtilValidator.validate(
                           data: _textZipController.text,
+                          type: ValidateType.pincode
                         );
                         //
                         // });

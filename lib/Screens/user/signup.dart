@@ -17,6 +17,7 @@ import 'package:orderly/Screens/mainNavigation.dart';
 import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/other.dart';
 import 'package:orderly/Utils/preferences.dart';
+import 'package:orderly/Utils/progressDialog.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Utils/util_preferences.dart';
 import 'package:orderly/Utils/validate.dart';
@@ -117,9 +118,11 @@ class _SignUpState extends State<SignUp>{
 
 
   void _callAPIForPincode() {
+    PsProgressDialog.showProgressWithoutMsg(context);
     Api.fetchPincode(http.Client(), _textZipController.text).then(
             (value) => {
-          setState(() {
+
+        setState(() {
             print('Value' + value.status.toString());
             // postOfficeList = value.postOffice;
             postResultList = value.result;
@@ -383,6 +386,7 @@ class _SignUpState extends State<SignUp>{
       );
       _validZip = UtilValidator.validate(
         data: _textZipController.text,
+        type: ValidateType.pincode
       );
       _validEmail = UtilValidator.validate(
         data: _textEmailController.text,
@@ -498,7 +502,8 @@ class _SignUpState extends State<SignUp>{
         body: Container(
             padding: EdgeInsets.only(left: 20, right: 20),
             child: SingleChildScrollView(
-              child:Column(
+              child:
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   //image
@@ -592,14 +597,14 @@ class _SignUpState extends State<SignUp>{
                         ],
                         textInputAction: TextInputAction.next,
                         onChanged: (text) {
-                          if(text.length>=5){
+                          if(text.length==6){
                             _apiCall=true;
                             _callAPIForPincode();
                           }
-
                           // setState(() {
                             _validZip = UtilValidator.validate(
                               data: _textZipController.text,
+                              type: ValidateType.pincode
                             );
                           //
                           // });

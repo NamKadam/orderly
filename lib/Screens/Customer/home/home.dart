@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:orderly/Api/api.dart';
@@ -11,6 +12,7 @@ import 'package:orderly/Blocs/authentication/authentication_event.dart';
 import 'package:orderly/Blocs/home/bloc.dart';
 import 'package:orderly/Blocs/home/home_bloc.dart';
 import 'package:orderly/Blocs/home/home_event.dart';
+import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/model_producer_list.dart';
 import 'package:orderly/Models/model_product_List.dart';
@@ -107,11 +109,14 @@ class _HomeState extends State<Home> {
               child: Text(
                 'OK',
               ),
-              onPressed: () {
+              onPressed: () async{
                 // Navigator.of(context).pop();
-                Navigator.push(context, MaterialPageRoute(
-                    builder: (context)=> ShoppingCart()
+                final result=await Navigator.push(context, MaterialPageRoute(
+                    builder: (context)=> ShoppingCart(flagFrom:"0",cartModel: Application.cartModel,) //from home
                 ));
+                if(result!=null){
+                  result[0]=Application.cartModel;
+                }
 
               },
             ),
@@ -145,6 +150,7 @@ class _HomeState extends State<Home> {
 
 
   void initState() {
+    // SystemChannels.textInput.invokeMethod('TextInput.hide');
 
     cartModel=new CartModel();
     _homeBloc = BlocProvider.of<HomeBloc>(context);
@@ -218,7 +224,8 @@ class _HomeState extends State<Home> {
       'producer_id':producerId,
       'product_id':productId,
       'user_id':Application.user.fbId,
-      'qty':qty,
+      // 'qty':qty,
+      'qty':"1", //updated on 4/01/2022 by default set to 1
       'rate_per_hour':price
     };
 
@@ -241,12 +248,25 @@ class _HomeState extends State<Home> {
           // OrderlyDatabase.database.add(listCategory[0]);
           // print(OrderlyDatabase.database.toString());
           if(model!=null){
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>ShoppingCart(price:price,cartModel:model)));
+            CartModel cartmodel=await
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                ShoppingCart(flagFrom:"0",productList:totalProductList,price:price,cartModel:model)));
+            if(cartmodel!=null){
+              Application.cartModel=cartmodel;
+            }
           }
         }else{
           print('exists');
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>ShoppingCart(price:price,cartModel:model)));
+          CartModel cartmodel=await
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>
+              ShoppingCart(flagFrom:"0",productList:totalProductList,price:price,cartModel:model)));
+          if(cartmodel!=null){
+            Application.cartModel=cartmodel;
+          }
         }
+        setState(() {
+
+        });
         // await PsProgressDialog.showProgressWithoutMsg(context);
       }
     }catch(e){
@@ -610,8 +630,9 @@ class _HomeState extends State<Home> {
                                 await PsProgressDialog
                                     .showProgressWithoutMsg(context);
                                 AddedToCart(model,
-                                    _producerList[producerListIndex]
-                                        .producerId.toString(),
+                                    // _producerList[producerListIndex]
+                                    //     .producerId.toString(),
+                                    totalProductList[index].producerid.toString(), //updated on 4/01/2022
                                     totalProductList[index].productId
                                         .toString(),
                                     totalProductList[index].qty
@@ -675,7 +696,158 @@ class _HomeState extends State<Home> {
         onWillPop: () => _exitApp(context),
         child: Scaffold(
             key: _scaffoldKey,
-            // appBar: AppBar(title: Text("Home"),
+            appBar:
+            AppBar(
+              title: Text(
+                "Home",
+                style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 18.0,
+                    color: AppTheme.textColor),
+              ),
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+
+              automaticallyImplyLeading: false,
+              actions: [
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Image.asset(
+                        Images.search,
+                        width: 30.0,
+                        height: 30.0,
+                      ),
+                      onPressed: () {},
+                    ),
+                    InkWell(
+                        onTap: (){
+
+                        },
+                        child:Stack(children: [
+                      // IconButton(
+                      //   icon:
+                        Image.asset(
+                          Images.notiIcon,
+                          width: 35.0,
+                          height: 35.0,
+                        ),
+                        // tooltip: "Save Todo and Retrun to List",
+                      //   onPressed: () {},
+                      // ),
+                      Positioned(
+                        right: 5,
+                        top: 3,
+                        child: new Container(
+                          padding: EdgeInsets.all(1),
+                          decoration: new BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(8.5),
+                          ),
+                          constraints: BoxConstraints(
+                            minWidth: 15,
+                            minHeight: 12,
+                          ),
+                          child: Text(
+                            "0",
+                            style: new TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: 'Poppins'
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                      // if(Application.user.userType=="1")//for fleet
+                      // Positioned(
+                      //   right: 5,
+                      //   top: 5,
+                      //   child: new Container(
+                      //     padding: EdgeInsets.all(1),
+                      //     decoration: new BoxDecoration(
+                      //       color: Colors.red,
+                      //       borderRadius: BorderRadius.circular(8.5),
+                      //     ),
+                      //     constraints: BoxConstraints(
+                      //       minWidth: 17,
+                      //       minHeight: 17,
+                      //     ),
+                      //     child: Text(
+                      //       "0",
+                      //       style: new TextStyle(
+                      //           color: Colors.white,
+                      //           fontSize: 10,
+                      //           fontWeight: FontWeight.w400,
+                      //           fontFamily: 'Poppins'
+                      //       ),
+                      //       textAlign: TextAlign.center,
+                      //     ),
+                      //   ),
+                      // )
+                    ],
+                    )),
+                    // if(Application.user.userType=="0") //for customer
+                    InkWell(
+                      onTap: () async{
+                        CartModel cartmodel=await Navigator.push(context, MaterialPageRoute(
+                            builder: (context)=> ShoppingCart(productList: totalProductList,)
+                        ));
+                        if(cartmodel!=null){
+                          setState(() {
+                            Application.cartModel=cartModel;
+
+                          });
+                        }
+                      },
+                      child: Stack(
+                        children: [
+                          Image.asset(
+                              Images.cart,
+                              width: 35.0,
+                              height: 35.0,
+                            ),
+                            // tooltip: "Save Todo and Retrun to List",
+                            // onPressed: () {
+                            //   // Navigator.push(context, MaterialPageRoute(
+                            //   //     builder: (context)=> ShoppingCart()
+                            //   // ));
+                            // },
+                          // ),
+                          Positioned(
+                            right: 5,
+                            top:1,
+                            child: new Container(
+                              padding: EdgeInsets.all(1),
+                              decoration: new BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(8.5),
+                              ),
+                              constraints: BoxConstraints(
+                                minWidth: 15,
+                                minHeight: 12,
+                              ),
+                              child: Text(
+                                Application.cartModel!=null?Application.cartModel.cart.length.toString():"0",
+                                style: new TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'Poppins'
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
             //   automaticallyImplyLeading:false,
             // ),
             body: BlocListener<HomeBloc, HomeState>(listener: (context, state) {
