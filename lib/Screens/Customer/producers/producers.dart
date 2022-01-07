@@ -116,6 +116,7 @@ class _ProducersState extends State<Producers> {
     offset = 0;
     _pageSize = 10;
     await Future.delayed(Duration(milliseconds: 1000));
+    paginationCall(_producerTabList);
     setBlocData();
     _controller.refreshCompleted();
   }

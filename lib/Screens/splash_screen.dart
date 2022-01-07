@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_version/get_version.dart';
 import 'package:orderly/Blocs/authentication/authentication_bloc.dart';
 import 'package:orderly/Blocs/authentication/authentication_state.dart';
 import 'package:orderly/Blocs/authentication/bloc.dart';
 import 'package:orderly/Configs/image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/preferences.dart';
 import 'package:orderly/Utils/util_preferences.dart';
@@ -28,15 +30,18 @@ class _SplashScreenState extends State<SplashScreen> {
    AuthBloc authBloc;
    final int splashDuration = 5;
 
+  String versionName="";
+
 
    @override
   void initState() {
     // authBloc = BlocProvider.of<AuthBloc>(context);
     // authBloc!.add(OnAuthCheck());
      startTime();
-
      super.initState();
   }
+
+
 
    startTime() async {
      //to resolve issue of:-flutter-unhandled-exception-missingpluginexceptionno-implementation-found-for add below:-
@@ -93,7 +98,15 @@ class _SplashScreenState extends State<SplashScreen> {
               height: 10,
               child: CircularProgressIndicator(strokeWidth: 1),
             ),
-          )
+          ),
+          Positioned(
+            bottom: 15.0,
+              child: Text("version "+Application.version,style: TextStyle(
+                fontSize: 16.0,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500,
+                color: AppTheme.textColor
+              ),))
         ],
       )),
     );

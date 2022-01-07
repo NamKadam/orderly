@@ -12,6 +12,7 @@ import 'package:orderly/Models/Invoice/invoice.dart';
 import 'package:orderly/Models/Invoice/supplier.dart';
 import 'package:orderly/Models/model_invoice.dart';
 import 'package:orderly/Models/model_myOrders.dart';
+import 'package:orderly/Screens/Customer/orders/order_detail.dart';
 import 'package:orderly/Screens/Customer/orders/product_review.dart';
 import 'package:orderly/Screens/Customer/orders/track_order.dart';
 import 'package:orderly/Screens/Customer/orders/track_order.dart';
@@ -285,7 +286,23 @@ class _OrderListItemState extends State<OrderListItem>{
                         Padding(
                             padding: EdgeInsets.all(10.0),
                             child:
-                            Row(
+                            GestureDetector(
+                              onTap: (){
+                                if (widget.orderList[widget.position].currentStatus != 6
+                                    && widget.orderList[widget.position].currentStatus != 8 &&
+                                    widget.orderList[widget.position].currentStatus != 12) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                          new CustOrderDetail(
+                                              orderData:
+                                              widget.orderList[
+                                              widget.position])));
+                                }
+                              },
+                                child:
+                                Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 CachedNetworkImage(
@@ -386,10 +403,8 @@ class _OrderListItemState extends State<OrderListItem>{
                                         ),
                                       ],
                                     )),
-
-
-                              ],
-                            )),
+                                 ],
+                            ))),
                         widget.orderList[widget.position].currentStatus!=6 &&
                             widget.orderList[widget.position].currentStatus!=8
                         && widget.orderList[widget.position].currentStatus!=12
@@ -435,15 +450,12 @@ class _OrderListItemState extends State<OrderListItem>{
                               ],
                             ),
 
-
-
                             //track order
                             GestureDetector(
                                 onTap: (){
                                   Navigator.push(context, MaterialPageRoute(builder: (context)=>
                                       TrackOrderUpdated(orderData:widget.orderList[widget.position])));
-                                  // Navigator.push(context, MaterialPageRoute(builder: (context)=>TrackOrder()));
-                                  // Navigator.push(context, MaterialPageRoute(builder: (context)=>Payment()));
+
                                 },
                                 child:Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -460,10 +472,19 @@ class _OrderListItemState extends State<OrderListItem>{
                                     )
                                   ],
                                 )),
+
                             //download invoice
                             if(widget.orderList[widget.position].currentStatus==3 ||
                                 widget.orderList[widget.position].currentStatus==10 ||
                                 widget.orderList[widget.position].currentStatus==14)
+                            GestureDetector(
+                              onTap: () async{
+                                Invoice invoice=await Utils.getDownloadInvoice(widget.orderList[widget.position].orderNumber);
+                                final pdfFile = await PdfInvoiceApi.generate(invoice);
+                                print(pdfFile);
+                                PdfApi.openFile(pdfFile);
+                              },
+                              child:
                             Column(
                               children: [
                                 Divider(
@@ -481,24 +502,25 @@ class _OrderListItemState extends State<OrderListItem>{
                                               fontFamily: 'Poppins',color: AppTheme.textColor),
                                           )),
 
-                                      IconButton(onPressed: ()
-                                      async {
-                                        // final date = DateTime.now();
-                                        // getDownloadInvoice();
-                                        Invoice invoice=await Utils.getDownloadInvoice(widget.orderList[widget.position].orderNumber);
-                                        final pdfFile = await PdfInvoiceApi.generate(invoice);
-                                        print(pdfFile);
-                                        PdfApi.openFile(pdfFile);
-
-
-                                      },
+                                      IconButton(
+                                        // onPressed: ()
+                                      // async {
+                                      //   // final date = DateTime.now();
+                                      //   // getDownloadInvoice();
+                                      //   Invoice invoice=await Utils.getDownloadInvoice(widget.orderList[widget.position].orderNumber);
+                                      //   final pdfFile = await PdfInvoiceApi.generate(invoice);
+                                      //   print(pdfFile);
+                                      //   PdfApi.openFile(pdfFile);
+                                      //
+                                      //
+                                      // },
                                           icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
 
                                       )
                                     ],
                                   ),
                               ],
-                            )
+                            ))
                           ],
                         )
                             :Container()

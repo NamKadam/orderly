@@ -48,7 +48,8 @@ class _PaymentState extends State<Payment>{
   static const platform=const MethodChannel("razorpay_flutter");
   Razorpay _razorpay ;
   // var razorPayKey='rzp_test_2UuUOV1rGmCSEg',razorPaySecretKey='gR8mI6DRPj5i0jLcLO3JJMwR'; //account of  destek used
-  var razorPayKey='rzp_test_xaIitfKWJUnhNw',razorPaySecretKey='bN7b4z4jEpnPYM4SywN7E8Wu'; //account of  orderly used
+  var razorPayKey='rzp_live_TXhZMyuTJ2hlFe',  //test:-rzp_test_xaIitfKWJUnhNw
+      razorPaySecretKey='bN7b4z4jEpnPYM4SywN7E8Wu'; //account of  orderly used
   CartBloc _cartBloc;
   String cartList="",paymentId="";
 
@@ -401,7 +402,7 @@ class _PaymentState extends State<Payment>{
                             doPayment();
                             // placeOrder();
                           }else if(radioPay=="RazorPay"){
-                            // openCheckout();
+                            openCheckout();
                             _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Funcionality Under development")));
                           }else if(radioPay=="Stripe")
                             {

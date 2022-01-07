@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_version/get_version.dart';
 import 'package:orderly/Blocs/login/bloc.dart';
 import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
@@ -24,12 +25,14 @@ class _ProfileState extends State<Profile>{
   LoginBloc _loginBloc;
   bool fromProf=true;
 
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _loginBloc = BlocProvider.of<LoginBloc>(context);
   }
+
 
 
   @override
@@ -236,6 +239,7 @@ class CardViewWidget extends StatefulWidget{
   _CardViewWidgetState createState()=>_CardViewWidgetState();
 }
 class _CardViewWidgetState extends State<CardViewWidget>{
+  String versionName="";
 
   void openwhatsapp() async{
     var no="9960035092";
@@ -255,6 +259,19 @@ class _CardViewWidgetState extends State<CardViewWidget>{
     }
 
   }
+
+  void getVersionName() async{
+      versionName=await GetVersion.projectVersion;
+
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getVersionName();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -422,7 +439,34 @@ class _CardViewWidgetState extends State<CardViewWidget>{
                   )
                 ],
               )),
-
+              Divider(
+                height: 0.5,
+                color: Colors.black26,
+              ),
+              Padding(
+                  padding: EdgeInsets.all(15.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(
+        "Version " ,
+        style: TextStyle(
+            fontSize: 14.0,
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w400,
+            color: AppTheme.textColor),
+      ),
+      Text(
+        versionName,
+        style: TextStyle(
+            fontSize: 14.0,
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w500,
+            color: AppTheme.textColor),
+      )
+    ],
+    )
+                 )
             ],
           ),
         ),

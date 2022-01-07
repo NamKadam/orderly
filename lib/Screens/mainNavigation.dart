@@ -11,6 +11,7 @@ import 'package:orderly/Models/model_scoped_cart.dart';
 import 'package:orderly/Models/model_product_List.dart';
 import 'package:orderly/Screens/Customer/cart/shopping_cart.dart';
 import 'package:orderly/Screens/Customer/home/home.dart';
+import 'package:orderly/Screens/Customer/home/home_old.dart';
 import 'package:orderly/Screens/Customer/orders/myOrders.dart';
 import 'package:orderly/Screens/Customer/producers/producers.dart';
 import 'package:orderly/Screens/FleetManager/claims/claims.dart';
@@ -218,6 +219,7 @@ class _MainNavigationState extends State<MainNavigation> {
         title = "Orders";
       }
     }
+
     setState(() {
 
     });
@@ -383,10 +385,8 @@ class _MainNavigationState extends State<MainNavigation> {
             userType=="0" //for customer
             ?
               Home()
-
-            :  //for fleet manager
+                :  //for fleet manager
               FleetOrders(),
-
             userType=="0"
               ?
               Producers(model: CartModel())

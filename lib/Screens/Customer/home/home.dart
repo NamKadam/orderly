@@ -60,7 +60,7 @@ class _HomeState extends State<Home> {
   PagingController<int, Product> _pagingController;
   int _pageSize;
   static bool AddedFlag=false;
-
+  ScrollController _scrollController = new ScrollController();
 
 
   Future<bool> _exitApp(BuildContext context) {
@@ -157,6 +157,19 @@ class _HomeState extends State<Home> {
     totalProductList=[];
     paginationCall(_producerList);
     getData();
+    // _scrollController.addListener(() {
+    //   if (_scrollController.position.pixels ==
+    //       _scrollController.position.maxScrollExtent) {
+    //     offset+=10;
+    //     _homeBloc.add(OnLoadingProductList(
+    //       producerId: _producerList[producerListIndex].producerId.toString(),
+    //       type: type,
+    //       offset:offset.toString(),
+    //     ));
+    //
+    //   }
+    // });
+
     super.initState();
 
   }
@@ -1053,8 +1066,110 @@ class _HomeState extends State<Home> {
                                               // ),
                                             ),
                                           )
+                                              // GridView.builder(
+                                              //      padding: EdgeInsets.only(left:5.0,right:5.0),
+                                              //       itemCount: _productList.length,
+                                              //        controller: _scrollController,
+                                              //        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount( crossAxisCount: 2, mainAxisSpacing: 8, crossAxisSpacing: 8, childAspectRatio: 0.8),
+                                              //      itemBuilder: (context, index){
+                                              //
+                                              //       return Container(
+                                              //    padding: EdgeInsets.only(left: 8),
+                                              //
+                                              //              child:
+                                              //             Card(
+                                              //               elevation: 3.0,
+                                              //               shape: RoundedRectangleBorder(
+                                              //
+                                              //                ),
+                                              //                child:
+                                              //
+                                              //                Column(
+                                              //                  crossAxisAlignment: CrossAxisAlignment.center,
+                                              //                  children: <Widget>[
+                                              //                    CachedNetworkImage(
+                                              //                      imageUrl: _productList[index].productImage,
+                                              //                     imageBuilder: (context, imageProvider) {
+                                              //                        return Container(
+                                              //                          height: 110,
+                                              //                          decoration: BoxDecoration(
+                                              //                            borderRadius: BorderRadius.zero,
+                                              //                            image: DecorationImage(
+                                              //                              image: imageProvider,
+                                              //                           fit: BoxFit.cover,
+                                              //                           ),
+                                              //                          ),
+                                              //
+                                              //                        );
+                                              //                      },
+                                              //                     placeholder: (context, url) {
+                                              //                       return Shimmer.fromColors(
+                                              //                          baseColor: Theme
+                                              //                              .of(context)
+                                              //                             .hoverColor,
+                                              //                         highlightColor: Theme
+                                              //                              .of(context)
+                                              //                           .highlightColor,
+                                              //                         enabled: true,
+                                              //                         child: Container(
+                                              //                            height: 110,
+                                              //                          decoration: BoxDecoration(
+                                              //                              borderRadius: BorderRadius.zero,
+                                              //                             color: Colors.white,
+                                              //                            ),
+                                              //                          ),
+                                              //                       );
+                                              //                      },
+                                              //                    errorWidget: (context, url, error) {
+                                              //                        return Shimmer.fromColors(
+                                              //                          baseColor: Theme
+                                              //                              .of(context)
+                                              //                              .hoverColor,
+                                              //                          highlightColor: Theme
+                                              //                             .of(context)
+                                              //                              .highlightColor,
+                                              //                         enabled: true,
+                                              //                        child: Container(
+                                              //                            height: 110,
+                                              //                           decoration: BoxDecoration(
+                                              //                              color: Colors.white,
+                                              //                            borderRadius: BorderRadius.zero,
+                                              //                          ),
+                                              //                            child: Icon(Icons.error),
+                                              //                         ),
+                                              //                        );
+                                              //                      },
+                                              //                    ),
+                                              //                    Padding(padding: EdgeInsets.only(top: 3)),
+                                              //                   Text(
+                                              //                     _productList[index].productName,
+                                              //                     style: Theme
+                                              //                          .of(context)
+                                              //                         .textTheme
+                                              //                         .caption
+                                              //                         .copyWith(fontWeight: FontWeight.w400,fontFamily: 'Poppins',color: AppTheme.textColor),
+                                              //                  ),
+                                              //                    Padding(padding: EdgeInsets.only(top: 2)),
+                                              //                    Text(
+                                              //                      _productList[index].ratePerHour.toString()+" \$/hr",
+                                              //                      maxLines: 1,
+                                              //                     style: Theme
+                                              //                          .of(context)
+                                              //                       .textTheme
+                                              //                          .subtitle2
+                                              //                         .copyWith(fontWeight: FontWeight.w600,fontFamily: "Poppins",color: Theme.of(context).primaryColor),
+                                              //                  ),
+                                              //
+                                              //
+                                              //                 ],
+                                              //                ),
+                                              //    )
+                                              //     );
+                                              //
+                                              //    },
+                                              // )
                                                   :
-                                                  Center(child:CircularProgressIndicator())
+                                              Center(child:CircularProgressIndicator())
                                               // Wrap(
                                               //   runSpacing: 10,
                                               //   alignment:
@@ -1068,18 +1183,17 @@ class _HomeState extends State<Home> {
                                           )
                                               :
                                     Center(
-                                                            child: Padding(
-                                                                padding:
-                                                                EdgeInsets.only(top: 100.0),
-                                                                child: Text(
-                                                                  "No Data Available",
-                                                                  style: TextStyle(
-                                                                      fontFamily: 'Poppins',
-                                                                      fontWeight: FontWeight.w600,
-                                                                      fontSize: 16.0,
-                                                                      color: AppTheme.textColor),
-                                                                )),
-                                                          )
+                                      child: Padding(
+                                          padding:
+                                          EdgeInsets.only(top: 100.0),
+                                          child: Text("No Data Available",
+                                            style: TextStyle(
+                                                fontFamily: 'Poppins',
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16.0,
+                                                color: AppTheme.textColor),
+                                          )),
+                                    )
 
                                         ],
                                       )

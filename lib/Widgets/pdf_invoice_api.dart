@@ -133,14 +133,14 @@ class PdfInvoiceApi {
     ];
     final data = invoice.items.map((item) {
       // final total = item.un * item.quantity * (1 + item.vat);
-      DateFormat formatter = new DateFormat("EEE MMM dd HH:mm:ss zzzz yyyy");
-      try {
-        String temp = "Thu Dec 17 15:37:43 GMT+05:30 2015";
-        DateTime expiry = formatter.parse(temp);
-        print(expiry.toString());
-      } catch (e) {
-      e.printStackTrace();
-      }
+      // DateFormat formatter = new DateFormat("EEE MMM dd HH:mm:ss zzzz yyyy");
+      // try {
+      //   String temp = "Thu Dec 17 15:37:43 GMT+05:30 2015";
+      //   DateTime expiry = formatter.parse(temp);
+      //   print(expiry.toString());
+      // } catch (e) {
+      // e.printStackTrace();
+      // }
       return [
         item.productName,
         item.orderDate,

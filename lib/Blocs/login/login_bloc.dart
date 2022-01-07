@@ -157,6 +157,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         /////updated on 10/02/2021
         if (deletePreferences ||deletePreferCart) {
           yield LogoutSuccess();
+
               } else {
                 final String message = "Cannot delete user data to storage phone";
                 throw Exception(message);

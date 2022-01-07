@@ -100,6 +100,7 @@ class UtilPreferences {
      return androidDeviceId.androidId;
     } else {
       var iosDeviceId = await deviceInfo.iosInfo;
+
       print("iosId"+ iosDeviceId.identifierForVendor);
       UtilPreferences.setString(Preferences.deviceId, iosDeviceId.identifierForVendor);
       return iosDeviceId.identifierForVendor;

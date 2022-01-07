@@ -328,7 +328,14 @@ class _CustOrderDetailState extends State<CustOrderDetail>{
                                         ),
                                         //download invoice
 
-                                          Row(
+                                          GestureDetector(
+                                            onTap: () async{
+                                              Invoice invoice=await Utils.getDownloadInvoice(widget.orderData.orderNumber);
+                                            final pdfFile = await PdfInvoiceApi.generate(invoice);
+                                            print(pdfFile);
+                                            PdfApi.openFile(pdfFile);
+                                            },
+                                              child:Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
                                               Padding(
@@ -336,17 +343,18 @@ class _CustOrderDetailState extends State<CustOrderDetail>{
                                                   child:Text(Translate.of(context).translate('invoice'),style: TextStyle(fontWeight:FontWeight.w400,
                                                       fontFamily: 'Poppins',color: AppTheme.textColor),
                                                   )),
-                                              IconButton(onPressed: () async{
-                                                Invoice invoice=await Utils.getDownloadInvoice(widget.orderData.orderNumber);
-                                                final pdfFile = await PdfInvoiceApi.generate(invoice);
-                                                print(pdfFile);
-                                                PdfApi.openFile(pdfFile);
-                                              },
+                                              IconButton(
+                                              //     onPressed: () async{
+                                              //   Invoice invoice=await Utils.getDownloadInvoice(widget.orderData.orderNumber);
+                                              //   final pdfFile = await PdfInvoiceApi.generate(invoice);
+                                              //   print(pdfFile);
+                                              //   PdfApi.openFile(pdfFile);
+                                              // },
                                                   icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
 
                                               )
                                             ],
-                                          ),
+                                          )),
                                       ],
                                     )
                                   ],

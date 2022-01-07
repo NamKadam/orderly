@@ -308,24 +308,20 @@ class _MyOrdersState extends State<MyOrders> {
                                             : 6,
                                         itemBuilder: (context, index) {
                                           return GestureDetector(
-                                              onTap: () {
-                                                if (_myOrderList[index].currentStatus != 6 &&
-                                                    _myOrderList[index]
-                                                            .currentStatus !=
-                                                        8 &&
-                                                    _myOrderList[index]
-                                                            .currentStatus !=
-                                                        12) {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              new CustOrderDetail(
-                                                                  orderData:
-                                                                      _myOrderList[
-                                                                          index])));
-                                                }
-                                              },
+                                              // onTap: () {
+                                              //   if (_myOrderList[index].currentStatus != 6
+                                              //       && _myOrderList[index].currentStatus != 8 &&
+                                              //       _myOrderList[index].currentStatus != 12) {
+                                              //     Navigator.push(
+                                              //         context,
+                                              //         MaterialPageRoute(
+                                              //             builder: (context) =>
+                                              //                 new CustOrderDetail(
+                                              //                     orderData:
+                                              //                         _myOrderList[
+                                              //                             index])));
+                                              //   }
+                                              // },
                                               child: OrderListItem(
                                                   orderList: _myOrderList,
                                                   position: index));

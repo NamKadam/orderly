@@ -66,18 +66,20 @@ class _TrackOrderUpdatedState extends State<TrackOrderUpdated> {
 
       //for new
       for(int i=0;i<=size;i++){
-        // highlightedIndexList.add(i);
         statictrackOrderList[i].isActiveColor=true;
-        try{
-          statictrackOrderList[i].date=_trackOrderList[i].orderDate;
+        for(int j=0;j<_trackOrderList.length;j++)
+          {
+            try{
+              if(_trackOrderList[j].ohStatus==i.toString()){
+                statictrackOrderList[i].date=_trackOrderList[j].orderDate;
+              }
+            }catch(e){
+              statictrackOrderList[i].date="";
 
-        }catch(e){
-          statictrackOrderList[i].date="";
-
-        }
+            }
+          }
       }
-    }
-    else if(currentStatus=="4"){ //for return part
+    }else if(currentStatus=="4"){ //for return part
       statictrackOrderList.add(TrackOrderList(
           id: 0, trackStatusName: "Return Order Pending", orderStatus: 4,isActiveColor: false,date: ""));
       statictrackOrderList.add(TrackOrderList(
@@ -96,15 +98,13 @@ class _TrackOrderUpdatedState extends State<TrackOrderUpdated> {
           for(int j=0;j<=size;j++){
             statictrackOrderList[j].isActiveColor=true;
             try{
-              statictrackOrderList[j].date=_trackOrderList[j].orderDate;
+              statictrackOrderList[j].date=_trackOrderList[_trackOrderList.length-1].orderDate;
 
             }catch(e){
               statictrackOrderList[j].date="";
-
             }
           }
         }
-
       }
     }
     else if(currentStatus=="5"){ //for replace
@@ -126,7 +126,7 @@ class _TrackOrderUpdatedState extends State<TrackOrderUpdated> {
           for(int j=0;j<=size;j++){
             statictrackOrderList[j].isActiveColor=true;
             try{
-              statictrackOrderList[j].date=_trackOrderList[j].orderDate;
+              statictrackOrderList[j].date=_trackOrderList[_trackOrderList.length-1].orderDate;
 
             }catch(e){
               statictrackOrderList[j].date="";

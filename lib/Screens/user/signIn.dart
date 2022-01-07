@@ -65,6 +65,7 @@ class SignInState extends State<SignIn>{
       try {
         versionCode = await GetVersion.projectCode;
         deviceName='android';
+        print("versionName:-"+await GetVersion.projectVersion);
 
         print("versionCode:-"+versionCode+" deviceName:-"+deviceName);
 
