@@ -154,7 +154,7 @@ class _FleetOrderDetRetReplaceState extends State<FleetOrderDetRetReplace>{
                                               fontFamily: "Poppins"),
                                         ),
                                         Text(
-                                          widget.orderData.ratePerHour.toString()+" \$hr",
+                                          widget.orderData.ratePerHour.toString()+" \u{20B9}hr",
                                           style: Theme.of(context)
                                               .textTheme
                                               .button

@@ -98,8 +98,9 @@ class _TrackOrderUpdatedState extends State<TrackOrderUpdated> {
           for(int j=0;j<=size;j++){
             statictrackOrderList[j].isActiveColor=true;
             try{
-              statictrackOrderList[j].date=_trackOrderList[_trackOrderList.length-1].orderDate;
-
+              if(_trackOrderList[j].ohStatus==i.toString()){
+                statictrackOrderList[i].date=_trackOrderList[j].orderDate;
+              }
             }catch(e){
               statictrackOrderList[j].date="";
             }
@@ -126,8 +127,9 @@ class _TrackOrderUpdatedState extends State<TrackOrderUpdated> {
           for(int j=0;j<=size;j++){
             statictrackOrderList[j].isActiveColor=true;
             try{
-              statictrackOrderList[j].date=_trackOrderList[_trackOrderList.length-1].orderDate;
-
+              if(_trackOrderList[j].ohStatus==i.toString()){
+                statictrackOrderList[i].date=_trackOrderList[j].orderDate;
+              }
             }catch(e){
               statictrackOrderList[j].date="";
 

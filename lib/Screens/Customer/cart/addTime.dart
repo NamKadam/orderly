@@ -203,7 +203,7 @@ class _TimeDataState extends State<TimeData> {
                                           fontFamily: "Poppins"),
                                 ),
                                 Text(
-                                  "Chargeable \$150",
+                                  "Chargeable \u{20B9}150",
                                   style: Theme.of(context)
                                       .textTheme
                                       .caption

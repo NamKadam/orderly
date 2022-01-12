@@ -362,10 +362,7 @@ class _HomeState extends State<Home> {
                             .toString(),
                         type: type,
                         offset: offset.toString()));
-
-
-
-                  },
+                    },
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -373,11 +370,11 @@ class _HomeState extends State<Home> {
                         imageUrl: item.producerIconUrl,
                         imageBuilder: (context, imageProvider) {
                           return Container(
-                            height: 70.0,
-                            width: 70.0,
+                            height: 60.0,
+                            width: 60.0,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.all(
-                                Radius.circular(35),
+                                Radius.circular(30),
                               ),
                               image: DecorationImage(
                                 image: imageProvider,
@@ -395,11 +392,11 @@ class _HomeState extends State<Home> {
                             highlightColor: Theme.of(context).highlightColor,
                             enabled: true,
                             child: Container(
-                              height: 70.0,
-                              width: 70.0,
+                              height: 60.0,
+                              width: 60.0,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.all(
-                                  Radius.circular(35),
+                                  Radius.circular(30),
                                 ),
                               ),
                             ),
@@ -411,11 +408,11 @@ class _HomeState extends State<Home> {
                             highlightColor: Theme.of(context).highlightColor,
                             enabled: true,
                             child: Container(
-                              height: 70.0,
-                              width: 70.0,
+                              height: 60.0,
+                              width: 60.0,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.all(
-                                  Radius.circular(35),
+                                  Radius.circular(30),
                                 ),
                               ),
                               child: Icon(Icons.error),
@@ -429,9 +426,9 @@ class _HomeState extends State<Home> {
                           item.producerName,
                           style: TextStyle(
                               fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                               fontSize: 12.0,
-                              color: AppTheme.textColor),
+                              color: producerListIndex==index?AppTheme.appColor:AppTheme.textColor),
                         ),
                       )
                     ],
@@ -610,7 +607,7 @@ class _HomeState extends State<Home> {
                     )),
                 Padding(padding: EdgeInsets.only(top: 2)),
                 Text(
-                  product.ratePerHour.toString() + " \$/hr",
+                  product.ratePerHour.toString() + " \u{20B9}/hr",
                   maxLines: 1,
                   style: Theme.of(context).textTheme.subtitle2.copyWith(
                       fontWeight: FontWeight.w600,
@@ -984,13 +981,14 @@ class _HomeState extends State<Home> {
                                             // )
                                           ),
                                           Container(
-                                            height: 200,
+                                            // height: 200,
                                             width: MediaQuery.of(context).size.width,
-                                            child: CachedNetworkImage(
-                                              imageUrl: _producerList != null
-                                                  ? _producerList[producerListIndex]
-                                                  .producerImageUrl
-                                                  : "http://via.placeholder.com/350x150",
+                                            child:_producerList!=null
+                                                ?
+                                            CachedNetworkImage(
+                                              imageUrl:
+                                                  _producerList[producerListIndex].producerImageUrl,
+
                                               imageBuilder: (context, imageProvider) {
                                                 return Container(
                                                   height: 180,
@@ -1040,7 +1038,24 @@ class _HomeState extends State<Home> {
                                                   ),
                                                 );
                                               },
-                                            ),
+                                            )
+                                                :
+                                             Shimmer.fromColors(
+                                          baseColor: Theme.of(context).hoverColor,
+                                highlightColor: Theme.of(context).highlightColor,
+                                enabled: true,
+                                child:
+                                      Container(
+                                        width: MediaQuery.of(context).size.width,
+
+                                        // alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.rectangle,
+                                          color: Colors.white,
+                                        ),
+
+                                      ),
+                                  )
                                           ),
                                           flagDataNotAvailable == false
                                               ?

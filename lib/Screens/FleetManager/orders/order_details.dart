@@ -432,7 +432,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                       trimCollapsedText: 'Show more',
                                       trimExpandedText: 'Show less'),
                                   Text(
-                                    fleetOrderDetList[index].ratePerHour.toString()+" \$ hr",
+                                    fleetOrderDetList[index].ratePerHour.toString()+" \u{20B9} hr",
                                     style: TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 13.0,
@@ -627,7 +627,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                         trimCollapsedText: 'Show more',
                                         trimExpandedText: 'Show less'),
                                     Text(
-                                      fleetOrderDetList[index].ratePerHour.toString()+" \$ hr",
+                                      fleetOrderDetList[index].ratePerHour.toString()+" \u{20B9} hr",
                                       style: TextStyle(
                                           fontWeight: FontWeight.w500,
                                           fontSize: 13.0,

@@ -354,7 +354,7 @@ class _InventoryListState extends State<InventoryList>{
                                     fontWeight: FontWeight.w500,
                                     color:AppTheme.appColor
                                 ),),
-                              Text(_inventoryList[index].ratePerHour+" \$ hr",style: TextStyle(
+                              Text(_inventoryList[index].ratePerHour+" \u{20B9} hr",style: TextStyle(
                                   fontSize: 12.0,
                                   fontFamily: "Poppins",
                                   fontWeight: FontWeight.w600,
@@ -1001,7 +1001,7 @@ class _ExpandableItemsState extends State<ExpandableItems>{
                   ),
                   Padding(padding: EdgeInsets.only(top: 2)),
                   Text(
-                    "25 \$/hr",
+                    "25 \u{20B9}/hr",
                     maxLines: 1,
                     style: Theme
                         .of(context)

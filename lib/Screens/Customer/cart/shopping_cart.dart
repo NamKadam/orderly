@@ -143,7 +143,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                 fontFamily: "Poppins"),
                                           ),
                                           Text(
-                                            "\$" + totalCartValue.toString(),
+                                            "\u{20B9}" + totalCartValue.toString(),
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .caption
@@ -174,7 +174,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                 fontFamily: "Poppins"),
                                           ),
                                           Text(
-                                            "\$ 75.00",
+                                            // "\$ 75.00",
+                                              "\u{20B9} 75.00",
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .caption
@@ -206,7 +207,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                 fontFamily: "Poppins"),
                                           ),
                                           Text(
-                                            "\$ 75.00",
+                                            // "\$ 75.00",
+                                            "\u{20B9} 75.00",
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .caption
@@ -529,7 +531,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                     ),
                                     Text(
                                       model.cart[index].ratePerHour.toString() +
-                                          " \$/Hr",
+                                          " \u{20B9}/Hr",
                                       style: Theme.of(context)
                                           .textTheme
                                           .button
@@ -1017,10 +1019,10 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                         Text(
                                                           subTotal==0
                                                               ?
-                                                          "\$" + cartModel.totalCartValue.toString()
+                                                          "\u{20B9}" + cartModel.totalCartValue.toString()
                                                           // "\$" + Application.cartModel.totalCartValue.toString()
                                                               :
-                                                          "\$" + subTotal.toString(),
+                                                          "\u{20B9}" + subTotal.toString(),
                                                           style: Theme.of(context)
                                                               .textTheme
                                                               .caption
@@ -1058,8 +1060,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                               "Poppins"),
                                                         ),
                                                         Text(
-                                                          "\$ " +
-                                                              conveniencFee.toString(),
+                                                          "\u{20B9}" + conveniencFee.toString(),
                                                           style: Theme.of(context)
                                                               .textTheme
                                                               .caption

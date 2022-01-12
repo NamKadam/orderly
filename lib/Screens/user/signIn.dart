@@ -219,7 +219,8 @@ class SignInState extends State<SignIn>{
           ),
 
           child: SingleChildScrollView(
-            child: Column(
+            child:
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 // const SizedBox(height: 05.0),

@@ -181,7 +181,7 @@ class _CartListItemState extends State<CartListItem>{
                                               // widget.users.address != null
                                               //     ? widget.users.address
                                               //     : "",
-                                              widget.cartItem.ratePerHour.toString()+" \$/Hr",
+                                              widget.cartItem.ratePerHour.toString()+" \u{20B9}/Hr",
                                               style: Theme.of(context).textTheme.button.copyWith(
                                                   fontSize: 13.0,
                                                   color: Theme.of(context).primaryColor,

@@ -111,6 +111,7 @@ class _PaymentState extends State<Payment>{
     var options = {
       'key': razorPayKey,
       'amount':amt,
+      // 'amount':100,
       'name': 'Orderly',
       // 'order_ID':'order_HxKUd8b3dI9ZKl',
       'description': 'Producer 1',
@@ -403,7 +404,7 @@ class _PaymentState extends State<Payment>{
                             // placeOrder();
                           }else if(radioPay=="RazorPay"){
                             openCheckout();
-                            _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Funcionality Under development")));
+                            // _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Funcionality Under development")));
                           }else if(radioPay=="Stripe")
                             {
                               makePayment();

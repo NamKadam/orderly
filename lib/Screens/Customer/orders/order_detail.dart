@@ -272,29 +272,38 @@ class _CustOrderDetailState extends State<CustOrderDetail>{
                                 Column(
                                   children: [
                                     //product review
-                                    GestureDetector(
-                                        onTap: (){
-                                          Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductReview(order:widget.orderData)));
-                                        },
-                                        child:Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Padding(
-                                                padding: EdgeInsets.only(left:15.0),
-                                                child:Text(Translate.of(context).translate('product_review'),style: TextStyle(fontWeight:FontWeight.w400,
-                                                    fontFamily: 'Poppins',color: AppTheme.textColor),
-                                                )),
+                                    if(widget.orderData.currentStatus==3 ||
+                                        widget.orderData.currentStatus==10 ||
+                                        widget.orderData.currentStatus==14)
+                                      Column(
+                                        children: [
+                                          GestureDetector(
+                                              onTap: (){
+                                                Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductReview(
+                                                    order:widget.orderData
+                                                )));
+                                              },
+                                              child:Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Padding(
+                                                      padding: EdgeInsets.only(left:15.0),
+                                                      child:Text(Translate.of(context).translate('product_review'),style: TextStyle(fontWeight:FontWeight.w400,
+                                                          fontFamily: 'Poppins',color: AppTheme.textColor),
+                                                      )),
 
-                                            IconButton(
-                                                icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
+                                                  IconButton(
+                                                      icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
 
-                                            )
-                                          ],
-                                        )),
-                                    Divider(
-                                      height: 1.0,
-                                      color: Colors.grey,
-                                    ),
+                                                  )
+                                                ],
+                                              )),
+                                          Divider(
+                                            height: 1.0,
+                                            color: Colors.grey,
+                                          ),
+                                        ],
+                                      ),
 
                                     //track order
                                     GestureDetector(

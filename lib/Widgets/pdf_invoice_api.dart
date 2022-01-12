@@ -160,11 +160,11 @@ class PdfInvoiceApi {
       headerDecoration: BoxDecoration(color: PdfColors.grey300),
       cellHeight: 30,
       cellAlignments: {
-        0: Alignment.centerLeft,
-        1: Alignment.centerRight,
-        2: Alignment.centerRight,
-        3: Alignment.centerRight,
-        // 4: Alignment.centerRight,
+        0: Alignment.center,
+        1: Alignment.center,
+        2: Alignment.center,
+        3: Alignment.center,
+        4: Alignment.center,
         // 5: Alignment.centerRight,
       },
     );
@@ -182,9 +182,9 @@ class PdfInvoiceApi {
       alignment: Alignment.centerRight,
       child: Row(
         children: [
-          Spacer(flex: 6),
+          Spacer(flex: 8),
           Expanded(
-            flex: 4,
+            flex: 2,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

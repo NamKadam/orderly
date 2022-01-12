@@ -257,7 +257,7 @@ class _ProducersState extends State<Producers> {
                   )),
               Padding(padding: EdgeInsets.only(top: 2)),
               Text(
-                product.ratePerHour.toString() + " \$/hr",
+                product.ratePerHour.toString() + "\u{20B9}/hr",
                 maxLines: 1,
                 style: Theme
                     .of(context)
@@ -881,7 +881,7 @@ class _ExpandedSectionState extends State<ExpandedSection>
                   )),
               Padding(padding: EdgeInsets.only(top: 2)),
               Text(
-                product.ratePerHour.toString() + " \$/hr",
+                product.ratePerHour.toString() + " \u{20B9}/hr",
                 maxLines: 1,
                 style: Theme
                     .of(context)

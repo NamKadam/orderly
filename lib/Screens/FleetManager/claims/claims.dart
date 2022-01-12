@@ -24,7 +24,7 @@ class _ClaimsState extends State<Claims> {
   String OrderNumber = 'OrderNumber';
   String date = '12 July 2021';
   String itemNumber = '04';
-  String amount = '\$1500';
+  String amount = '\u{20B9}1500';
   List<ClaimData> mArraylistClaim;
   List<ClaimData> searchClaimresult=[];
 
@@ -290,7 +290,7 @@ class _ClaimsState extends State<Claims> {
                   flex: 1,
                   child: Column(
                     children: [
-                      Text("\$ "+_claimList[index].total.toString(),
+                      Text("\u{20B9} "+_claimList[index].total.toString(),
                           style: TextStyle(
                               fontSize: 14.0,
                               fontFamily: "Poppins",
@@ -473,7 +473,7 @@ class _ClaimsState extends State<Claims> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text('\$'+receivedAmt.toString(),
+                                    Text('\u{20B9}'+receivedAmt.toString(),
                                         style: TextStyle(
                                             fontSize: 14.0,
                                             fontFamily: "Poppins",
@@ -501,7 +501,7 @@ class _ClaimsState extends State<Claims> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text('\$'+refundedAmt.toString(),
+                                    Text('\u{20B9}'+refundedAmt.toString(),
                                         style: TextStyle(
                                             fontSize: 14.0,
                                             fontFamily: "Poppins",
