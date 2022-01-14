@@ -35,6 +35,9 @@ class Cart {
   String productName;
   String productDesc;
   String productImg;
+  String currency;
+  String unit;
+  String producerName;
 
   Cart(
       {this.id,
@@ -45,7 +48,10 @@ class Cart {
         this.qty,
         this.productName,
         this.productDesc,
-      this.productImg});
+      this.productImg,
+      this.currency,
+      this.unit,
+      this.producerName});
 
   Cart.fromJson(Map<String, dynamic> json) {
     id = json['cart_id'];
@@ -57,6 +63,9 @@ class Cart {
     productName = json['product_name'];
     productDesc = json['product_desc'];
     productImg=json['img_paths'];
+    currency=json['currency'];
+    unit=json['unit'];
+    producerName=json['producer_name'];
   }
 
   // Map<String, dynamic> toJson() {
@@ -84,6 +93,9 @@ class Cart {
     data['product_name'] = cart.productName;
     data['product_desc'] = cart.productDesc;
     data['img_paths']=cart.productImg;
+    data['currency']=cart.currency;
+    data['unit']=cart.unit;
+    data['producer_name']=cart.producerName;
     return data;
   }
   static String encode(List<dynamic> cart)=>

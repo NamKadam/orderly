@@ -218,8 +218,9 @@ class SignInState extends State<SignIn>{
             ),
           ),
 
-          child: SingleChildScrollView(
-            child:
+          child:
+          // SingleChildScrollView(
+          //   child:
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -310,10 +311,14 @@ class SignInState extends State<SignIn>{
                           "understood our",
                           style:TextStyle(fontFamily: 'Poppins',fontWeight:FontWeight.w400,fontSize: 11.0,color: AppTheme.textColor),
                         ),
-                        Text(
+                        InkWell(
+                          onTap: (){
+                            Navigator.pushNamed(context, Routes.privacy);
+                          },
+                            child:Text(
                           " Privacy Policy",
                           style:TextStyle(fontFamily: 'Poppins',fontSize: 12.0,fontWeight:FontWeight.w600,color: Theme.of(context).primaryColor),
-                        ),
+                        )),
                       ],
                     )
 
@@ -326,7 +331,7 @@ class SignInState extends State<SignIn>{
 
               ],
             ),
-          ),
+          // ),
         ));
   }
 }

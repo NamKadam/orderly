@@ -285,7 +285,7 @@ class _CardViewWidgetState extends State<CardViewWidget>{
           child: Column(
             children: [
               //orders
-              GestureDetector(
+              InkWell(
           onTap: ()
           {
             if(Application.user.userType=="0"){
@@ -306,7 +306,7 @@ class _CardViewWidgetState extends State<CardViewWidget>{
                           fontFamily: 'Poppins',color: AppTheme.textColor),
                       )),
 
-                  IconButton(onPressed: (){},
+                  IconButton(
                       icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
 
                   )

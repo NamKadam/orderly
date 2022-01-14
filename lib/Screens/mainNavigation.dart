@@ -41,59 +41,66 @@ class _MainNavigationState extends State<MainNavigation> {
 
     if(userType=="0"){
       return [
+        // BottomNavigationBarItem(
+        //   icon: Icon(Icons.home,size: 15.0,),
+        //   title: Text(Translate.of(context).translate('home'),
+        //   ),
+        // ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          title: Padding(
-            padding: EdgeInsets.only(top: 3),
-            child: Text(Translate.of(context).translate('home')),
+          icon: Image.asset(
+            Images.home,
+            width: 20.0,
+            height: 20.0,
+          ),
+          activeIcon: Image.asset(
+            Images.homeActive,
+            width: 20.0,
+            height: 20.0,
+          ),
+          title: Text(Translate.of(context).translate('home'),
           ),
         ),
+
         BottomNavigationBarItem(
           icon: Image.asset(
             Images.producer,
-            width: 25.0,
-            height: 25.0,
+            width: 20.0,
+            height: 20.0,
           ),
           activeIcon: Image.asset(
             Images.producerActive,
-            width: 25.0,
-            height: 25.0,
+            width: 20.0,
+            height: 20.0,
           ),
-          title: Padding(
-            padding: EdgeInsets.only(top: 3),
-            child: Text(Translate.of(context).translate('producer')),
+          title: Text(Translate.of(context).translate('producer'),
           ),
         ),
         BottomNavigationBarItem(
           icon: Image.asset(
             Images.order,
-            width: 25.0,
-            height: 25.0,
+            width: 20.0,
+            height: 20.0,
           ),
           activeIcon: Image.asset(
             Images.orderActive,
-            width: 25.0,
-            height: 25.0,
+            width: 20.0,
+            height: 20.0,
           ),
-          title: Padding(
-            padding: EdgeInsets.only(top: 3),
-            child: Text(Translate.of(context).translate('my_order')),
+          title: Text(Translate.of(context).translate('my_order'),
           ),
         ),
         BottomNavigationBarItem(
           icon: Image.asset(
             Images.profile,
-            width: 25.0,
-            height: 25.0,
+            width: 20.0,
+            height: 20.0,
           ),
           activeIcon: Image.asset(
             Images.profileActive,
-            width: 25.0,
-            height: 25.0,
+            width: 20.0,
+            height: 20.0,
           ),
-          title: Padding(
-            padding: EdgeInsets.only(top: 3),
-            child: Text(Translate.of(context).translate('profile')),
+          title: Text(Translate.of(context).translate('profile'),
           ),
         ),
       ];
@@ -104,66 +111,58 @@ class _MainNavigationState extends State<MainNavigation> {
         BottomNavigationBarItem(
           icon: Image.asset(
             Images.order,
-            width: 25.0,
-            height: 25.0,
+            width: 20.0,
+            height: 20.0,
           ),
           activeIcon: Image.asset(
             Images.orderActive,
-            width: 25.0,
-            height: 25.0,
+            width: 20.0,
+            height: 20.0,
           ),
-          title: Padding(
-            padding: EdgeInsets.only(top: 3),
-            child: Text(Translate.of(context).translate('orders')),
+          title: Text(Translate.of(context).translate('orders'),
           ),
         ),
         BottomNavigationBarItem(
           icon: Image.asset(
             Images.inventory,
-            width: 25.0,
-            height: 25.0,
+            width: 20.0,
+            height: 20.0,
           ),
           activeIcon: Image.asset(
             Images.inventoryActive,
-            width: 25.0,
-            height: 25.0,
+            width: 20.0,
+            height: 20.0,
           ),
-          title: Padding(
-            padding: EdgeInsets.only(top: 3),
-            child: Text(Translate.of(context).translate('inventory')),
+          title: Text(Translate.of(context).translate('inventory'),
           ),
         ),
         BottomNavigationBarItem(
           icon: Image.asset(
             Images.claim,
-            width: 25.0,
-            height: 25.0,
+            width: 20.0,
+            height: 20.0,
           ),
           activeIcon: Image.asset(
             Images.claimActive,
-            width: 25.0,
-            height: 25.0,
+            width: 20.0,
+            height: 20.0,
           ),
-          title: Padding(
-            padding: EdgeInsets.only(top: 3),
-            child: Text(Translate.of(context).translate('claims')),
+          title: Text(Translate.of(context).translate('claims'),
           ),
         ),
         BottomNavigationBarItem(
           icon: Image.asset(
             Images.profile,
-            width: 25.0,
-            height: 25.0,
+            width: 20.0,
+            height: 20.0,
           ),
           activeIcon: Image.asset(
             Images.profileActive,
-            width: 25.0,
-            height: 25.0,
+            width: 20.0,
+            height: 20.0,
           ),
-          title: Padding(
-            padding: EdgeInsets.only(top: 3),
-            child: Text(Translate.of(context).translate('profile')),
-          ),
+          title:  Text(Translate.of(context).translate('profile')),
+
         ),
       ];
     }
@@ -401,8 +400,9 @@ class _MainNavigationState extends State<MainNavigation> {
           ],
         ),
         bottomNavigationBar: Padding(
-            padding: EdgeInsets.all(10.0),
+            padding: EdgeInsets.all(5.0),
             child: Container(
+              height: 60.0,
                 child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(color: Color(0xFF727C8E5C)),

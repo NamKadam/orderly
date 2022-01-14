@@ -21,6 +21,7 @@ import 'package:orderly/Screens/Customer/cart/addTime.dart';
 import 'package:orderly/Screens/Customer/cart/cart_list_item.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
 import 'package:orderly/Screens/profile/profAddress/prof_address.dart';
+import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/connectivity_check.dart';
 import 'package:orderly/Utils/preferences.dart';
@@ -43,6 +44,7 @@ class ShoppingCart extends StatefulWidget {
   String producerId,productId,qty,price,flagFrom;
   CartModel cartModel;
   List<Product> productList;
+
 
 
   // double totalCartValue;
@@ -112,7 +114,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                             fontFamily: "Poppins"),
                                       ),
                                       Text(
-                                        "date",
+                                        date,
                                         style: Theme.of(context)
                                             .textTheme
                                             .caption
@@ -245,11 +247,14 @@ class _ShoppingCartState extends State<ShoppingCart> {
     var date = new DateTime.now().toString();
     var dateParse = DateTime.parse(date);
     // var formattedDate = new DateFormat('yyyy-MM-dd HH:mm').parse(date);
+    // print(new DateFormat('dd MMM yyyy').format(DateTime.parse(date)));
 
-    var formattedDate = "${dateParse.year}-${dateParse.month}-${dateParse.day}";
+    // var formattedDate = "${dateParse.year}-${dateParse.month}-${dateParse.day}";
     setState(() {
-      currentDate = formattedDate.toString();
+      // currentDate = formattedDate.toString();
+      currentDate = date;//to convert to eg:-12 jan 2022
       print("currentDate:-" + currentDate);
+
     });
   }
 
@@ -270,7 +275,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
     //     });
     //   });
     // });
-    getCurrentDate();
+    // getCurrentDate();
     // setBlocData();
     getsharedPrefData();
 
@@ -516,22 +521,22 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
                                     ),
                                     Text(
-                                      model.cart[index].productName == null
-                                          ? "sold by: "
-                                          : "sold by: " +
-                                          model.cart[index].productName,
+                                      model.cart[index].producerName == null
+                                          ? "Sold by: "
+                                          : "Sold by: " +
+                                          model.cart[index].producerName,
                                       style: Theme.of(context)
                                           .textTheme
                                           .button
                                           .copyWith(
                                           fontSize: 12.0,
-                                          color: AppTheme.textColor,
-                                          fontWeight: FontWeight.w300,
+                                          color: AppTheme.appColor,
+                                          fontWeight: FontWeight.w500,
                                           fontFamily: "Poppins"),
                                     ),
                                     Text(
                                       model.cart[index].ratePerHour.toString() +
-                                          " \u{20B9}/Hr",
+                                          " "+Utils.getCurrencyPerLocale("en_IN")+" /"+model.cart[index].unit,
                                       style: Theme.of(context)
                                           .textTheme
                                           .button
@@ -771,7 +776,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
         key: _scaffoldKey,
         appBar: new AppBar(
           title: Text(
-            'Shopping Cart',
+            'Cart',
             style: TextStyle(
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w600,
@@ -896,7 +901,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                         sigmaX: 10.0, sigmaY: 10.0),
                                     child: new Container(
                                         width: MediaQuery.of(context).size.width,
-                                        height: 220.0,
+                                        height: 240.0,
                                         decoration: new BoxDecoration(
                                             color:
                                             Colors.grey.shade200.withOpacity(0.5)),
@@ -908,92 +913,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                               crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                               children: [
-                                                //delivery time
-                                                Row(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    GestureDetector(
-                                                        onTap: () async {
-                                                          // final List<String> _response = await Navigator.push(
-                                                          //   context,
-                                                          //     await Navigator.pushNamed(context, Routes.addTime));
-                                                          // //for date
-                                                          //    if(_response[0]==""){
-                                                          //      date = currentDate;
-                                                          //    }else{
-                                                          //      date = _response[0];
-                                                          //    }
-                                                          //    String deliverySlot=_response[3];
-                                                          //    String deliveryType=_response[2];
-                                                          //    String amt=_response[1];
-                                                          //    setState(() {
-                                                          //
-                                                          //    });
-                                                          // addTimeresult = await Navigator.push(context, MaterialPageRoute(builder: (context)=>
-                                                          await Navigator.push(context, MaterialPageRoute(builder: (context)=>
-                                                              AddTime()));
-                                                          print("result:-" + addTimeresult.toString());
-                                                          print("currentDate:-" + currentDate);
-
-                                                          if (AddTime.dateTime == "") {
-                                                            AddTime.dateTime = currentDate;
-                                                            AddTime.time=DateFormat('hh:mm a').format(DateTime.now());
-                                                            AddTime.currentDate=currentDate;
-                                                            AddTime.selectedDate=currentDate;
-                                                            date=currentDate;
-                                                          } else {
-                                                            date = AddTime.dateTime;
-                                                          }
-                                                          //for amt
-                                                          // if(addTimeresult.chargeAmt!=null){
-                                                          if(AddTime.chargedAmt!=null){
-                                                            try {
-                                                              // subTotal = Application.cartModel.totalCartValue.toInt() + int.parse(AddTime.chargedAmt);
-                                                              subTotal = cartModel.totalCartValue.toInt() + int.parse(AddTime.chargedAmt);
-                                                              print(subTotal);
-                                                            }catch(e){
-                                                              print(e);
-                                                            }
-                                                            // widget.cartModel.totalCartValue+=int.parse(addTimeresult.chargeAmt);
-                                                          }else{
-                                                            // subTotal=Application.cartModel.totalCartValue.toInt();
-                                                            subTotal=cartModel.totalCartValue.toInt();
-                                                          }
-                                                          calculateOverallTotal(subTotal.toDouble(), conveniencFee);
-
-                                                          setState(() {});
-
-                                                        },
-                                                        child: Text(
-                                                          "Choose Delivery",
-                                                          style: Theme.of(context)
-                                                              .textTheme
-                                                              .caption
-                                                              .copyWith(
-                                                              fontSize: 14.0,
-                                                              fontWeight:
-                                                              FontWeight.w600,
-                                                              color:
-                                                              Theme.of(context)
-                                                                  .primaryColor,
-                                                              fontFamily:
-                                                              "Poppins"),
-                                                        )),
-                                                    Text(
-                                                      date,
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .caption
-                                                          .copyWith(
-                                                          fontSize: 14.0,
-                                                          fontWeight:
-                                                          FontWeight.w600,
-                                                          color: AppTheme.textColor,
-                                                          fontFamily: "Poppins"),
-                                                    ),
-                                                  ],
-                                                ),
                                                 // subtotal
                                                 Padding(
                                                     padding: EdgeInsets.only(top: 5.0),
@@ -1037,7 +956,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                         ),
                                                       ],
                                                     )),
-                                                //convinience fee
+                                                //Conveyance fee
                                                 Padding(
                                                     padding: EdgeInsets.only(top: 5.0),
                                                     child: Row(
@@ -1046,7 +965,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                           .spaceBetween,
                                                       children: [
                                                         Text(
-                                                          "Convinience Fee",
+                                                          "Conveyance Fee",
                                                           style: Theme.of(context)
                                                               .textTheme
                                                               .caption
@@ -1120,15 +1039,168 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                         ),
                                                       ],
                                                     )),
+                                                //delivery time
+                                                Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    // GestureDetector(
+                                                    //     onTap: () async {
+                                                    //       // final List<String> _response = await Navigator.push(
+                                                    //       //   context,
+                                                    //       //     await Navigator.pushNamed(context, Routes.addTime));
+                                                    //       // //for date
+                                                    //       //    if(_response[0]==""){
+                                                    //       //      date = currentDate;
+                                                    //       //    }else{
+                                                    //       //      date = _response[0];
+                                                    //       //    }
+                                                    //       //    String deliverySlot=_response[3];
+                                                    //       //    String deliveryType=_response[2];
+                                                    //       //    String amt=_response[1];
+                                                    //       //    setState(() {
+                                                    //       //
+                                                    //       //    });
+                                                    //       // addTimeresult = await Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                                                    //       await Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                                                    //           AddTime()));
+                                                    //       print("result:-" + addTimeresult.toString());
+                                                    //       print("currentDate:-" + currentDate);
+                                                    //
+                                                    //       if (AddTime.dateTime == "") {
+                                                    //         AddTime.dateTime = currentDate;
+                                                    //         AddTime.time=DateFormat('hh:mm a').format(DateTime.now());
+                                                    //         AddTime.currentDate=currentDate;
+                                                    //         AddTime.selectedDate=currentDate;
+                                                    //         date=currentDate;
+                                                    //       } else {
+                                                    //         date = AddTime.dateTime;
+                                                    //       }
+                                                    //       //for amt
+                                                    //       // if(addTimeresult.chargeAmt!=null){
+                                                    //       if(AddTime.chargedAmt!=null){
+                                                    //         try {
+                                                    //           // subTotal = Application.cartModel.totalCartValue.toInt() + int.parse(AddTime.chargedAmt);
+                                                    //           subTotal = cartModel.totalCartValue.toInt() + int.parse(AddTime.chargedAmt);
+                                                    //           print(subTotal);
+                                                    //         }catch(e){
+                                                    //           print(e);
+                                                    //         }
+                                                    //         // widget.cartModel.totalCartValue+=int.parse(addTimeresult.chargeAmt);
+                                                    //       }else{
+                                                    //         // subTotal=Application.cartModel.totalCartValue.toInt();
+                                                    //         subTotal=cartModel.totalCartValue.toInt();
+                                                    //       }
+                                                    //       calculateOverallTotal(subTotal.toDouble(), conveniencFee);
+                                                    //
+                                                    //       setState(() {});
+                                                    //
+                                                    //     },
+                                                    //     child:
+                                                    //     // Text(
+                                                    //     //   "Choose Delivery",
+                                                    //     //   style: Theme.of(context)
+                                                    //     //       .textTheme
+                                                    //     //       .caption
+                                                    //     //       .copyWith(
+                                                    //     //       fontSize: 14.0,
+                                                    //     //       fontWeight:
+                                                    //     //       FontWeight.w600,
+                                                    //     //       color:
+                                                    //     //       Theme.of(context)
+                                                    //     //           .primaryColor,
+                                                    //     //       fontFamily:
+                                                    //     //       "Poppins"),
+                                                    //     // )
+                                                    //
+                                                    // ),
+                                                    Container(
+                                                        height: 30.0,
+                                                        child:ElevatedButton(
+
+                                                          style: ElevatedButton.styleFrom(
+                                                            side: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+                                                            primary: Theme.of(context).primaryColor,
+                                                            shape: const RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                BorderRadius.all(Radius.circular(15))),
+                                                          ),
+                                                          child: Text(
+                                                            "Select Delivery Option *",
+                                                            style: TextStyle(
+                                                                fontWeight: FontWeight.w600,
+                                                                fontFamily: 'Poppins',
+                                                                fontSize: 12.0,
+                                                                color: Colors.white),
+                                                          ),
+                                                          onPressed: () async {
+                                                            await Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                                                                AddTime()));
+                                                            print("result:-" + addTimeresult.toString());
+                                                            print("currentDate:-" + currentDate);
+
+                                                            // if (AddTime.dateTime == "") {
+                                                            if (AddTime.isCheckedCharged == true) {
+                                                              // AddTime.dateTime = currentDate;
+                                                              // AddTime.time=DateFormat('hh:mm a').format(DateTime.now());
+                                                              // AddTime.currentDate=AddTime.dateTime;
+                                                              AddTime.selectedDate=AddTime.currentDate;
+                                                              date=(DateFormat('dd MMM yyyy').format(DateTime.parse(AddTime.currentDate)))+" "+AddTime.time;
+                                                              print("date:-"+date);
+
+                                                            } else {
+                                                              date=DateFormat('dd MMM yyyy').format(DateTime.parse(AddTime.dateTime));
+                                                              String day=AddTime.deliverySlot=="0"?"Morning":"Evening";
+                                                              date=date+" - "+day;
+                                                              print("date:-"+date+"- "+AddTime.deliverySlot=="0"?"Morning":"Evening");
+                                                            }
+                                                            //for amt
+                                                            // if(addTimeresult.chargeAmt!=null){
+                                                            if(AddTime.chargedAmt!=null){
+                                                              try {
+                                                                // subTotal = Application.cartModel.totalCartValue.toInt() + int.parse(AddTime.chargedAmt);
+                                                                subTotal = cartModel.totalCartValue.toInt() + int.parse(AddTime.chargedAmt);
+                                                                print(subTotal);
+                                                              }catch(e){
+                                                                print(e);
+                                                              }
+                                                              // widget.cartModel.totalCartValue+=int.parse(addTimeresult.chargeAmt);
+                                                            }else{
+                                                              // subTotal=Application.cartModel.totalCartValue.toInt();
+                                                              subTotal=cartModel.totalCartValue.toInt();
+                                                            }
+                                                            calculateOverallTotal(subTotal.toDouble(), conveniencFee);
+
+                                                            setState(() {
+
+                                                            });
+
+                                                          },
+
+                                                        )),
+                                                    Text(
+                                                      date,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .caption
+                                                          .copyWith(
+                                                          fontSize: 13.0,
+                                                          fontWeight:
+                                                          FontWeight.w500,
+                                                          color: AppTheme.textColor,
+                                                          fontFamily: "Poppins"),
+                                                    ),
+                                                  ],
+                                                ),
                                                 Padding(
-                                                    padding: EdgeInsets.only(top: 15.0),
+                                                    padding: EdgeInsets.only(top: 20.0),
                                                     child: AppButton(
                                                       onPressed: () {
                                                         if (date == "") {
                                                           _scaffoldKey.currentState
                                                               .showSnackBar(SnackBar(
                                                               content: Text(
-                                                                  "Please Choose Delivery time")));
+                                                                  "Please Select Delivery Option")));
                                                         }else {
 
                                                           String cart_json = jsonEncode(cartModel.cart.map((i)

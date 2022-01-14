@@ -301,7 +301,6 @@ class _OtpScreenState extends State<OtpScreen>{
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
             border: Border.all(
-
               color: digit==null?
               Color(0xFFFFD8BC)
               :

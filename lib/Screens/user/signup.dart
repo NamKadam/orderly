@@ -128,11 +128,10 @@ class _SignUpState extends State<SignUp>{
             postResultList = value.result;
             if(postResultList.length<=0){
               _validZip='Please enter valid Zipcode';
-
             }else{
               _validZip="";
-              address='${postResultList[0].postalCode}, ${postResultList[0].state},${postResultList[0].country}, ${postResultList[0].postalLocation}';
-
+              address='  ${postResultList[0].postalCode}, ${postResultList[0].state},'
+                  '${postResultList[0].country}, ${postResultList[0].postalLocation},${postResultList[0].province}';
             }
             print(value.result);
 
@@ -534,7 +533,7 @@ class _SignUpState extends State<SignUp>{
                       child:
                       AppTextInput(
                         enabled: true,
-                        hintText: Translate.of(context).translate('input_first_name'),
+                        hintText: Translate.of(context).translate('first_name'),
                         errorText: Translate.of(context).translate(_validFirstName),
                         icon: Icon(Icons.clear),
                         controller: _textFirstNameController,
@@ -559,7 +558,7 @@ class _SignUpState extends State<SignUp>{
                   Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
                       child:AppTextInput(
                         enabled: true,
-                        hintText: Translate.of(context).translate('input_last_name'),
+                        hintText: Translate.of(context).translate('last_name'),
                         errorText: Translate.of(context).translate(_validLastName),
                         icon: Icon(Icons.clear),
                         controller: _textLastNameController,
@@ -585,7 +584,7 @@ class _SignUpState extends State<SignUp>{
                       child:
                       AppTextInput(
                         enabled: true,
-                        hintText: Translate.of(context).translate('input_zipcode'),
+                        hintText: Translate.of(context).translate('zipcode'),
                         errorText: Translate.of(context).translate(_validZip),
                         icon: Icon(Icons.clear),
                         controller: _textZipController,
@@ -648,8 +647,8 @@ class _SignUpState extends State<SignUp>{
                             child:
                             Text(
 
-                              '   ${postResultList[0].postalCode}, ${postResultList[0].state},${postResultList[0].country}, ${postResultList[0].postalLocation}'
-                                  ,
+                              // '   ${postResultList[0].postalCode}, ${postResultList[0].state},${postResultList[0].country}, ${postResultList[0].postalLocation}'
+                                  address,
 
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -675,7 +674,7 @@ class _SignUpState extends State<SignUp>{
                       child:
                       AppTextInput(
                         enabled: flagEmailEnabled,
-                        hintText: Translate.of(context).translate('input_email'),
+                        hintText: Translate.of(context).translate('email'),
                         errorText: Translate.of(context).translate(_validEmail),
                         icon: Icon(Icons.clear),
                         keyboardType: TextInputType.emailAddress,
@@ -705,7 +704,7 @@ class _SignUpState extends State<SignUp>{
                       child:
                       AppTextInput(
                         enabled: flagPhoneEnabled,
-                        hintText: Translate.of(context).translate('input_mobile'),
+                        hintText: Translate.of(context).translate('mobile'),
                         errorText: Translate.of(context).translate(_validMobile),
                         icon: Icon(Icons.clear),
                         controller: _textMobileController,

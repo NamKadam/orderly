@@ -129,6 +129,8 @@ class Product {
   int displayStatus;
   String productImage;
   int qty;
+  String currency;
+  String unit;
 
 
   Product({this.productId,
@@ -140,7 +142,9 @@ class Product {
     this.truckNumber,
     this.displayStatus,
     this.productImage,
-    this.qty});
+    this.qty,
+  this.currency,
+  this.unit});
 
   Product.fromJson(Map<String, dynamic> json) {
     productId = json['product_id'];
@@ -153,6 +157,8 @@ class Product {
     displayStatus = json['display_status'];
     productImage = json['product_image'];
     qty = json['product_qty'];
+    currency = json['currency'];
+    unit = json['unit'];
   }
 
   Map<String, dynamic> toJson() {
@@ -167,6 +173,8 @@ class Product {
     data['display_status'] = this.displayStatus;
     data['product_image'] = this.productImage;
     data['product_qty'] = this.qty;
+    data['currency'] = this.currency;
+    data['unit'] = this.unit;
     return data;
   }
 }

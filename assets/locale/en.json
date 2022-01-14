@@ -10,7 +10,7 @@
   "notification": "Notification",
   "account": "Account",
   "started": "Get Started",
-  "first_name": "First Name *",
+  "first_name": "First Name",
   "input_first_name": "Input your First Name",
   "last_name": "Last Name",
   "input_last_name": "Input your Last Name",

@@ -84,7 +84,10 @@ class AddEditAddressState extends State<AddEditAddress> {
                 } else {
                   _validZip = "";
                   address =
-                  '${postResultList[0].postalCode}, ${postResultList[0].state},${postResultList[0].country}, ${postResultList[0].postalLocation}';
+                  '  ${postResultList[0].postalCode}, ${postResultList[0]
+                      .state},'
+                      '${postResultList[0].country}, ${postResultList[0]
+                      .postalLocation},${postResultList[0].province}';
                 }
                 print(value.result);
               })
@@ -221,7 +224,7 @@ class AddEditAddressState extends State<AddEditAddress> {
                   child: AppTextInput(
                     enabled: true,
                     hintText:
-                    Translate.of(context).translate('input_first_name'),
+                    Translate.of(context).translate('first_name'),
                     errorText: Translate.of(context).translate(_validFirstName),
                     icon: Icon(Icons.clear),
                     controller: _textFirstNameController,
@@ -250,7 +253,7 @@ class AddEditAddressState extends State<AddEditAddress> {
                   child: AppTextInput(
                     enabled: true,
                     hintText:
-                    Translate.of(context).translate('input_last_name'),
+                    Translate.of(context).translate('last_name'),
                     errorText: Translate.of(context).translate(_validLastName),
                     icon: Icon(Icons.clear),
                     controller: _textLastNameController,
@@ -278,7 +281,7 @@ class AddEditAddressState extends State<AddEditAddress> {
                   margin: EdgeInsets.only(top: 15.0, left: 20.0, right: 20.0),
                   child: AppTextInput(
                     enabled: true,
-                    hintText: Translate.of(context).translate('input_zipcode'),
+                    hintText: Translate.of(context).translate('zipcode'),
                     errorText: Translate.of(context).translate(_validZip),
                     icon: Icon(Icons.clear),
                     controller: _textZipController,
@@ -356,7 +359,7 @@ class AddEditAddressState extends State<AddEditAddress> {
                   margin: EdgeInsets.only(top: 15.0, left: 20.0, right: 20.0),
                   child: AppTextInput(
                     enabled: true,
-                    hintText: Translate.of(context).translate('input_email'),
+                    hintText: Translate.of(context).translate('email'),
                     errorText: Translate.of(context).translate(_validEmail),
                     icon: Icon(Icons.clear),
                     keyboardType: TextInputType.emailAddress,
@@ -384,7 +387,7 @@ class AddEditAddressState extends State<AddEditAddress> {
                   margin: EdgeInsets.only(top: 15.0, left: 20.0, right: 20.0),
                   child: AppTextInput(
                     enabled: true,
-                    hintText: Translate.of(context).translate('input_mobile'),
+                    hintText: Translate.of(context).translate('mobile'),
                     errorText: Translate.of(context).translate(_validMobile),
                     icon: Icon(Icons.clear),
                     controller: _textMobileController,

@@ -82,8 +82,8 @@ class _EditProfileState extends State<EditProfile>{
 
             }else{
               _validZip="";
-              address='${postResultList[0].postalCode}, ${postResultList[0].state},${postResultList[0].country}, ${postResultList[0].postalLocation}';
-
+              address='  ${postResultList[0].postalCode}, ${postResultList[0].state},'
+                  '${postResultList[0].country}, ${postResultList[0].postalLocation},${postResultList[0].province}';
             }
             print(value.result);
 
@@ -404,7 +404,7 @@ class _EditProfileState extends State<EditProfile>{
                 //first name
                 Container(margin: EdgeInsets.only(top:25.0,left:20.0,right:20.0),
                     child:AppTextInput(
-                      hintText: Translate.of(context).translate('input_first_name'),
+                      hintText: Translate.of(context).translate('first_name'),
                       errorText: Translate.of(context).translate(_validFirstName),
                       icon: Icon(Icons.clear),
                       controller: _textFirstNameController,
@@ -429,7 +429,7 @@ class _EditProfileState extends State<EditProfile>{
                 //lastName
                 Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
                     child:AppTextInput(
-                      hintText:Translate.of(context).translate('input_last_name'),
+                      hintText:Translate.of(context).translate('last_name'),
                       errorText: Translate.of(context).translate(_validLastName),
                       icon: Icon(Icons.clear),
                       controller: _textLastNameController,
@@ -456,7 +456,7 @@ class _EditProfileState extends State<EditProfile>{
                     child:
                     AppTextInput(
                       enabled: true,
-                      hintText: Translate.of(context).translate('input_zipcode'),
+                      hintText: Translate.of(context).translate('zipcode'),
                       errorText: Translate.of(context).translate(_validZip),
                       icon: Icon(Icons.clear),
                       controller: _textZipController,
@@ -520,9 +520,7 @@ class _EditProfileState extends State<EditProfile>{
                             child:
                             Text(
                             "  "+address
-                              ,
-
-                              maxLines: 1,
+                              , maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontWeight: FontWeight.w400,fontSize: 14.0,),),
                           ))),
@@ -532,7 +530,7 @@ class _EditProfileState extends State<EditProfile>{
                 Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
                     child:
                     AppTextInput(
-                      hintText: Translate.of(context).translate('input_email'),
+                      hintText: Translate.of(context).translate('email'),
                       errorText: Translate.of(context).translate(_validEmail),
                       icon: Icon(Icons.clear),
                       enabled: false,
@@ -558,7 +556,7 @@ class _EditProfileState extends State<EditProfile>{
               Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
                   child:
                   AppTextInput(
-                    hintText: Translate.of(context).translate('input_email'),
+                    hintText: Translate.of(context).translate('email'),
                     errorText: Translate.of(context).translate(_validEmail),
                     icon: Icon(Icons.clear),
                     enabled: true,
@@ -587,7 +585,7 @@ class _EditProfileState extends State<EditProfile>{
                     child:
                     AppTextInput(
                       enabled: Application.user.signUpType=="phone"?false:true,
-                      hintText:Translate.of(context).translate('input_mobile'),
+                      hintText:Translate.of(context).translate('mobile'),
                       errorText:Translate.of(context).translate(_validMobile),
                       icon: Icon(Icons.clear),
                       controller: _textMobileController,

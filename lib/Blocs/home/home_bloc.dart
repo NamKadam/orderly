@@ -35,16 +35,16 @@ class HomeBloc extends Bloc<HomeEvent,HomeState> {
           final Iterable refactorCategory = response.producer ?? [];
           final listCategory = refactorCategory.map((item) {
             //for offline db
-            if(countProducer==0){
-              OrderlyDatabase.database.addProducer(Producer.fromJson(item));
-
-            }
+            // if(countProducer==0){
+            //   OrderlyDatabase.database.addProducer(Producer.fromJson(item));
+            //
+            // }
 
             return Producer.fromJson(item);
           }).toList();
 
           ///Sync UI
-          countProducer++;
+          // countProducer++;
           yield ProducerListSuccess(producerList: listCategory);
         } else {
           yield ProducerListLoadFail();

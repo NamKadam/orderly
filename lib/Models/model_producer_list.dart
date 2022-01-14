@@ -49,16 +49,18 @@ class Producer {
   String producerName;
   String producerImageUrl;
   String producerIconUrl;
+  String producerDesc;
   bool expand=false;
   int tapcount=0;
 
-  Producer({this.producerId, this.producerName, this.producerImageUrl,this.producerIconUrl,this.expand,this.tapcount});
+  Producer({this.producerId, this.producerName, this.producerImageUrl,this.producerIconUrl,this.expand,this.tapcount,this.producerDesc});
 
   Producer.fromJson(Map<String, dynamic> json) {
     producerId = json['producer_id'];
     producerName = json['producer_name'];
     producerImageUrl = json['producer_image_url'];
     producerIconUrl = json['producer_icon_url'];
+    producerDesc = json['prod_desc'];
   }
 
   Map<String, dynamic> toJson() {
@@ -67,6 +69,7 @@ class Producer {
     data['producer_name'] = this.producerName;
     data['producer_image_url'] = this.producerImageUrl;
     data['producer_icon_url'] = this.producerIconUrl;
+    data['prod_desc'] = this.producerDesc;
     return data;
   }
 
