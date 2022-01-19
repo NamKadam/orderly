@@ -65,7 +65,9 @@ class AddressBloc extends Bloc<AddressEvent,AddressState> {
         'zipcode':event.zipcode,
         'city':event.city,
         'state':event.state,
-        'country':event.country
+        'country':event.country,
+        'street_no':event.streetNo,
+        'flat_no':event.flatNo
       };
 
       var response = await http.post(
@@ -97,7 +99,9 @@ class AddressBloc extends Bloc<AddressEvent,AddressState> {
         'city':event.city,
         'state':event.state,
         'country':event.country,
-        'addressid':event.addressId
+        'addressid':event.addressId,
+        'street_no':event.streetNo,
+        'flat_no':event.flatNo
       };
 
       var response = await http.post(

@@ -63,7 +63,8 @@ class _HomeState extends State<Home> {
   PagingController<int, Product> _pagingController;
   int _pageSize;
   static bool AddedFlag=false;
-  ScrollController _scrollController = new ScrollController();
+  ScrollController _scrollController ;
+  static String convFee="";
 
 
   Future<bool> _exitApp(BuildContext context) {
@@ -115,7 +116,7 @@ class _HomeState extends State<Home> {
               onPressed: () async{
                 // Navigator.of(context).pop();
                 final result=await Navigator.push(context, MaterialPageRoute(
-                    builder: (context)=> ShoppingCart(flagFrom:"0",cartModel: Application.cartModel,) //from home
+                    builder: (context)=> ShoppingCart(flagFrom:"0",cartModel: Application.cartModel) //from home
                 ));
                 if(result!=null){
                   result[0]=Application.cartModel;
@@ -160,17 +161,29 @@ class _HomeState extends State<Home> {
     totalProductList=[];
     // paginationCall(_producerList);
     getData();
-    // _scrollController.addListener(() {
-    //   if (_scrollController.position.pixels ==
-    //       _scrollController.position.maxScrollExtent) {
-    //     offset+=10;
-    //     setProductBlocData(_producerList,offset);
-    //
-    //   }
-    // });
-
+    _scrollController = new ScrollController(initialScrollOffset: 5.0)
+      ..addListener(_scrollListener);
     super.initState();
 
+  }
+
+  //// ADDING THE SCROLL LISTINER
+  _scrollListener() {
+    if (_scrollController.offset >=
+        _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      // setState(() {
+      //   print("comes to bottom $isLoading");
+      //   isLoading = true;
+      //
+      //   if (isLoading) {
+      //     print("RUNNING LOAD MORE");
+
+          offset+=10;
+              setProductBlocData(_producerList,offset);
+      //   }
+      // });
+    }
   }
 
   void paginationCall(List<Producer> producerList){
@@ -259,13 +272,15 @@ class _HomeState extends State<Home> {
     try{
       if (response.statusCode == 200) {
         var resp = json.decode(response.body);
+        convFee=resp['conv_fee'];
+
         if(resp['msg']=="Successed"){
           final Iterable refactorCategory = resp['cart'] ?? [];
           final listCategory = refactorCategory.map((item) {
             return Cart.fromJson(item);
           }).toList();
           // //
-          model.addProduct(listCategory[0]);
+          model.addProduct(listCategory[0],convFee);
           AppBloc.authBloc.add(OnSaveCart(model));
           //for offline db
           // OrderlyDatabase.database.add(listCategory[0]);
@@ -449,12 +464,12 @@ class _HomeState extends State<Home> {
       );
     }
 
-    Widget buildListViewItemProd(int index, Product product, CartModel model) {
+    Widget buildListViewItemProd(int index, List<Product> product, CartModel model) {
       print("product:-"+product.toString());
       String currency="\u{20B9}";
 
 
-      if (product  == null) {
+      if (product  == null ||product.length<=0) {
         // return ListView.builder(
         //   padding: EdgeInsets.all(0),
         //   shrinkWrap: true,
@@ -510,10 +525,10 @@ class _HomeState extends State<Home> {
         //   },
         //   itemCount: 8,
         // );
-        return FractionallySizedBox(
-            widthFactor: 0.5,
-            child:
-          Container(
+        // return FractionallySizedBox(
+        //     widthFactor: 0.5,
+        //     child:
+          return Container(
             padding: EdgeInsets.only(left: 8),
             child: Card(
                 elevation: 3.0,
@@ -554,7 +569,8 @@ class _HomeState extends State<Home> {
                       ),
                     ],
                   ),
-                ))));
+                )));
+        // );
       }
       return Container(
           padding: EdgeInsets.only(left: 8),
@@ -566,7 +582,7 @@ class _HomeState extends State<Home> {
               // mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 CachedNetworkImage(
-                  imageUrl: product.productImage,
+                  imageUrl: product[index].productImage,
                   imageBuilder: (context, imageProvider) {
                     return Container(
                       height: 110,
@@ -613,7 +629,7 @@ class _HomeState extends State<Home> {
                 Padding(
                     padding: EdgeInsets.only(left:10.0,right: 10.0),
                     child:Text(
-                      product.productName,
+                      product[index].productName,
                       style: Theme.of(context).textTheme.caption.copyWith(
                           fontWeight: FontWeight.w400,
                           fontFamily: 'Poppins',
@@ -621,7 +637,7 @@ class _HomeState extends State<Home> {
                     )),
                 Padding(padding: EdgeInsets.only(top: 2)),
                 Text(
-                  product.ratePerHour.toString() +" "+ Utils.getCurrencyPerLocale("en_IN")+"/"+product.unit,
+                  product[index].ratePerHour.toString() +" "+ Utils.getCurrencyPerLocale(product[index].currency)+"/"+product[index].unit,
                   maxLines: 1,
                   style: Theme.of(context).textTheme.subtitle2.copyWith(
                       fontWeight: FontWeight.w600,
@@ -724,10 +740,12 @@ class _HomeState extends State<Home> {
             AppBar(
               title: Text(
                 "Home",
+                textAlign: TextAlign.left,
                 style: TextStyle(
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w400,
                     fontSize: 18.0,
+
                     color: AppTheme.textColor),
               ),
               backgroundColor: Colors.transparent,
@@ -995,8 +1013,10 @@ class _HomeState extends State<Home> {
                                             // )
                                           ),
                                           Expanded(
-                                            child: SingleChildScrollView(
-                                              child:
+                                            child:
+                                            ListView(
+                                              controller: _productList!=null?_scrollController:null,
+                                                children:[
                                              Column(
                                                   children: <Widget>[
                                                     Container(
@@ -1139,8 +1159,8 @@ class _HomeState extends State<Home> {
                                                         ?
                                                     // Flexible(
                                                     //     child:
-                                                        _productList!=null
-                                                            ?
+                                                    //     _productList!=null
+                                                    //         ?
                                                         // PagedGridView<int, Product>(
                                                         //   shrinkWrap: true,//updated on 12/01/2022 for whole scromll under single child scrollview
                                                         //   physics: NeverScrollableScrollPhysics(),//updated on 12/01/2022 for whole scromll under single child scrollview
@@ -1163,28 +1183,28 @@ class _HomeState extends State<Home> {
                                                         //   ),
                                                         // )
                                                         GridView.builder(
-                                                          shrinkWrap: true,
+                                                          shrinkWrap: true, //updated for no scrol for gridview and applied whole scrollview
                                                              physics: NeverScrollableScrollPhysics(),
+                                                             // physics: AlwaysScrollableScrollPhysics(),
                                                              // padding: EdgeInsets.only(left:5.0,right:5.0),
-                                                              itemCount: _productList.length,
-                                                               controller: _scrollController,
+                                                              itemCount: totalProductList.length>0?totalProductList.length:6,
+                                                               // controller: _scrollController,
                                                             gridDelegate:SliverGridDelegateWithFixedCrossAxisCount(
-                                                                  childAspectRatio: 80 / 88,
+                                                                  childAspectRatio: Platform.isAndroid?80 / 88:80/90,
                                                                   crossAxisSpacing: 8,
                                                                   mainAxisSpacing: 8,
                                                                   crossAxisCount: 2,
                                                                 ),
                                                              itemBuilder: (context, index){
-
-
-                                                               return buildListViewItemProd(index,_productList[index],model);
+                                                            // return buildListViewItemProd(index,_productList[index],model);
+                                                               return buildListViewItemProd(index,totalProductList,model);
 
                                                            },
                                                         )
-                                                            :
-                                                        Center(child: Padding(
-                                                            padding:
-                                                            EdgeInsets.only(top: 100.0),child:CircularProgressIndicator()))
+                                                            // :
+                                                        // Center(child: Padding(
+                                                        //     padding:
+                                                        //     EdgeInsets.only(top: 100.0),child:CircularProgressIndicator()))
                                                       // Wrap(
                                                       //   runSpacing: 10,
                                                       //   alignment:
@@ -1211,8 +1231,165 @@ class _HomeState extends State<Home> {
                                                     )
                                                   ],
                                                 ),
-
+                             ]
                                             ),
+
+                                            // CustomScrollView(
+                                            //   controller: _scrollController,
+                                            //   slivers: [
+                                            //   Container(
+                                            //       height: 188,
+                                            //       width: MediaQuery.of(context).size.width,
+                                            //       child:_producerList!=null
+                                            //           ?
+                                            //       Stack(
+                                            //                                children: [
+                                            //                                  CachedNetworkImage(
+                                            //                                    imageUrl:
+                                            //                                    _producerList[producerListIndex].producerImageUrl,
+                                            //                                    imageBuilder: (context, imageProvider) {
+                                            //                                      return Container(
+                                            //                                        height: 180,
+                                            //                                        width: MediaQuery.of(context).size.width,
+                                            //                                        decoration: BoxDecoration(
+                                            //                                          borderRadius: BorderRadius.zero,
+                                            //                                          image: DecorationImage(
+                                            //                                            image: imageProvider,
+                                            //                                            fit: BoxFit.cover,
+                                            //                                          ),
+                                            //                                        ),
+                                            //                                      );
+                                            //                                    },
+                                            //                                    placeholder: (context, url) {
+                                            //                                      return Shimmer.fromColors(
+                                            //                                        baseColor:
+                                            //                                        Theme.of(context).hoverColor,
+                                            //                                        highlightColor:
+                                            //                                        Theme.of(context).highlightColor,
+                                            //                                        enabled: true,
+                                            //                                        child: Container(
+                                            //                                          height: 180,
+                                            //                                          width: MediaQuery.of(context).size.width,
+                                            //
+                                            //                                          decoration: BoxDecoration(
+                                            //                                            borderRadius: BorderRadius.zero,
+                                            //                                            color: Colors.white,
+                                            //                                          ),
+                                            //                                        ),
+                                            //                                      );
+                                            //                                    },
+                                            //                                    errorWidget: (context, url, error) {
+                                            //                                      return Shimmer.fromColors(
+                                            //                                        baseColor:
+                                            //                                        Theme.of(context).hoverColor,
+                                            //                                        highlightColor:
+                                            //                                        Theme.of(context).highlightColor,
+                                            //                                        enabled: true,
+                                            //                                        child: Container(
+                                            //                                          height: 180,
+                                            //                                          decoration: BoxDecoration(
+                                            //                                            color: Colors.white,
+                                            //                                            borderRadius: BorderRadius.zero,
+                                            //                                          ),
+                                            //                                          child: Icon(Icons.error),
+                                            //                                        ),
+                                            //                                      );
+                                            //                                    },
+                                            //                                  ),
+                                            //                                  Container(
+                                            //                                    width: 200.0,
+                                            //                                      child:Padding(
+                                            //                                      padding: EdgeInsets.only(left:15.0,top:20.0),
+                                            //                                      child: Column(
+                                            //                                        mainAxisAlignment: MainAxisAlignment.start,
+                                            //                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                            //                                        children: [
+                                            //                                          Text(
+                                            //                                            _producerList[producerListIndex].producerName,
+                                            //                                            style: TextStyle(
+                                            //                                                fontWeight: FontWeight.w600,
+                                            //                                                fontFamily: 'Poppins',
+                                            //                                                fontSize: 14.0,
+                                            //                                                color: Colors.black),
+                                            //                                          ),
+                                            //                                          SizedBox(height: 5.0,),
+                                            //                                          ReadMoreText(_producerList[producerListIndex].producerDesc,
+                                            //
+                                            //                                              style: TextStyle(
+                                            //                                                  fontWeight: FontWeight.w400,
+                                            //                                                  fontFamily: 'Poppins',
+                                            //                                                  fontSize: 12.0,
+                                            //                                                  height: 1.2,
+                                            //
+                                            //                                                  color: Colors.black),
+                                            //                                              trimLines: 2,
+                                            //                                              trimMode: TrimMode.Line,
+                                            //                                              trimCollapsedText: 'Show more',
+                                            //                                              trimExpandedText: 'Show less'),
+                                            //                                          // SizedBox(height: 15.0,),
+                                            //
+                                            //                                          // //for view All
+                                            //                                          // Container(
+                                            //                                          //     height: 30.0,
+                                            //                                          //     width: 100.0,
+                                            //                                          //     child:ElevatedButton(
+                                            //                                          //       style: ElevatedButton.styleFrom(
+                                            //                                          //         side: BorderSide(color: Colors.white, width: 1),
+                                            //                                          //         primary: Colors.white,
+                                            //                                          //         shape: const RoundedRectangleBorder(
+                                            //                                          //             borderRadius:
+                                            //                                          //             BorderRadius.all(Radius.circular(15))),
+                                            //                                          //       ),
+                                            //                                          //       child: Text(
+                                            //                                          //         "VIEW All",
+                                            //                                          //         style: TextStyle(
+                                            //                                          //             fontWeight: FontWeight.w600,
+                                            //                                          //             fontFamily: 'Poppins',
+                                            //                                          //             fontSize: 11.0,
+                                            //                                          //             color: Colors.black),
+                                            //                                          //       ),
+                                            //                                          //       onPressed: () async {},
+                                            //                                          //     ))
+                                            //                                        ],
+                                            //                                      )))
+                                            //                                ],
+                                            //                              )
+                                            //                                  :
+                                            //                              Shimmer.fromColors(
+                                            //                                baseColor: Theme.of(context).hoverColor,
+                                            //                                highlightColor: Theme.of(context).highlightColor,
+                                            //                                enabled: true,
+                                            //                                child:
+                                            //                                Container(
+                                            //                                  height: 200.0,
+                                            //                                  width: MediaQuery.of(context).size.width,
+                                            //
+                                            //                                  // alignment: Alignment.center,
+                                            //                                  decoration: BoxDecoration(
+                                            //                                    shape: BoxShape.rectangle,
+                                            //                                    color: Colors.white,
+                                            //                                  ),
+                                            //
+                                            //                                ),
+                                            //                              )
+                                            //                          ),
+                                            //     SliverGrid(
+                                            //       gridDelegate:SliverGridDelegateWithFixedCrossAxisCount(
+                                            //         childAspectRatio: Platform.isAndroid?80 / 88:80/90,
+                                            //         crossAxisSpacing: 8,
+                                            //         mainAxisSpacing: 8,
+                                            //         crossAxisCount: 2,
+                                            //       ),
+                                            //       delegate: SliverChildBuilderDelegate(
+                                            //             (BuildContext context, int index) {
+                                            //               return buildListViewItemProd(index,totalProductList,model);
+                                            //
+                                            //             },
+                                            //         childCount: totalProductList.length>0?totalProductList.length:6,
+                                            //       ),
+                                            //     ),
+                                            //   ],
+                                            // )
                                           ),
 
                                         ],
@@ -1572,7 +1749,7 @@ class _HomeState extends State<Home> {
   }
   @override
   void dispose() {
-    _pagingController.dispose();
+    // _pagingController.dispose();
     super.dispose();
   }
 }

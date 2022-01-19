@@ -40,6 +40,14 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<key>LSApplicationQueriesSchemes</key>
+          <array>
+            <string>https</string>
+            <string>http</string>
+          </array>
+	<array>
+        <string>UIInterfaceOrientationPortrait</string>
+    </array>
 	<false/>
 </dict>
 </plist>

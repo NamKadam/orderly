@@ -15,6 +15,7 @@ import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/authentication.dart';
 import 'package:orderly/Utils/routes.dart';
 import 'package:orderly/Utils/translate.dart';
+import 'package:orderly/Widgets/app_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Profile extends StatefulWidget{
@@ -81,43 +82,65 @@ class _ProfileState extends State<Profile>{
             CardViewWidget(fromProf:fromProf),
             SizedBox(height: 5.0,), //for spacing
             //logout
-            Container(color: Colors.white,
-                child:Padding(
-                padding: EdgeInsets.all(20.0),
-              child:ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                side: BorderSide(color: Theme.of(context).primaryColor, width: 1),
-                primary: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0)
-                )
-              ),
-              // shape: shape,
-              onPressed: (){
-                // Navigator.pop(context);
-                Authentication.signOut(context: context, signInFlag: "0");
-                _loginBloc.add(OnLogout());
-                Navigator.popAndPushNamed(context, Routes.roleType);
-              },
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Padding(padding: EdgeInsets.all(10.0),child:Text(
-                    Translate.of(context).translate('log_out'),
-                    style: Theme.of(context)
-                        .textTheme
-                        .button
-                        .copyWith(color: AppTheme.textColor, fontWeight: FontWeight.w600),
-                  )
-                  ),
-                ],
-              ),
-            )
-            )
-            ),
+    BlocBuilder<LoginBloc,LoginState>(builder: (context,profile){
+    return BlocListener<LoginBloc,LoginState>(listener: (context,state){
+      if (state is LogoutSuccess) //added on 9/12/2020
+      {
+        // Navigator.popAndPushNamed(context, Routes.roleType);
+        Navigator.pushReplacementNamed(context, Routes.roleType);
 
-          ],
+      }
+      },
+      child:  Container(color: Colors.white,
+          child:Padding(
+              padding: EdgeInsets.all(20.0),
+              child:
+              // ElevatedButton(
+              //   style: ElevatedButton.styleFrom(
+              //       side: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+              //       primary: Colors.white,
+              //       shape: RoundedRectangleBorder(
+              //           borderRadius: BorderRadius.circular(10.0)
+              //       )
+              //   ),
+              //   // shape: shape,
+              //   onPressed: (){
+              //     // Navigator.pop(context);
+              //     Authentication.signOut(context: context, signInFlag: "0");
+              //     _loginBloc.add(OnLogout());
+              //     // Navigator.popAndPushNamed(context, Routes.roleType);
+              //   },
+              //   child: Row(
+              //     crossAxisAlignment: CrossAxisAlignment.center,
+              //     mainAxisAlignment: MainAxisAlignment.center,
+              //     children: <Widget>[
+              //       Padding(padding: EdgeInsets.all(10.0),child:Text(
+              //         Translate.of(context).translate('log_out'),
+              //         style: Theme.of(context)
+              //             .textTheme
+              //             .button
+              //             .copyWith(color: AppTheme.textColor, fontWeight: FontWeight.w600),
+              //       )
+              //       ),
+              //     ],
+              //   ),
+              // )
+
+            //updated on 14/01/2022
+              AppButton(
+                onPressed: (){
+                 _loginBloc.add(OnLogout());
+                },
+                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),
+                text: 'Logout',
+                loading: profile is LogoutLoading,
+                disableTouchWhenLoading: true,
+              )
+          )
+      ),
+    );
+    }
+    )],
         )),
 
       )
@@ -246,7 +269,8 @@ class _CardViewWidgetState extends State<CardViewWidget>{
     var numbers = "+91"+no;
     String url() {
       if (Platform.isIOS) {
-        return "whatsapp://wa.me/$numbers/?text=${Uri.parse("Hello")}";
+        // return "whatsapp://wa.me/$numbers/?text=${Uri.parse("Hello")}";
+        return "https://wa.me/$numbers/?text=${Uri.parse("Hello")}";
       } else {
         return "whatsapp://send?phone=$numbers&text=${Uri.parse("Hello")}";
       }
@@ -261,7 +285,8 @@ class _CardViewWidgetState extends State<CardViewWidget>{
   }
 
   void getVersionName() async{
-      versionName=await GetVersion.projectVersion;
+    versionName = await GetVersion.projectVersion;
+
 
   }
 

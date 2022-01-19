@@ -33,6 +33,8 @@ class Address {
   String city;
   String state;
   String country;
+  String streetNo;
+  String flatNo;
   bool ischecked=false;
 
   Address(
@@ -44,7 +46,10 @@ class Address {
         this.zipcode,
         this.city,
         this.state,
-        this.country,this.ischecked});
+        this.country,
+        this.streetNo,
+        this.flatNo,
+        this.ischecked});
 
   Address.fromJson(Map<String, dynamic> json) {
     uaId = json['ua_id'];
@@ -56,6 +61,8 @@ class Address {
     city = json['city'];
     state = json['state'];
     country = json['country'];
+    streetNo = json['street_no'];
+    flatNo = json['flat_no'];
   }
 
   Map<String, dynamic> toJson() {
@@ -69,6 +76,8 @@ class Address {
     data['city'] = this.city;
     data['state'] = this.state;
     data['country'] = this.country;
+    data['street_no'] = this.streetNo;
+    data['flat_no'] = this.flatNo;
     return data;
   }
 }

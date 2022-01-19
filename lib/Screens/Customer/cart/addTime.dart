@@ -136,10 +136,11 @@ class _TimeDataState extends State<TimeData> {
     // var formattedDate = new DateFormat('yyyy-MM-dd HH:mm').parse(date);
     // print(new DateFormat('dd MMM yyyy').format(DateTime.parse(date)));
 
-    // var formattedDate = "${dateParse.year}-${dateParse.month}-${dateParse.day}";
+    var formattedDate = "${dateParse.year}-${dateParse.month}-${dateParse.day}";
     setState(() {
       // currentDate = formattedDate.toString();
-      currentDate = date;
+      // AddTime.currentDate=formattedDate.toString();
+      currentDate = DateFormat('yyyy-MM-dd').format(dateParse);
       AddTime.time = DateFormat('hh:mm a').format(dateParse);
       print("currentDate:-" + currentDate);
     });
@@ -565,12 +566,9 @@ class _TimeDataState extends State<TimeData> {
                           print("deleiverySlot:-" + AddTime.deliverySlot);
 
                           if (AddTime.dateTime != "") {
-                            if (AddTime.currentDate
-                                    .compareTo(AddTime.selectedDate) ==
-                                0) {
+                            if (AddTime.currentDate.compareTo(AddTime.selectedDate) == 0) {
                               if (AddTime.radioDay != '') {
-                                if (AddTime.time.contains("PM") &&
-                                    AddTime.deliverySlot == "0") {
+                                if (AddTime.time.contains("PM") && AddTime.deliverySlot == "0") {
                                   widget.scaffoldKey.currentState.showSnackBar(
                                       SnackBar(
                                           content: Text(

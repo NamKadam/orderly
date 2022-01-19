@@ -64,7 +64,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
   CartModel cartModel;
   double totalCartValue = 0;
   int quantity = 0;
-  double OverallTotalVal = 0, conveniencFee = 75.0;
+  double OverallTotalVal = 0;
   CartBloc cartBloc;
   bool isconnectedToInternet = false;
   bool flagDataNotAvailable = false;
@@ -210,7 +210,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                           ),
                                           Text(
                                             // "\$ 75.00",
-                                            "\u{20B9} 75.00",
+                                              Utils.getCurrencyPerLocale(cartModel.cart[0].currency) + "  75.00",
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .caption
@@ -315,19 +315,16 @@ class _ShoppingCartState extends State<ShoppingCart> {
       }
     }
 
-    OverallTotalVal = totalCartValue + conveniencFee;
+    OverallTotalVal = totalCartValue + double.parse(cartModel.conveyanceFee);
     setState(() {});
   }
 
   //overall total
   void calculateOverallTotal(double total,double convenience){
     setState(() {
-      OverallTotalVal=total+conveniencFee;
+      OverallTotalVal=total+convenience;
       print("OverallTotal:-"+OverallTotalVal.toString());
-
-
     });
-
   }
 
   void removeProduct(List<Cart> cart, Cart cartItem) {
@@ -341,347 +338,378 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
   // for cartList
   Widget buildCartList(int index, CartModel model) {
-    if ( model.cart==null || model.cart.length<=0) {
-      return ListView.builder(
-        padding: EdgeInsets.all(0),
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: EdgeInsets.only(bottom: 15),
-            child: Shimmer.fromColors(
-              child: Row(
-                children: <Widget>[
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.white,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: 10,
-                      right: 10,
-                      top: 5,
-                      bottom: 5,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          height: 10,
-                          width: 180,
-                          color: Colors.white,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 5),
-                        ),
-                        Container(
-                          height: 10,
-                          width: 150,
-                          color: Colors.white,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              baseColor: Theme.of(context).hoverColor,
-              highlightColor: Theme.of(context).highlightColor,
-            ),
-          );
-        },
-        itemCount: 8,
-      );
-    }
+    if (model.cart.length>0) {
+      // return ListView.builder(
+      //   padding: EdgeInsets.all(0),
+      //   shrinkWrap: true,
+      //   physics: NeverScrollableScrollPhysics(),
+      //   itemBuilder: (context, index) {Sing
+      //     return Padding(
+      //       padding: EdgeInsets.only(bottom: 15),
+      //       child: Shimmer.fromColors(
+      //         child: Row(
+      //           children: <Widget>[
+      //             Container(
+      //               width: 80,
+      //               height: 80,
+      //               decoration: BoxDecoration(
+      //                 borderRadius: BorderRadius.circular(8),
+      //                 color: Colors.white,
+      //               ),
+      //             ),
+      //             Padding(
+      //               padding: EdgeInsets.only(
+      //                 left: 10,
+      //                 right: 10,
+      //                 top: 5,
+      //                 bottom: 5,
+      //               ),
+      //               child: Column(
+      //                 crossAxisAlignment: CrossAxisAlignment.start,
+      //                 children: <Widget>[
+      //                   Container(
+      //                     height: 10,
+      //                     width: 180,
+      //                     color: Colors.white,
+      //                   ),
+      //                   Padding(
+      //                     padding: EdgeInsets.only(top: 5),
+      //                   ),
+      //                   Container(
+      //                     height: 10,
+      //                     width: 150,
+      //                     color: Colors.white,
+      //                   ),
+      //                 ],
+      //               ),
+      //             ),
+      //           ],
+      //         ),
+      //         baseColor: Theme.of(context).hoverColor,
+      //         highlightColor: Theme.of(context).highlightColor,
+      //       ),
+      //     );
+      //   },
+      //   itemCount: 8,
+      // );
 
-    return Padding(
-      padding: const EdgeInsets.only(
-        top: 5,
 
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            color: Colors.transparent,
-            // height: MediaQuery.of(context).size.height * 0.15,
-            // width: MediaQuery.of(context).size.width ,
-            // decoration: BoxDecoration(
-            //   borderRadius: BorderRadius.circular(10.0),
-            // ),
-            child: Card(
-                elevation: 0.0,
-                // shape: RoundedRectangleBorder(
-                //     borderRadius: BorderRadius.circular(5.0),
-                //     side: BorderSide(
-                //       color: Colors.grey,
-                //       width: 0.5,
-                //     )),
-                // borderOnForeground: true,
-                child: Column(
-                  children: [
-                    Padding(
-                        padding: EdgeInsets.all(10.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CachedNetworkImage(
-                              filterQuality: FilterQuality.medium,
-                              // imageUrl: Api.PHOTO_URL + widget.users.avatar,
-                              // imageUrl:
-                              //     "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
-                              imageUrl: model.cart[index].productImg == null
-                                  ? "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
-                                  : model.cart[index].productImg,
-                              placeholder: (context, url) {
-                                return Shimmer.fromColors(
-                                  baseColor: Theme.of(context).hoverColor,
-                                  highlightColor:
-                                  Theme.of(context).highlightColor,
-                                  enabled: true,
-                                  child: Container(
+      return Padding(
+        padding: const EdgeInsets.only(
+          top: 5,
+
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              color: Colors.transparent,
+              // height: MediaQuery.of(context).size.height * 0.15,
+              // width: MediaQuery.of(context).size.width ,
+              // decoration: BoxDecoration(
+              //   borderRadius: BorderRadius.circular(10.0),
+              // ),
+              child: Card(
+                  elevation: 0.0,
+                  // shape: RoundedRectangleBorder(
+                  //     borderRadius: BorderRadius.circular(5.0),
+                  //     side: BorderSide(
+                  //       color: Colors.grey,
+                  //       width: 0.5,
+                  //     )),
+                  // borderOnForeground: true,
+                  child: Column(
+                    children: [
+                      Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CachedNetworkImage(
+                                filterQuality: FilterQuality.medium,
+                                // imageUrl: Api.PHOTO_URL + widget.users.avatar,
+                                // imageUrl:
+                                //     "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80",
+                                imageUrl: model.cart[index].productImg == null
+                                    ? "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80"
+                                    : model.cart[index].productImg,
+                                placeholder: (context, url) {
+                                  return Shimmer.fromColors(
+                                    baseColor: Theme
+                                        .of(context)
+                                        .hoverColor,
+                                    highlightColor:
+                                    Theme
+                                        .of(context)
+                                        .highlightColor,
+                                    enabled: true,
+                                    child: Container(
+                                      height: 80,
+                                      width: 80,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                imageBuilder: (context, imageProvider) {
+                                  return Container(
                                     height: 80,
                                     width: 80,
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      image: DecorationImage(
+                                        image: imageProvider,
+                                        fit: BoxFit.cover,
+                                      ),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
-                                  ),
-                                );
-                              },
-                              imageBuilder: (context, imageProvider) {
-                                return Container(
-                                  height: 80,
-                                  width: 80,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: imageProvider,
-                                      fit: BoxFit.cover,
+                                  );
+                                },
+                                errorWidget: (context, url, error) {
+                                  return Shimmer.fromColors(
+                                    baseColor: Theme
+                                        .of(context)
+                                        .hoverColor,
+                                    highlightColor:
+                                    Theme
+                                        .of(context)
+                                        .highlightColor,
+                                    enabled: true,
+                                    child: Container(
+                                      height: 80,
+                                      width: 80,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Icon(Icons.error),
                                     ),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                );
-                              },
-                              errorWidget: (context, url, error) {
-                                return Shimmer.fromColors(
-                                  baseColor: Theme.of(context).hoverColor,
-                                  highlightColor:
-                                  Theme.of(context).highlightColor,
-                                  enabled: true,
-                                  child: Container(
-                                    height: 80,
-                                    width: 80,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Icon(Icons.error),
-                                  ),
-                                );
-                              },
-                            ),
-                            SizedBox(
-                              width: 10.0,
-                            ),
-                            Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      model.cart[index].productName,
-                                      // widget.users.firstName+" "+widget.users.lastName,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .caption
-                                          .copyWith(
-                                          fontSize: 14.0,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppTheme.textColor,
-                                          fontFamily: "Poppins"),
-                                    ),
-                                    ReadMoreText(
-                                        model.cart[index].productDesc == null
-                                            ? ""
-                                            : model.cart[index].productDesc,
-                                        style: Theme.of(context)
+                                  );
+                                },
+                              ),
+                              SizedBox(
+                                width: 10.0,
+                              ),
+                              Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment
+                                        .start,
+                                    children: [
+                                      Text(
+                                        model.cart[index].productName,
+                                        // widget.users.firstName+" "+widget.users.lastName,
+                                        style: Theme
+                                            .of(context)
+                                            .textTheme
+                                            .caption
+                                            .copyWith(
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppTheme.textColor,
+                                            fontFamily: "Poppins"),
+                                      ),
+                                      ReadMoreText(
+                                          model.cart[index].productDesc == null
+                                              ? ""
+                                              : model.cart[index].productDesc,
+                                          style: Theme
+                                              .of(context)
+                                              .textTheme
+                                              .button
+                                              .copyWith(
+                                              fontSize: 13.0,
+                                              color: AppTheme.textColor,
+                                              fontWeight: FontWeight.w400,
+                                              fontFamily: "Poppins"),
+                                          trimLines: 2,
+                                          trimMode: TrimMode.Line,
+                                          trimCollapsedText: 'Show more',
+                                          trimExpandedText: 'Show less'
+
+                                      ),
+                                      Text(
+                                        model.cart[index].producerName == null
+                                            ? "Sold by: "
+                                            : "Sold by: " +
+                                            model.cart[index].producerName,
+                                        style: Theme
+                                            .of(context)
+                                            .textTheme
+                                            .button
+                                            .copyWith(
+                                            fontSize: 12.0,
+                                            color: AppTheme.appColor,
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: "Poppins"),
+                                      ),
+                                      Text(
+                                        model.cart[index].ratePerHour
+                                            .toString() +
+                                            " " + Utils.getCurrencyPerLocale(
+                                            model.cart[index].currency) + " /" +
+                                            model.cart[index].unit,
+                                        style: Theme
+                                            .of(context)
                                             .textTheme
                                             .button
                                             .copyWith(
                                             fontSize: 13.0,
-                                            color: AppTheme.textColor,
-                                            fontWeight: FontWeight.w400,
+                                            color: Theme
+                                                .of(context)
+                                                .primaryColor,
+                                            fontWeight: FontWeight.w600,
                                             fontFamily: "Poppins"),
-                                        trimLines: 2,
-                                        trimMode: TrimMode.Line,
-                                        trimCollapsedText: 'Show more',
-                                        trimExpandedText: 'Show less'
-
-                                    ),
-                                    Text(
-                                      model.cart[index].producerName == null
-                                          ? "Sold by: "
-                                          : "Sold by: " +
-                                          model.cart[index].producerName,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .button
-                                          .copyWith(
-                                          fontSize: 12.0,
-                                          color: AppTheme.appColor,
-                                          fontWeight: FontWeight.w500,
-                                          fontFamily: "Poppins"),
-                                    ),
-                                    Text(
-                                      model.cart[index].ratePerHour.toString() +
-                                          " "+Utils.getCurrencyPerLocale("en_IN")+" /"+model.cart[index].unit,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .button
-                                          .copyWith(
-                                          fontSize: 13.0,
-                                          color: Theme.of(context).primaryColor,
-                                          fontWeight: FontWeight.w600,
-                                          fontFamily: "Poppins"),
-                                    ),
-                                  ],
-                                )),
-                          ],
-                        )),
-                    //quantity
-                    Container(
-                        margin: EdgeInsets.all(15.0),
-                        decoration: BoxDecoration(
-                          border:
-                          Border.all(color: Theme.of(context).dividerColor),
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(45.0),
-                          ),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Quantity',
-                                style: TextStyle(
-                                    fontSize: 14.0,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: 'Poppins',
-                                    color: AppTheme.textColor),
-                              ),
-                              Row(
-                                children: [
-                                  Padding(
-                                      padding: EdgeInsets.only(right: 15.0),
-                                      child: InkWell(
-                                          onTap: () {
-                                            if ((model.cart[index].qty-1)== 0) {
-                                              flagRemove="1";
-                                            }else{
-                                              flagRemove="";
-                                              model.updateProduct(
-                                                  model.cart[index],
-                                                  model.cart[index].qty - 1);
-
-                                              calculateOverallTotal(model.totalCartValue, conveniencFee);
-
-                                              // calculateTotal(model.cart,index,flagRemove);
-
-                                            }
-
-                                          },
-                                          child: Image.asset(Images.minus,
-                                              height: 22.0, width: 22.0))),
-                                  Text(
-                                    model.cart[index].qty.toString(),
-                                    style: TextStyle(
-                                        fontSize: 15.0,
-                                        fontWeight: FontWeight.w600,
-                                        fontFamily: 'Poppins',
-                                        color: Theme.of(context).primaryColor),
-                                  ),
-                                  Padding(
-                                      padding: EdgeInsets.only(left: 15.0),
-                                      child: InkWell(
-                                          onTap: () {
-                                            if((model.cart[index].qty + 1)>widget.productList[index].qty){ //updated on 4/01/2022 for out of stock part
-                                              Fluttertoast.showToast(msg: "Out Of stock");
-                                            }else{
-                                              model.updateProduct(model.cart[index], model.cart[index].qty + 1);
-
-                                            }
-                                            // calculateTotal(model.cart,index,"0");
-                                            calculateOverallTotal(model.totalCartValue, conveniencFee);
-                                          },
-                                          child: Image.asset(
-                                            Images.plus,
-                                            height: 22.0,
-                                            width: 22.0,
-                                          )
-                                      )),
-                                ],
-                              )
+                                      ),
+                                    ],
+                                  )),
                             ],
+                          )),
+                      //quantity
+                      Container(
+                          margin: EdgeInsets.all(15.0),
+                          decoration: BoxDecoration(
+                            border:
+                            Border.all(color: Theme
+                                .of(context)
+                                .dividerColor),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(45.0),
+                            ),
                           ),
-                        )),
-                  ],
-                )),
-          ),
-          Positioned(
-            right: 0.0,
-            top: 5.0,
-            child: Container(
-              // width:30.0,height:30.0,
-              decoration: BoxDecoration(
-                // color: Colors.greenAccent,
-                // borderRadius: BorderRadius.circular(20.0),
-              ),
-              margin: const EdgeInsets.symmetric(horizontal: 4.0),
-              child:
-              // CircleAvatar(
-              // child:
-              IconButton(
-                // hoverColor: Theme.of(context).primaryColor,
-                splashColor: Colors.white,
-                icon: Image.asset(
-                  Images.delete,
-                  width: 15.0,
-                  height: 15.0,
-                ),
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Quantity',
+                                  style: TextStyle(
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'Poppins',
+                                      color: AppTheme.textColor),
+                                ),
+                                Row(
+                                  children: [
+                                    Padding(
+                                        padding: EdgeInsets.only(right: 15.0),
+                                        child: InkWell(
+                                            onTap: () {
+                                              if ((model.cart[index].qty - 1) ==
+                                                  0) {
+                                                flagRemove = "1";
+                                              } else {
+                                                flagRemove = "";
+                                                model.updateProduct(
+                                                    model.cart[index],
+                                                    model.cart[index].qty - 1);
 
-                onPressed: () {
-                  cartBloc.add(OnDeleteCartList(
-                      cartId:_cartList[index].id.toString()));
-                  // setState(() {
-                  //   if(_cartList[index]==0) {
-                  //     flagDataNotAvailable = true;
-                  //   }
-                  // });
-                  model.removeProduct(_cartList[index]);
+                                                calculateOverallTotal(
+                                                    model.totalCartValue,
+                                                    double.parse(cartModel.conveyanceFee));
 
+                                                // calculateTotal(model.cart,index,flagRemove);
 
-                  // setState(() {
-                  // _cartList.removeAt(index);
-                  // model.cart.removeAt(index);
-                  //   model.cart.removeAt(index);
-                  //   if(_cartList.length==0) {
-                  //     flagDataNotAvailable = true;
-                  //   }
-                  // });
-
-                },
-              ),
-              // backgroundColor: Colors.black,
-              // )
+                                              }
+                                            },
+                                            child: Image.asset(Images.minus,
+                                                height: 22.0, width: 22.0))),
+                                    Text(
+                                      model.cart[index].qty.toString(),
+                                      style: TextStyle(
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight.w600,
+                                          fontFamily: 'Poppins',
+                                          color: Theme
+                                              .of(context)
+                                              .primaryColor),
+                                    ),
+                                    Padding(
+                                        padding: EdgeInsets.only(left: 15.0),
+                                        child: InkWell(
+                                            onTap: () {
+                                              if ((model.cart[index].qty + 1) >
+                                                  widget.productList[index]
+                                                      .qty) { //updated on 4/01/2022 for out of stock part
+                                                Fluttertoast.showToast(
+                                                    msg: "Out Of stock");
+                                              } else {
+                                                model.updateProduct(
+                                                    model.cart[index],
+                                                    model.cart[index].qty + 1);
+                                              }
+                                              // calculateTotal(model.cart,index,"0");
+                                              calculateOverallTotal(
+                                                  model.totalCartValue,
+                                                  double.parse(cartModel.conveyanceFee));
+                                            },
+                                            child: Image.asset(
+                                              Images.plus,
+                                              height: 22.0,
+                                              width: 22.0,
+                                            )
+                                        )),
+                                  ],
+                                )
+                              ],
+                            ),
+                          )),
+                    ],
+                  )),
             ),
-          ),
-        ],
-      ),
-    );
+            Positioned(
+              right: 0.0,
+              top: 5.0,
+              child: Container(
+                // width:30.0,height:30.0,
+                decoration: BoxDecoration(
+                  // color: Colors.greenAccent,
+                  // borderRadius: BorderRadius.circular(20.0),
+                ),
+                margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                child:
+                // CircleAvatar(
+                // child:
+                IconButton(
+                  // hoverColor: Theme.of(context).primaryColor,
+                  splashColor: Colors.white,
+                  icon: Image.asset(
+                    Images.delete,
+                    width: 15.0,
+                    height: 15.0,
+                  ),
+
+                  onPressed: () {
+                    cartBloc.add(OnDeleteCartList(
+                        cartId: _cartList[index].id.toString()));
+                    // setState(() {
+                    //   if(_cartList[index]==0) {
+                    //     flagDataNotAvailable = true;
+                    //   }
+                    // });
+                    model.removeProduct(_cartList[index]);
+
+
+                    // setState(() {
+                    // _cartList.removeAt(index);
+                    // model.cart.removeAt(index);
+                    //   model.cart.removeAt(index);
+                    //   if(_cartList.length==0) {
+                    //     flagDataNotAvailable = true;
+                    //   }
+                    // });
+
+                  },
+                ),
+                // backgroundColor: Colors.black,
+                // )
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   Future<void> setsharedPrefData() async{
@@ -700,56 +728,28 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
   //get from sharedpref
   Future<void> getsharedPrefData() async{
-    // final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // final String cartString = await prefs.getString('cart_key');
-    // // _cartList = Cart.decode(cartString);
-    // _cartList = jsonDecode(cartString).toList();
-    // if(_cartList.length<=0){
-    //   setBlocData();
-    // }
-    //  final String cartString = UtilPreferences.getString(Preferences.cart);
-    // if(cartString!=null) {
-    //
-    //    var _cart= jsonDecode(cartString).toList();
-    //    _cartList = _cart.map((cartJson) => Cart.fromJson(cartJson)).toList();
-    //    widget.cartModel.addAllProduct(_cartList);
-    //    print(_cartList);
-    //    setState(() {
-    //    });
-    //
-    // }
-    // else{
-    //   if(Application.cartModel==null){
-    //     setBlocData();
-    //   }else{
-
-    // setState(() {
     print("cartModel:"+Application.cartModel.toString());
     cartModel=new CartModel();
-
     if(Application.cartModel!=null&&Application.cartModel.cart.length>0){
       _cartList=Application.cartModel.cart;
       cartModel=Application.cartModel;
 
-    } else if(widget.flagFrom=="0"){
-      _cartList=widget.cartModel.cart;
-      cartModel=widget.cartModel;
-    }else{//from main page cart icon redirection
-
-      _cartList=Application.cartModel.cart;
-      cartModel=Application.cartModel;
     }
-    calculateOverallTotal(cartModel.totalCartValue, conveniencFee);
+    // else if(widget.flagFrom=="0"){
+    //   _cartList=widget.cartModel.cart;
+    //   cartModel=widget.cartModel;
+    // }
+    else{//from main page cart icon redirection
 
+      // _cartList=Application.cartModel.cart;
+      // cartModel=Application.cartModel;
+      print(widget.cartModel);
+
+      _cartList=widget.cartModel.cart.length>0 ||widget.cartModel!=null?widget.cartModel.cart:null;
+      cartModel=widget.cartModel;
+    }
+    calculateOverallTotal(cartModel.totalCartValue, double.parse(cartModel.conveyanceFee));
     // calculateOverallTotal(Application.cartModel.totalCartValue, conveniencFee);
-
-
-
-    // });
-    // }
-    // }
-    // }
-
     print(_cartList);
 
   }
@@ -785,23 +785,11 @@ class _ShoppingCartState extends State<ShoppingCart> {
           ),
           leading: InkWell(
               onTap: () {
-                // if(addTimeresult!=null){
-                //   if(addTimeresult.chargeAmt!=null) {
-                //
-                //     widget.cartModel.totalCartValue =
-                //         widget.cartModel.totalCartValue - int.parse(addTimeresult.chargeAmt);
-                //   }
-                // }
                 clearData();
-
                 AppBloc.authBloc.add(OnSaveCart(cartModel));
                 // AppBloc.authBloc.add(OnSaveCart(Application.cartModel));
                 Navigator.pop(context,cartModel);
-                // Navigator.push(context,MaterialPageRoute(builder: (context)=>MainNavigation(flagOrder: "0")));
-                // showPlaceOrderBottomDialog(context);
-                // setsharedPrefData();
-
-              },
+                },
               child: Icon(
                 Icons.arrow_back_ios,
                 color: AppTheme.textColor,
@@ -812,12 +800,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
         body: BlocListener<CartBloc, CartState>(
           listener: (context, state) {},
           child: BlocBuilder<CartBloc, CartState>(builder: (context, state) {
-
-            // if(state is InitialCartListState){
-            //   cartModel=new CartModel();
-            //
-            // }
-
             if (state is CartListSuccess) {
               // cartModel=new CartModel();
               _cartList = state.cartList;
@@ -836,17 +818,8 @@ class _ShoppingCartState extends State<ShoppingCart> {
                 model:  cartModel,
                 child: ScopedModelDescendant<CartModel>(
                   builder: (context, child, model) {
-                    // if(Application.cartModel!=null)
-                    //   {
-                    //     Application.cartModel = model;
-                    //   }else{
-                    // cartModel=new CartModel();
-                    // Application.cartModel=cartModel;
-                    // }
                     cartModel=model;
                     print("cartModel:-"+widget.cartModel.toString());
-
-                    // totalCartValue=widget.cartModel.totalCartValue;
                     return Container(
                       // height: MediaQuery.of(context).size.height,
                         child:
@@ -865,27 +838,11 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                 itemBuilder: (context, index) {
                                   return GestureDetector(
                                       onTap: () {
-                                        // Navigator.push(
-                                        //     context,
-                                        //     MaterialPageRoute(
-                                        //         builder: (context) =>
-                                        //         new MemberDetails(userListData:memberlist[index])));
+
                                       },
                                       // child: buildCartList(index, Application.cartModel)
                                       child: buildCartList(index, cartModel)
-                                    // ScopedModel<CartModel>(
-                                    //     model: cartModel,
-                                    //     child: ScopedModelDescendant<CartModel>(
-                                    //       builder: (context, child, model) {
-                                    //         cartModel = model;
-                                    //         print(cartModel);
-                                    //
-                                    //         totalCartValue=cartModel.totalCartValue;
-                                    //
-                                    //
-                                    //         return buildCartList(index, model);
-                                    //       },
-                                    //     ))
+
                                   );
                                 })),
 
@@ -938,10 +895,11 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                         Text(
                                                           subTotal==0
                                                               ?
-                                                          "\u{20B9}" + cartModel.totalCartValue.toString()
+                                                          // "\u{20B9}" + cartModel.totalCartValue.toString()
+                                                          Utils.getCurrencyPerLocale(cartModel.cart[0].currency) + " "+cartModel.totalCartValue.toString()
                                                           // "\$" + Application.cartModel.totalCartValue.toString()
                                                               :
-                                                          "\u{20B9}" + subTotal.toString(),
+                                                          Utils.getCurrencyPerLocale(cartModel.cart[0].currency) + " " + subTotal.toString(),
                                                           style: Theme.of(context)
                                                               .textTheme
                                                               .caption
@@ -979,7 +937,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                               "Poppins"),
                                                         ),
                                                         Text(
-                                                          "\u{20B9}" + conveniencFee.toString(),
+                                                          Utils.getCurrencyPerLocale(cartModel.cart[0].currency) + " " + cartModel.conveyanceFee.toString(),
                                                           style: Theme.of(context)
                                                               .textTheme
                                                               .caption
@@ -1024,7 +982,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                           //     :
                                                           // "\$ " + OverallTotalVal
                                                           //         .toString(),
-                                                          OverallTotalVal.toString(),
+                                                        Utils.getCurrencyPerLocale(cartModel.cart[0].currency) + " "+OverallTotalVal.toString(),
                                                           style: Theme.of(context)
                                                               .textTheme
                                                               .caption
@@ -1134,6 +1092,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                                 color: Colors.white),
                                                           ),
                                                           onPressed: () async {
+                                                            _scaffoldKey.currentState.hideCurrentSnackBar();
                                                             await Navigator.push(context, MaterialPageRoute(builder: (context)=>
                                                                 AddTime()));
                                                             print("result:-" + addTimeresult.toString());
@@ -1169,7 +1128,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                               // subTotal=Application.cartModel.totalCartValue.toInt();
                                                               subTotal=cartModel.totalCartValue.toInt();
                                                             }
-                                                            calculateOverallTotal(subTotal.toDouble(), conveniencFee);
+                                                            calculateOverallTotal(subTotal.toDouble(), double.parse(cartModel.conveyanceFee));
 
                                                             setState(() {
 
@@ -1199,6 +1158,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                         if (date == "") {
                                                           _scaffoldKey.currentState
                                                               .showSnackBar(SnackBar(
+                                                              duration: Duration(seconds: 2),
                                                               content: Text(
                                                                   "Please Select Delivery Option")));
                                                         }else {
@@ -1208,16 +1168,15 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                           => Cart.toJson(i)).toList()).toString();
                                                           // var json1 = jsonEncode(cartList.map((e) => e.toJson()).toList());
                                                           print("cartList:-" + cart_json);
-                                                          print("cartList:-" + widget.cartModel.cart.toString());
+                                                          print("cartList:-" + cartModel.cart.toString());
                                                           Navigator.push(context,
                                                               MaterialPageRoute(builder: (context)
                                                               =>ProfAddress(
-                                                                addTimeData: addTimeresult,
                                                                 // cartDetails: Application.cartModel.cart,
                                                                 cartDetails: cartModel.cart,
                                                                 // subTotal:Application.cartModel.totalCartValue.toString(),
                                                                 subTotal:cartModel.totalCartValue.toString(),
-                                                                convFee:conveniencFee.toString(),
+                                                                convFee:cartModel.conveyanceFee.toString(),
                                                                 total:OverallTotalVal.toString(),
                                                               )
                                                               )

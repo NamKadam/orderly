@@ -55,15 +55,19 @@ class _SignUpState extends State<SignUp>{
   final _textZipController = TextEditingController();
   final _textEmailController = TextEditingController();
   final _textMobileController = TextEditingController();
+  final _textStreetController = TextEditingController();
+  final _textHouseFlatNoController = TextEditingController();
   final _focusName = FocusNode();
   final _focusLastName = FocusNode();
   final _focusEmail = FocusNode();
   final _focusMobile = FocusNode();
   final _focusZip = FocusNode();
+  final _focusStreet = FocusNode();
+  final _focusHouseNo = FocusNode();
   dynamic postResultList = <Result>[];
   bool _apiCall = false;
   UserRegBloc _userRegBloc;
-  String _validFirstName="",_validLastName="",_validEmail="",_validMobile="",_validZip="";
+  String _validFirstName="",_validLastName="",_validEmail="",_validMobile="",_validZip="",_validStreet="",_validHouseNo="";
   var address;
   bool flagEmailEnabled;
   bool flagPhoneEnabled;
@@ -130,7 +134,7 @@ class _SignUpState extends State<SignUp>{
               _validZip='Please enter valid Zipcode';
             }else{
               _validZip="";
-              address='  ${postResultList[0].postalCode}, ${postResultList[0].state},'
+              address='${postResultList[0].postalCode}, ${postResultList[0].state},'
                   '${postResultList[0].country}, ${postResultList[0].postalLocation},${postResultList[0].province}';
             }
             print(value.result);
@@ -387,6 +391,12 @@ class _SignUpState extends State<SignUp>{
         data: _textZipController.text,
         type: ValidateType.pincode
       );
+      _validStreet = UtilValidator.validate(
+        data: _textStreetController.text,
+      );
+      _validHouseNo = UtilValidator.validate(
+        data: _textHouseFlatNoController.text,
+      );
       _validEmail = UtilValidator.validate(
         data: _textEmailController.text,
         type:ValidateType.email
@@ -611,7 +621,7 @@ class _SignUpState extends State<SignUp>{
                         },
 
                         onSubmitted: (text) {
-                          UtilOther.fieldFocusChange(context, _focusZip, _focusEmail);
+                          UtilOther.fieldFocusChange(context, _focusZip, _focusMobile);
                           print('submitted zip');
                         },
                         onTapIcon: () async {
@@ -629,31 +639,92 @@ class _SignUpState extends State<SignUp>{
                       )),
                   //address from zipcode
                   if(postResultList.length>0)
-                    Padding(
-                      padding:EdgeInsets.only(top:postResultList.length>0?0:10
-                        ,left:20.0,right: 20.0,),
-                      child:
+                    Column(
+                      children: [
+                        Padding(
+                          padding:EdgeInsets.only(top:postResultList.length>0?0:10
+                            ,left:20.0,right: 20.0,),
+                          child:
 
-                      Container(
-                          height: 50.0,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Theme.of(context).primaryColor),
-                            color: AppTheme.verifyPhone.withOpacity(0.4),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child:Align(
-                            alignment: Alignment.centerLeft,
-                            child:
-                            Text(
+                          Container(
+                              height: 50.0,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Theme.of(context).primaryColor),
+                                color: AppTheme.verifyPhone.withOpacity(0.4),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child:Align(
+                                alignment: Alignment.centerLeft,
+                                child:
+                                Text(
 
-                              // '   ${postResultList[0].postalCode}, ${postResultList[0].state},${postResultList[0].country}, ${postResultList[0].postalLocation}'
-                                  address,
+                                  // '   ${postResultList[0].postalCode}, ${postResultList[0].state},${postResultList[0].country}, ${postResultList[0].postalLocation}'
+                                  " "+address,
 
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontWeight: FontWeight.w400,fontSize: 14.0,),),
-                          ))),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(fontWeight: FontWeight.w400,fontSize: 14.0,),),
+                              ))),
+                        //street no
+                        // Container(
+                        //     margin: EdgeInsets.only(top: 15.0,),
+                        //     child: AppTextInput(
+                        //       enabled: true,
+                        //       hintText:
+                        //       Translate.of(context).translate('street'),
+                        //       errorText: Translate.of(context).translate(_validStreet),
+                        //       icon: Icon(Icons.clear),
+                        //       controller: _textStreetController,
+                        //       focusNode: _focusStreet,
+                        //       keyboardType: TextInputType.number,
+                        //       textInputAction: TextInputAction.next,
+                        //       onChanged: (text) {
+                        //         setState(() {
+                        //           _validStreet = UtilValidator.validate(
+                        //             data: _textStreetController.text,
+                        //           );
+                        //         });
+                        //       },
+                        //       onSubmitted: (text) {
+                        //         UtilOther.fieldFocusChange(
+                        //             context, _focusStreet, _focusHouseNo);
+                        //       },
+                        //       onTapIcon: () async {
+                        //         await Future.delayed(Duration(milliseconds: 100));
+                        //         _textStreetController.clear();
+                        //       },
+                        //     )),
+                        // //house no/flat no
+                        // Container(
+                        //     margin: EdgeInsets.only(top: 15.0,),
+                        //     child: AppTextInput(
+                        //       enabled: true,
+                        //       hintText:
+                        //       Translate.of(context).translate('flat'),
+                        //       errorText: Translate.of(context).translate(_validHouseNo),
+                        //       icon: Icon(Icons.clear),
+                        //       controller: _textHouseFlatNoController,
+                        //       focusNode: _focusHouseNo,
+                        //       textInputAction: TextInputAction.next,
+                        //       onChanged: (text) {
+                        //         setState(() {
+                        //           _validHouseNo = UtilValidator.validate(
+                        //             data: _textStreetController.text,
+                        //           );
+                        //         });
+                        //       },
+                        //       onSubmitted: (text) {
+                        //         UtilOther.fieldFocusChange(
+                        //             context, _focusHouseNo, _focusEmail);
+                        //       },
+                        //       onTapIcon: () async {
+                        //         await Future.delayed(Duration(milliseconds: 100));
+                        //         _textHouseFlatNoController.clear();
+                        //       },
+                        //     )),
+                      ],
+                    ),
                   //    :
                   //     Padding(
                   //     padding:EdgeInsets.only(left:20.0,right: 20.0,),

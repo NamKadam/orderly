@@ -40,16 +40,19 @@ class _EditProfileState extends State<EditProfile>{
   final _textZipController = TextEditingController();
   final _textEmailController = TextEditingController();
   final _textMobileController = TextEditingController();
+  final _textStreetController = TextEditingController();
+  final _textHouseFlatNoController = TextEditingController();
   final _focusName = FocusNode();
   final _focusLastName = FocusNode();
   final _focusEmail = FocusNode();
   final _focusMobile = FocusNode();
   final _focusZip = FocusNode();
+  final _focusStreet = FocusNode();
+  final _focusHouseNo = FocusNode();
   dynamic postResultList = <Result>[];
 
-  var _validFirstName,_validLastName,_validEmail,_validMobile,_validZip;
+  var _validFirstName,_validLastName,_validEmail,_validMobile,_validZip,_validStreet,_validHouseNo,address;
   ProfileBloc _profileBloc;
-  var address;
   bool _apiCall = false;
 
 
@@ -82,7 +85,7 @@ class _EditProfileState extends State<EditProfile>{
 
             }else{
               _validZip="";
-              address='  ${postResultList[0].postalCode}, ${postResultList[0].state},'
+              address='${postResultList[0].postalCode}, ${postResultList[0].state},'
                   '${postResultList[0].country}, ${postResultList[0].postalLocation},${postResultList[0].province}';
             }
             print(value.result);
@@ -316,6 +319,12 @@ class _EditProfileState extends State<EditProfile>{
         data: _textZipController.text,
         type: ValidateType.pincode
       );
+      _validStreet = UtilValidator.validate(
+        data: _textStreetController.text,
+      );
+      _validHouseNo = UtilValidator.validate(
+        data: _textHouseFlatNoController.text,
+      );
       _validEmail = UtilValidator.validate(
           data: _textEmailController.text,
           type:ValidateType.email
@@ -402,7 +411,7 @@ class _EditProfileState extends State<EditProfile>{
                   ),
                 ),
                 //first name
-                Container(margin: EdgeInsets.only(top:25.0,left:20.0,right:20.0),
+                Container(margin: EdgeInsets.only(top:25.0),
                     child:AppTextInput(
                       hintText: Translate.of(context).translate('first_name'),
                       errorText: Translate.of(context).translate(_validFirstName),
@@ -425,9 +434,8 @@ class _EditProfileState extends State<EditProfile>{
                         _textFirstNameController.clear();
                       },
                     )),
-
                 //lastName
-                Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
+                Container(margin: EdgeInsets.only(top:15.0,),
                     child:AppTextInput(
                       hintText:Translate.of(context).translate('last_name'),
                       errorText: Translate.of(context).translate(_validLastName),
@@ -450,9 +458,8 @@ class _EditProfileState extends State<EditProfile>{
                         _textLastNameController.clear();
                       },
                     )),
-
                 //zip
-                Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
+                Container(margin: EdgeInsets.only(top:15.0),
                     child:
                     AppTextInput(
                       enabled: true,
@@ -484,7 +491,7 @@ class _EditProfileState extends State<EditProfile>{
                       },
 
                       onSubmitted: (text) {
-                        UtilOther.fieldFocusChange(context, _focusZip, _focusEmail);
+                        UtilOther.fieldFocusChange(context, _focusZip, _focusMobile);
                         print('submitted zip');
                       },
                       onTapIcon: () async {
@@ -502,32 +509,93 @@ class _EditProfileState extends State<EditProfile>{
                     )),
                 //address from zipcode
                 if(address!=null)
-                  Padding(
-                      padding:EdgeInsets.only(top:postResultList.length>0?0:10
-                        ,left:20.0,right: 20.0,),
-                      child:
+                  Column(
+                    children: [
+                      Padding(
+                          padding:EdgeInsets.only(top:postResultList.length>0?0:10
+                            ,),
+                          child:
 
-                      Container(
-                          height: 50.0,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Theme.of(context).primaryColor),
-                            color: AppTheme.verifyPhone.withOpacity(0.4),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child:Align(
-                            alignment: Alignment.centerLeft,
-                            child:
-                            Text(
-                            "  "+address
-                              , maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontWeight: FontWeight.w400,fontSize: 14.0,),),
-                          ))),
+                          Container(
+                              height: 50.0,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Theme.of(context).primaryColor),
+                                color: AppTheme.verifyPhone.withOpacity(0.4),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child:Align(
+                                alignment: Alignment.centerLeft,
+                                child:
+                                Text(
+                                "  "+address
+                                  , maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(fontWeight: FontWeight.w400,fontSize: 14.0,),),
+                              ))),
+                      // //street no
+                      // Container(
+                      //     margin: EdgeInsets.only(top: 15.0,),
+                      //     child: AppTextInput(
+                      //       enabled: true,
+                      //       hintText:
+                      //       Translate.of(context).translate('street'),
+                      //       errorText: Translate.of(context).translate(_validStreet),
+                      //       icon: Icon(Icons.clear),
+                      //       controller: _textStreetController,
+                      //       focusNode: _focusStreet,
+                      //       keyboardType: TextInputType.number,
+                      //       textInputAction: TextInputAction.next,
+                      //       onChanged: (text) {
+                      //         setState(() {
+                      //           _validStreet = UtilValidator.validate(
+                      //             data: _textStreetController.text,
+                      //           );
+                      //         });
+                      //       },
+                      //       onSubmitted: (text) {
+                      //         UtilOther.fieldFocusChange(
+                      //             context, _focusStreet, _focusHouseNo);
+                      //       },
+                      //       onTapIcon: () async {
+                      //         await Future.delayed(Duration(milliseconds: 100));
+                      //         _textStreetController.clear();
+                      //       },
+                      //     )),
+                      // //house no/flat no
+                      // Container(
+                      //     margin: EdgeInsets.only(top: 15.0,),
+                      //     child: AppTextInput(
+                      //       enabled: true,
+                      //       hintText:
+                      //       Translate.of(context).translate('flat'),
+                      //       errorText: Translate.of(context).translate(_validHouseNo),
+                      //       icon: Icon(Icons.clear),
+                      //       controller: _textHouseFlatNoController,
+                      //       focusNode: _focusHouseNo,
+                      //       textInputAction: TextInputAction.next,
+                      //       onChanged: (text) {
+                      //         setState(() {
+                      //           _validHouseNo = UtilValidator.validate(
+                      //             data: _textStreetController.text,
+                      //           );
+                      //         });
+                      //       },
+                      //       onSubmitted: (text) {
+                      //         UtilOther.fieldFocusChange(
+                      //             context, _focusHouseNo, _focusEmail);
+                      //       },
+                      //       onTapIcon: () async {
+                      //         await Future.delayed(Duration(milliseconds: 100));
+                      //         _textHouseFlatNoController.clear();
+                      //       },
+                      //     )),
+                    ],
+                  ),
                 //email
               Application.user.signUpType=="gmail"|| Application.user.signUpType=="facebook"
                 ?
-                Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
+                Container(margin: EdgeInsets.only(top:15.0),
                     child:
                     AppTextInput(
                       hintText: Translate.of(context).translate('email'),
@@ -553,7 +621,7 @@ class _EditProfileState extends State<EditProfile>{
                       },
                     ))
               :
-              Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
+              Container(margin: EdgeInsets.only(top:15.0,),
                   child:
                   AppTextInput(
                     hintText: Translate.of(context).translate('email'),
@@ -578,10 +646,8 @@ class _EditProfileState extends State<EditProfile>{
                       _textEmailController.clear();
                     },
                   )),
-
-
                 //mobile
-                Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
+                Container(margin: EdgeInsets.only(top:15.0,),
                     child:
                     AppTextInput(
                       enabled: Application.user.signUpType=="phone"?false:true,
@@ -616,7 +682,7 @@ class _EditProfileState extends State<EditProfile>{
                   children: [
                     //cancel
                     Expanded(
-                        child:Padding(padding: EdgeInsets.only(left:20.0,right:20.0,top:50.0),
+                        child:Padding(padding: EdgeInsets.only(left:20.0,right:20.0,top:50.0,bottom: 10.0),
 
                             child:ElevatedButton(
                               style: ElevatedButton.styleFrom(
@@ -648,7 +714,7 @@ class _EditProfileState extends State<EditProfile>{
                         )),
                     //save
                   Expanded(
-                      child:Padding(padding: EdgeInsets.only(left:20.0,right:20.0,top:50.0),
+                      child:Padding(padding: EdgeInsets.only(left:20.0,right:20.0,top:50.0,bottom: 10.0),
                       child:  BlocBuilder<ProfileBloc,ProfileState>(builder: (context,profile){
                         return BlocListener<ProfileBloc,ProfileState>(listener: (context,state){
                         if(state is EditProfSuccess){Application.user.mobile=state.user.mobile;

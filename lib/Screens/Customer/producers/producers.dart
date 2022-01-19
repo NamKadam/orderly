@@ -59,6 +59,7 @@ class _ProducersState extends State<Producers> {
   final _controller = RefreshController(initialRefresh: false);
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
 
+
   @override
   void initState() {
     // TODO: implement initState
@@ -67,7 +68,7 @@ class _ProducersState extends State<Producers> {
     cartModel = new CartModel();
     _producerProdBloc = BlocProvider.of<ProducerProdBloc>(context);
     totalProductTabList = [];
-    // paginationCall(_producerTabList);
+    paginationCall(_producerTabList);
     getData();
   }
 
@@ -567,7 +568,8 @@ class _ProducersState extends State<Producers> {
                   cartModel: model,
                   isConnectedToInternet: isconnectedToInternet,
                   pagingController: _pagingTabController,
-                  noData: flagDataNotAvailable)
+                  noData: flagDataNotAvailable,
+              )
 
             // Container(
             //     height: 300.0,
@@ -622,7 +624,7 @@ class _ProducersState extends State<Producers> {
           if (state is ProducerListTabSuccess) {
             _producerTabList = state.producerList;
             offset = 0;
-            // paginationCall(_producerTabList);
+            paginationCall(_producerTabList);
             _producerProdBloc.add(OnLoadingProductTabList(
                 producerId:
                     _producerTabList[producerListIndex].producerId.toString(),
@@ -634,6 +636,7 @@ class _ProducersState extends State<Producers> {
             if (__productTabList == null) {
               __productTabList = state.productList;
               totalProductTabList.addAll(__productTabList);
+
               if (__productTabList.length > 0) {
                 //for pagination
                 flagDataNotAvailable = false;
@@ -654,6 +657,7 @@ class _ProducersState extends State<Producers> {
 
           if (state is ProductTabLoading) {
             __productTabList = null;
+
           }
           //for addto cart
           if (state is AddToCartTabSuccess) {
@@ -699,6 +703,7 @@ class ExpandedSection extends StatefulWidget {
   CartModel cartModel;
   bool isConnectedToInternet;
   final bool expand, noData;
+
   PagingController<int, Product> pagingController;
 
   ExpandedSection(
@@ -725,6 +730,8 @@ class _ExpandedSectionState extends State<ExpandedSection>
 
   // List<AnimationController> expandController = [];
   int pos = 0;
+  static String convFee="";
+
 
   @override
   void initState() {
@@ -904,7 +911,7 @@ class _ExpandedSectionState extends State<ExpandedSection>
                   )),
               Padding(padding: EdgeInsets.only(top: 2)),
               Text(
-                product.ratePerHour.toString() + " "+Utils.getCurrencyPerLocale("en_IN")+"/"+product.unit,
+                product.ratePerHour.toString() + " "+Utils.getCurrencyPerLocale(product.currency)+"/"+product.unit,
                 maxLines: 1,
                 style: Theme.of(context).textTheme.subtitle2.copyWith(
                     fontWeight: FontWeight.w600,
@@ -1011,13 +1018,14 @@ class _ExpandedSectionState extends State<ExpandedSection>
     try {
       if (response.statusCode == 200) {
         var resp = json.decode(response.body);
+        convFee=resp['conv_fee'];
         if (resp['msg'] == "Successed") {
           final Iterable refactorCategory = resp['cart'] ?? [];
           final listCategory = refactorCategory.map((item) {
             return Cart.fromJson(item);
           }).toList();
           // //
-          model.addProduct(listCategory[0]);
+          model.addProduct(listCategory[0],convFee);
           AppBloc.authBloc.add(OnSaveCart(model));
           //for offline db
           // OrderlyDatabase.database.add(listCategory[0]);

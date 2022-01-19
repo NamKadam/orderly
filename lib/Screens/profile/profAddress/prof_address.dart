@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:orderly/Blocs/address/address_bloc.dart';
 import 'package:orderly/Blocs/address/address_event.dart';
 import 'package:orderly/Blocs/address/address_state.dart';
@@ -26,11 +27,10 @@ import 'package:shimmer/shimmer.dart';
 
 class ProfAddress extends StatefulWidget {
   bool fromProf;
-  AddTimeData addTimeData;
   List<Cart> cartDetails;
   String convFee,total,subTotal;
 
-  ProfAddress({Key key, @required this.addTimeData,
+  ProfAddress({Key key,
     @required this.cartDetails, @required this.convFee,
     @required this.total,@required this.subTotal,@required this.fromProf})
       : super(key: key);
@@ -89,6 +89,7 @@ class _ProfAddressState extends State<ProfAddress> {
   }
 
   Widget buildAddressListRadio(int index,List<Address> _addressList){
+    // print(_addressList);
     if(_addressList==null){
       return ListView.builder(
         padding: EdgeInsets.all(0),
@@ -190,7 +191,7 @@ class _ProfAddressState extends State<ProfAddress> {
                           // )
                         ),
                         Text(
-                          _addressList[index].address+","+_addressList[index].state+","+_addressList[index].country,
+                          _addressList[index].address,
                           style: TextStyle(
                               fontWeight:
                               FontWeight
@@ -283,6 +284,7 @@ class _ProfAddressState extends State<ProfAddress> {
 
   //fromprofile
   Widget buildAddressList(int index,List<Address> _addressList){
+
     if(_addressList==null){
       return ListView.builder(
         padding: EdgeInsets.all(0),
@@ -371,8 +373,8 @@ class _ProfAddressState extends State<ProfAddress> {
                                       .textColor),
                               // )
                             ),
-                    Text(
-                              _addressList[index].address+","+_addressList[index].state+","+_addressList[index].country,
+                         Text(
+                              _addressList[index].address,
                               style: TextStyle(
                                   fontWeight:
                                   FontWeight
@@ -598,34 +600,31 @@ class _ProfAddressState extends State<ProfAddress> {
                                       child:
                                       AppButton(
                                         onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) => Payment(
-                                                        addTimeData: widget.addTimeData,
-                                                        cartDet: widget.cartDetails,
-                                                        total: widget.total,
-                                                    subTotal:widget.subTotal,
-                                                    convFee: widget.convFee,
-                                                    address: _addressList[pos],
-                                                  )));
+                                          if(_addressList[pos].streetNo=="" && _addressList[pos].flatNo==""){
+                                            Fluttertoast.showToast(msg: "Please add/edit street and flat No. to proceed");
+                                          }else {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Payment(
+                                                          cartDet: widget
+                                                              .cartDetails,
+                                                          total: widget.total,
+                                                          subTotal: widget
+                                                              .subTotal,
+                                                          convFee: widget
+                                                              .convFee,
+                                                          address: _addressList[pos],
+                                                        )));
+                                          }
                                         },
                                         shape: const RoundedRectangleBorder(
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(50))),
                                         text: 'Continue',
                                       ))
-                                  // Container(
-                                  //   // margin: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-                                  //   margin: EdgeInsets.only(right:70,left:70.0),
-                                  //   width: double.infinity,
-                                  //   child: FlatButton(
-                                  //     child: Text('Continue', style: TextStyle(fontSize: 24)),
-                                  //     onPressed: () => {},
-                                  //     color: Colors.green,
-                                  //     textColor: Colors.white,
-                                  //   ),
-                                  // ),
+
                                   ),
                             ],
                           ))

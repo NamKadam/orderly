@@ -53,6 +53,7 @@ class Api {
   static const String PRIVACY_URL=HOST_URL+"privacy_policy";
   static const String FAQ=HOST_URL+"faq_list";
   static const String INVOICE=HOST_URL+"download_invoice";
+  static const String LOGOUT=HOST_URL+"logout";
 
   ///Login api
   static Future<dynamic> login(params) async {

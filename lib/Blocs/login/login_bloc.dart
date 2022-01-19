@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:orderly/Api/api.dart';
 import 'package:orderly/Blocs/authentication/authentication_event.dart';
 import 'package:orderly/Blocs/login/login_event.dart';
 import 'package:orderly/Blocs/login/login_state.dart';
@@ -142,31 +143,46 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       try {
         ///Begin start AuthBloc Event OnProcessLogout
         // AppBloc.authBloc.add(OnClear());
-       //updated on 10/02/2021
-        final deletePreferences = await userRepository.deleteUser();
-        final deletePreferCart = await userRepository.deleteCart();
+        //updated on 14/01/2022 for logout api to clear all cart data from server side
+        Map<String, String> params = {
+          'fb_id': Application.user.fbId,
+        };
 
-        ///Clear user Storage user via repository
-        Application.user = null;
-        Application.cartModel = null;
+        var response = await http.post(
+        Uri.parse(Api.LOGOUT),
+          body: params,
+        );
+        if (response.statusCode == 200) {
+          var resp = json.decode(response.body); //for dio dont need to convert to json.decode
+          if(resp['msg']=="Success"){
+            //updated on 10/02/2021
+            final deletePreferences = await userRepository.deleteUser();
+            final deletePreferCart = await userRepository.deleteCart();
 
-        // ///Clear token httpManager
-        // httpManager.getOption.headers = {};
-        // httpManager.postOption.headers = {};
-        ///Notify loading to UI
-        /////updated on 10/02/2021
-        if (deletePreferences ||deletePreferCart) {
-          yield LogoutSuccess();
+            ///Clear user Storage user via repository
+            Application.user = null;
+            Application.cartModel = null;
 
-              } else {
-                final String message = "Cannot delete user data to storage phone";
-                throw Exception(message);
-              }
-        // yield LogoutSuccess();
-      } catch (error) {
+            /////updated on 10/02/2021
+            if (deletePreferences || deletePreferCart) {
+              yield LogoutSuccess();
+            } else {
+              final String message = "Cannot delete user data to storage phone";
+              throw Exception(message);
+            }
+          }
+          else{
+            ///Notify loading to UI
+            yield LogoutFail("error");
+          }
+          }
+
+          // yield LogoutSuccess();
+        } catch (error) {
         ///Notify loading to UI
         yield LogoutFail(error.toString());
       }
+
     }
   }
 }

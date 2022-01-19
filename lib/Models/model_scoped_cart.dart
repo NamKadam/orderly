@@ -5,10 +5,12 @@ class CartModel extends Model {
   // List<Products> cart = [];
   List<Cart> cart = [];
   double totalCartValue = 0;
+  String conveyanceFee ="";
 
   int get total => cart.length;
 
-  void addProduct(product) {
+  void addProduct(product,convFee) {
+    conveyanceFee=convFee;
     int index = cart.indexWhere((i) => i.id == product.id);
     print(index);
     if (index != -1)

@@ -233,6 +233,7 @@ class _MainNavigationState extends State<MainNavigation> {
         AppBar(
           title: Text(
             title,
+            textAlign:TextAlign.left,
             style: TextStyle(
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w400,
@@ -402,17 +403,17 @@ class _MainNavigationState extends State<MainNavigation> {
         bottomNavigationBar: Padding(
             padding: EdgeInsets.all(5.0),
             child: Container(
-              height: 60.0,
+            // height: 65.0,
                 child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(color: Color(0xFF727C8E5C)),
-                      borderRadius: BorderRadius.circular(30.0),
+                      borderRadius: BorderRadius.circular(35.0),
                       //   boxShadow: [
                       // BoxShadow(color: Colors.black38, spreadRadius: 0, blurRadius: 10),
                       // ],
                     ),
                     child: ClipRRect(
-                        borderRadius: BorderRadius.circular(30.0),
+                        borderRadius: BorderRadius.circular(35.0),
                         child: Container(
                             child:
                           //   new BackdropFilter(

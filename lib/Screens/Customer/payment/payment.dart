@@ -30,12 +30,11 @@ import 'package:flutter_stripe/flutter_stripe.dart' as stripepay;
 
 
 class Payment extends StatefulWidget{
-  AddTimeData addTimeData;
   List<Cart> cartDet;
   String convFee,total,subTotal;
   Address address;
 
-  Payment({Key key,@required this.addTimeData,
+  Payment({Key key,
     @required this.cartDet,@required this.convFee,
     @required this.total,@required this.address,@required this.subTotal}):super(key:key);
 
@@ -113,6 +112,7 @@ class _PaymentState extends State<Payment>{
       'amount':amt,
       // 'amount':100,
       'name': 'Orderly',
+
       // 'order_ID':'order_HxKUd8b3dI9ZKl',
       'description': 'Producer 1',
       'prefill': {'contact': Application.user.mobile, 'email': Application.user.emailId},
@@ -176,7 +176,7 @@ class _PaymentState extends State<Payment>{
   {
     _cartBloc.add(PlaceOrder(
         deliveryType: AddTime.deliveryType,
-        deliveryDate: AddTime.dateTime,
+        deliveryDate: AddTime.isCheckedCharged==true?AddTime.currentDate:AddTime.dateTime,
         deliverySlot: AddTime.deliveryType=="0"
             ?"9"
             :AddTime.deliverySlot,
@@ -386,9 +386,8 @@ class _PaymentState extends State<Payment>{
                   if(state is PlaceOrderSuccess){
                     clearData();
                     UtilPreferences.remove(Preferences.cart);
+                    Application.cartModel = null;
                     _showMessage("Order Placed Successfully");
-
-
                   }
                   if(state is PlaceOrderFail){
                     _scaffoldKey.currentState.showSnackBar(SnackBar(content:Text("failed")));

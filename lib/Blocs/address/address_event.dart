@@ -13,13 +13,14 @@ class OnDeleteAddress extends AddressEvent {
 }
 
 class OnAddAdress extends AddressEvent {
-  String fullName,mobile,email,address,zipcode,city,state,country;
-  OnAddAdress({this.fullName,this.mobile,this.email,this.address,this.zipcode,this.city,this.state,this.country});
+  String fullName,mobile,email,address,zipcode,city,state,country,streetNo,flatNo;
+  OnAddAdress({this.fullName,this.mobile,this.email,this.address,this.zipcode,this.city,this.state,this.country,this.streetNo,this.flatNo});
 }
 
 class OnEditAdress extends AddressEvent {
-  String fullName,mobile,email,address,zipcode,city,state,country,addressId;
-  OnEditAdress({this.fullName,this.mobile,this.email,this.address,this.zipcode,this.city,this.state,this.country,this.addressId});
+  String fullName,mobile,email,address,zipcode,city,state,country,addressId,streetNo,flatNo;
+  OnEditAdress({this.fullName,this.mobile,this.email,this.address,this.zipcode,this.city,this.state,this.country,this.addressId,this.streetNo,
+  this.flatNo});
 }
 
 
