@@ -64,7 +64,7 @@ class _VerifyPhoneState extends State<VerifyPhone>{
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      // appBar: AppBar(),
+      appBar: AppBar(),
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(

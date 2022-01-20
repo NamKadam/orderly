@@ -32,6 +32,7 @@ class HomeBloc extends Bloc<HomeEvent,HomeState> {
       final ProducerListResp response = await homeRepository.fetchProducerCat();
       try {
         if (response.msg == "Success") {
+          String conveyanceFee=response.convfee;
           final Iterable refactorCategory = response.producer ?? [];
           final listCategory = refactorCategory.map((item) {
             //for offline db
@@ -45,7 +46,7 @@ class HomeBloc extends Bloc<HomeEvent,HomeState> {
 
           ///Sync UI
           // countProducer++;
-          yield ProducerListSuccess(producerList: listCategory);
+          yield ProducerListSuccess(producerList: listCategory,convFee:conveyanceFee);
         } else {
           yield ProducerListLoadFail();
         }

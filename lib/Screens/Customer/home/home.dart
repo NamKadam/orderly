@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dashed_circle/dashed_circle.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ import 'package:orderly/db/orderly_database.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:readmore/readmore.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:http/http.dart' as http;
 
@@ -64,7 +66,7 @@ class _HomeState extends State<Home> {
   int _pageSize;
   static bool AddedFlag=false;
   ScrollController _scrollController ;
-  static String convFee="";
+  String convFee="";
 
 
   Future<bool> _exitApp(BuildContext context) {
@@ -115,8 +117,9 @@ class _HomeState extends State<Home> {
               ),
               onPressed: () async{
                 // Navigator.of(context).pop();
+                print("conveyanceFee:-"+convFee);
                 final result=await Navigator.push(context, MaterialPageRoute(
-                    builder: (context)=> ShoppingCart(flagFrom:"0",cartModel: Application.cartModel) //from home
+                    builder: (context)=> ShoppingCart(flagFrom:"0",cartModel: Application.cartModel,conveyanceFee:convFee) //from home
                 ));
                 if(result!=null){
                   result[0]=Application.cartModel;
@@ -166,6 +169,7 @@ class _HomeState extends State<Home> {
     super.initState();
 
   }
+
 
   //// ADDING THE SCROLL LISTINER
   _scrollListener() {
@@ -237,6 +241,7 @@ class _HomeState extends State<Home> {
   }
 
 
+
   ///On Refresh List
   Future<void> _onRefresh() async {
     _producerList=null;
@@ -272,7 +277,6 @@ class _HomeState extends State<Home> {
     try{
       if (response.statusCode == 200) {
         var resp = json.decode(response.body);
-        convFee=resp['conv_fee'];
 
         if(resp['msg']=="Successed"){
           final Iterable refactorCategory = resp['cart'] ?? [];
@@ -280,7 +284,7 @@ class _HomeState extends State<Home> {
             return Cart.fromJson(item);
           }).toList();
           // //
-          model.addProduct(listCategory[0],convFee);
+          model.addProduct(listCategory[0]);
           AppBloc.authBloc.add(OnSaveCart(model));
           //for offline db
           // OrderlyDatabase.database.add(listCategory[0]);
@@ -288,7 +292,7 @@ class _HomeState extends State<Home> {
           if(model!=null){
             CartModel cartmodel=await
             Navigator.push(context, MaterialPageRoute(builder: (context)=>
-                ShoppingCart(flagFrom:"0",productList:totalProductList,price:price,cartModel:model)));
+                ShoppingCart(flagFrom:"0",productList:totalProductList,price:price,cartModel:model,conveyanceFee:convFee)));
             if(cartmodel!=null){
               Application.cartModel=cartmodel;
             }
@@ -297,7 +301,7 @@ class _HomeState extends State<Home> {
           print('exists');
           CartModel cartmodel=await
           Navigator.push(context, MaterialPageRoute(builder: (context)=>
-              ShoppingCart(flagFrom:"0",productList:totalProductList,price:price,cartModel:model)));
+              ShoppingCart(flagFrom:"0",productList:totalProductList,price:price,cartModel:model,conveyanceFee:convFee)));
           if(cartmodel!=null){
             Application.cartModel=cartmodel;
           }
@@ -366,12 +370,12 @@ class _HomeState extends State<Home> {
 
       return ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.only(right: 10),
+        padding: EdgeInsets.only(right: 12),
         itemBuilder: (context, index) {
           final item = producerList[index];
           return
             Padding(
-              padding: EdgeInsets.only(left: 12),
+              padding: EdgeInsets.only(left: 10),
               child:
               GestureDetector(
                   onTap: () async{
@@ -392,6 +396,78 @@ class _HomeState extends State<Home> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
+                      producerListIndex==index
+                  ?
+                  DashedCircle(
+                  child: Padding(padding: EdgeInsets.all(4.0),
+                child:
+                // CircleAvatar(
+                //   radius: 26.0,
+                //   child:
+                  CachedNetworkImage(
+                    imageUrl: item.producerIconUrl,
+                    imageBuilder: (context, imageProvider) {
+                      return Container(
+                        height: 50.0,
+                        width: 50.0,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(25),
+                          ),
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        child: Container(
+                          padding: EdgeInsets.all(8),
+                        ),
+                      );
+                    },
+                    placeholder: (context, url) {
+                      return Shimmer.fromColors(
+                        baseColor: Theme.of(context).hoverColor,
+                        highlightColor: Theme.of(context).highlightColor,
+                        enabled: true,
+                        child: Container(
+                          height: 50.0,
+                          width: 50.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(25),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    errorWidget: (context, url, error) {
+                      return Shimmer.fromColors(
+                        baseColor: Theme.of(context).hoverColor,
+                        highlightColor: Theme.of(context).highlightColor,
+                        enabled: true,
+                        child: Container(
+                          height: 50.0,
+                          width: 50.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(25),
+                            ),
+                          ),
+                          child: Icon(Icons.error),
+                        ),
+                      );
+                    },
+                  ),
+                  // backgroundColor: Colors.transparent,
+                  // backgroundImage: NetworkImage(
+                  //   item.producerIconUrl,
+                  // ),
+                ),
+              // ),
+              color: Theme.of(context).primaryColor,
+            )
+
+              :
                       CachedNetworkImage(
                         imageUrl: item.producerIconUrl,
                         imageBuilder: (context, imageProvider) {
@@ -664,11 +740,13 @@ class _HomeState extends State<Home> {
                             onPressed: () async {
                               // model.addProduct(_productList[index]);
                               // Navigator.push(context, MaterialPageRoute(builder: (context)=>ShoppingCart(price:_productList[index].ratePerHour.toString(),cartModel:model)));
+                              isconnectedToInternet = await ConnectivityCheck.checkInternetConnectivity();
                               if (isconnectedToInternet == true) {
                                 AddedFlag=true;
 
                                 await PsProgressDialog
                                     .showProgressWithoutMsg(context);
+
                                 AddedToCart(model,
                                     // _producerList[producerListIndex]
                                     //     .producerId.toString(),
@@ -835,7 +913,7 @@ class _HomeState extends State<Home> {
                     InkWell(
                       onTap: () async{
                         CartModel cartmodel=await Navigator.push(context, MaterialPageRoute(
-                            builder: (context)=> ShoppingCart(productList: totalProductList,)
+                            builder: (context)=> ShoppingCart(productList: totalProductList,conveyanceFee: Application.preferences.getString("convFee"),)
                         ));
                         if(cartmodel!=null){
                           setState(() {
@@ -900,6 +978,9 @@ class _HomeState extends State<Home> {
               // List<Product> _productList;
               if (state is ProducerListSuccess) {
                 _producerList = state.producerList;
+                // setConveyanceinShared(state.convFee);
+                Application.preferences.setString("convFee", state.convFee);
+                convFee=state.convFee;
                 print("prodList"+_producerList.toString());
                 offset=0;
                 // paginationCall(_producerList);
@@ -1750,6 +1831,7 @@ class _HomeState extends State<Home> {
   @override
   void dispose() {
     // _pagingController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 }

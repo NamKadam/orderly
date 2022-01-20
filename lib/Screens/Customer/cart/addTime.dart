@@ -199,10 +199,11 @@ class _TimeDataState extends State<TimeData> {
                                     onChanged: (bool value) {
                                       getCharges();
                                       setState(() {
-                                        AddTime.radioDay='';
-                                        AddTime.dateTime='';
-                                        AddTime.currentDate=currentDate;
-                                        AddTime.selectedDate=null;
+                                        // AddTime.radioDay='';
+                                        // AddTime.dateTime='';
+                                        // AddTime.currentDate='';
+                                        // // AddTime.currentDate=currentDate;
+                                        // AddTime.selectedDate=null;
                                         if(AddTime.isCheckedfree==true){
                                           AddTime.isCheckedfree=!AddTime.isCheckedfree;
                                         }
@@ -292,9 +293,9 @@ class _TimeDataState extends State<TimeData> {
                                                 !AddTime.isCheckedCharged;
                                           }
                                           AddTime.isCheckedfree = value;
-                                          AddTime.chargedAmt = null;
-
-                                          AddTime.deliveryType = "1";
+                                          // AddTime.chargedAmt = null;
+                                          //
+                                          // AddTime.deliveryType = "1";
                                         });
                                       }),
 
@@ -561,9 +562,16 @@ class _TimeDataState extends State<TimeData> {
                       // shape: shape,
                       onPressed: () {
                         if (AddTime.isCheckedCharged == true) {
+                          AddTime.radioDay='';
+                          AddTime.dateTime='';
+                          AddTime.selectedDate=null;
+                          AddTime.currentDate=currentDate;
+
                           Navigator.pop(context);
                         } else if (AddTime.isCheckedfree == true) {
                           print("deleiverySlot:-" + AddTime.deliverySlot);
+                          AddTime.chargedAmt = null;
+                          AddTime.deliveryType = "1";
 
                           if (AddTime.dateTime != "") {
                             if (AddTime.currentDate.compareTo(AddTime.selectedDate) == 0) {

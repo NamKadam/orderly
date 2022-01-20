@@ -327,7 +327,7 @@ class _MainNavigationState extends State<MainNavigation> {
                 InkWell(
                   onTap: (){
                     Navigator.push(context, MaterialPageRoute(
-                        builder: (context)=> ShoppingCart(flagFrom:"1",cartModel: Application.cartModel,) //from main page
+                        builder: (context)=> ShoppingCart(flagFrom:"1",cartModel: Application.cartModel,conveyanceFee: Application.preferences.getString("convFee"),) //from main page
                     ));
                   },
                   child: Stack(

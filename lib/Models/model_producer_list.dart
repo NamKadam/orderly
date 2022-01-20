@@ -2,13 +2,15 @@ class ProducerListResp {
   dynamic status;
   dynamic producer;
   dynamic msg;
+  dynamic convfee;
 
-  ProducerListResp({this.status, this.producer, this.msg});
+  ProducerListResp({this.status, this.producer, this.msg,this.convfee});
 
   factory ProducerListResp.fromJson(Map<dynamic, dynamic> json) {
     try {
       return ProducerListResp(
         msg: json['msg'],
+        convfee: json['conv_fee'],
         producer: json['producer'],
         status: json['status'].toString(),
       );
@@ -17,6 +19,7 @@ class ProducerListResp {
         msg: false,
         producer: null,
         status: '',
+        convfee: ''
       );
     }
   }

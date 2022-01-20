@@ -33,6 +33,7 @@ class ProducerProdBloc extends Bloc<ProducerProdEvent,ProducerProdState> {
       final ProducerListResp response = await producerProdRepo.fetchProducerCat();
       try {
         if (response.msg == "Success") {
+          String conveyanceFee=response.convfee;
           final Iterable refactorCategory = response.producer ?? [];
           final listCategory = refactorCategory.map((item) {
 
@@ -40,7 +41,7 @@ class ProducerProdBloc extends Bloc<ProducerProdEvent,ProducerProdState> {
           }).toList();
 
 
-          yield ProducerListTabSuccess(producerList: listCategory);
+          yield ProducerListTabSuccess(producerList: listCategory,convFee: conveyanceFee);
         } else {
           yield ProducerListTabLoadFail();
         }

@@ -41,7 +41,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
 class ShoppingCart extends StatefulWidget {
-  String producerId,productId,qty,price,flagFrom;
+  String producerId,productId,qty,price,flagFrom,conveyanceFee;
   CartModel cartModel;
   List<Product> productList;
 
@@ -51,7 +51,8 @@ class ShoppingCart extends StatefulWidget {
   // ShoppingCart({Key key, @required this.producerId, @required this.model})
   //     : super(key: key);
 
-  ShoppingCart({Key key, @required this.price,@required this.cartModel,@required this.productList,@required this.flagFrom})
+  ShoppingCart({Key key, @required this.price,@required this.cartModel,@required this.productList,@required this.flagFrom,
+  @required this.conveyanceFee})
       : super(key: key);
 
   _ShoppingCartState createState() => _ShoppingCartState();
@@ -315,7 +316,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
       }
     }
 
-    OverallTotalVal = totalCartValue + double.parse(cartModel.conveyanceFee);
+    OverallTotalVal = totalCartValue + double.parse(widget.conveyanceFee);
     setState(() {});
   }
 
@@ -607,7 +608,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
                                                 calculateOverallTotal(
                                                     model.totalCartValue,
-                                                    double.parse(cartModel.conveyanceFee));
+                                                    double.parse(widget.conveyanceFee));
 
                                                 // calculateTotal(model.cart,index,flagRemove);
 
@@ -642,7 +643,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                               // calculateTotal(model.cart,index,"0");
                                               calculateOverallTotal(
                                                   model.totalCartValue,
-                                                  double.parse(cartModel.conveyanceFee));
+                                                  double.parse(widget.conveyanceFee));
                                             },
                                             child: Image.asset(
                                               Images.plus,
@@ -748,7 +749,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
       _cartList=widget.cartModel.cart.length>0 ||widget.cartModel!=null?widget.cartModel.cart:null;
       cartModel=widget.cartModel;
     }
-    calculateOverallTotal(cartModel.totalCartValue, double.parse(cartModel.conveyanceFee));
+    calculateOverallTotal(cartModel.totalCartValue, double.parse(widget.conveyanceFee));
     // calculateOverallTotal(Application.cartModel.totalCartValue, conveniencFee);
     print(_cartList);
 
@@ -937,7 +938,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                               "Poppins"),
                                                         ),
                                                         Text(
-                                                          Utils.getCurrencyPerLocale(cartModel.cart[0].currency) + " " + cartModel.conveyanceFee.toString(),
+                                                          Utils.getCurrencyPerLocale(cartModel.cart[0].currency) + " " + widget.conveyanceFee.toString(),
                                                           style: Theme.of(context)
                                                               .textTheme
                                                               .caption
@@ -1099,19 +1100,20 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                             print("currentDate:-" + currentDate);
 
                                                             // if (AddTime.dateTime == "") {
-                                                            if (AddTime.isCheckedCharged == true) {
+                                                            if (AddTime.dateTime != "") {
                                                               // AddTime.dateTime = currentDate;
                                                               // AddTime.time=DateFormat('hh:mm a').format(DateTime.now());
                                                               // AddTime.currentDate=AddTime.dateTime;
-                                                              AddTime.selectedDate=AddTime.currentDate;
-                                                              date=(DateFormat('dd MMM yyyy').format(DateTime.parse(AddTime.currentDate)))+" "+AddTime.time;
-                                                              print("date:-"+date);
 
-                                                            } else {
                                                               date=DateFormat('dd MMM yyyy').format(DateTime.parse(AddTime.dateTime));
                                                               String day=AddTime.deliverySlot=="0"?"Morning":"Evening";
                                                               date=date+" - "+day;
                                                               print("date:-"+date+"- "+AddTime.deliverySlot=="0"?"Morning":"Evening");
+
+                                                            } else {
+                                                              AddTime.selectedDate=AddTime.currentDate;
+                                                              date=(DateFormat('dd MMM yyyy').format(DateTime.parse(AddTime.currentDate)))+" "+AddTime.time;
+                                                              print("date:-"+date);
                                                             }
                                                             //for amt
                                                             // if(addTimeresult.chargeAmt!=null){
@@ -1124,11 +1126,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                                 print(e);
                                                               }
                                                               // widget.cartModel.totalCartValue+=int.parse(addTimeresult.chargeAmt);
-                                                            }else{
+                                                            }
+                                                            else{
                                                               // subTotal=Application.cartModel.totalCartValue.toInt();
                                                               subTotal=cartModel.totalCartValue.toInt();
                                                             }
-                                                            calculateOverallTotal(subTotal.toDouble(), double.parse(cartModel.conveyanceFee));
+                                                            calculateOverallTotal(subTotal.toDouble(), double.parse(widget.conveyanceFee));
 
                                                             setState(() {
 
@@ -1176,7 +1179,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                                 cartDetails: cartModel.cart,
                                                                 // subTotal:Application.cartModel.totalCartValue.toString(),
                                                                 subTotal:cartModel.totalCartValue.toString(),
-                                                                convFee:cartModel.conveyanceFee.toString(),
+                                                                convFee:widget.conveyanceFee.toString(),
                                                                 total:OverallTotalVal.toString(),
                                                               )
                                                               )

@@ -58,6 +58,7 @@ class _ProducersState extends State<Producers> {
   int offset = 0, producerListIndex = 0;
   final _controller = RefreshController(initialRefresh: false);
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
+  String convFee="";
 
 
   @override
@@ -316,7 +317,7 @@ class _ProducersState extends State<Producers> {
         ));
   }
 
-  Widget buildCategory(List<Producer> producerList, CartModel model) {
+  Widget buildCategory(List<Producer> producerList, CartModel model, String convFee) {
     if (producerList == null) {
       return ListView.builder(
         scrollDirection: Axis.vertical,
@@ -569,6 +570,7 @@ class _ProducersState extends State<Producers> {
                   isConnectedToInternet: isconnectedToInternet,
                   pagingController: _pagingTabController,
                   noData: flagDataNotAvailable,
+                conveyanceFee:convFee
               )
 
             // Container(
@@ -623,6 +625,8 @@ class _ProducersState extends State<Producers> {
                 builder: (context, state) {
           if (state is ProducerListTabSuccess) {
             _producerTabList = state.producerList;
+            convFee=state.convFee;
+
             offset = 0;
             paginationCall(_producerTabList);
             _producerProdBloc.add(OnLoadingProductTabList(
@@ -680,7 +684,7 @@ class _ProducersState extends State<Producers> {
                             //       child:
                             //       Container(child:
                         SingleChildScrollView(child:
-                            buildCategory(_producerTabList, model)))
+                            buildCategory(_producerTabList, model,convFee)))
                     // buildCategory(_producerTabList,model)
                     // ),
                     //       ])
@@ -703,6 +707,7 @@ class ExpandedSection extends StatefulWidget {
   CartModel cartModel;
   bool isConnectedToInternet;
   final bool expand, noData;
+  String conveyanceFee;
 
   PagingController<int, Product> pagingController;
 
@@ -715,7 +720,8 @@ class ExpandedSection extends StatefulWidget {
       this.cartModel,
       this.isConnectedToInternet,
       this.pagingController,
-      this.noData});
+      this.noData,
+      this.conveyanceFee});
 
   @override
   _ExpandedSectionState createState() => _ExpandedSectionState();
@@ -730,7 +736,6 @@ class _ExpandedSectionState extends State<ExpandedSection>
 
   // List<AnimationController> expandController = [];
   int pos = 0;
-  static String convFee="";
 
 
   @override
@@ -1018,14 +1023,13 @@ class _ExpandedSectionState extends State<ExpandedSection>
     try {
       if (response.statusCode == 200) {
         var resp = json.decode(response.body);
-        convFee=resp['conv_fee'];
         if (resp['msg'] == "Successed") {
           final Iterable refactorCategory = resp['cart'] ?? [];
           final listCategory = refactorCategory.map((item) {
             return Cart.fromJson(item);
           }).toList();
           // //
-          model.addProduct(listCategory[0],convFee);
+          model.addProduct(listCategory[0]);
           AppBloc.authBloc.add(OnSaveCart(model));
           //for offline db
           // OrderlyDatabase.database.add(listCategory[0]);
@@ -1038,7 +1042,8 @@ class _ExpandedSectionState extends State<ExpandedSection>
                         flagFrom: "0",
                         price: price,
                         cartModel: model,
-                        productList: widget.totalProductTabList)));
+                        productList: widget.totalProductTabList,
+                    conveyanceFee: widget.conveyanceFee,)));
           }
         } else {
           print('exists');
@@ -1049,7 +1054,8 @@ class _ExpandedSectionState extends State<ExpandedSection>
                       flagFrom: "0",
                       price: price,
                       cartModel: model,
-                      productList: widget.totalProductTabList)));
+                      productList: widget.totalProductTabList,
+                    conveyanceFee: widget.conveyanceFee,)));
         }
         // await PsProgressDialog.showProgressWithoutMsg(context);
       }

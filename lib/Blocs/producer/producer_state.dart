@@ -14,7 +14,8 @@ class AddToCartTabLoading extends ProducerProdState {}
 
 class ProducerListTabSuccess extends ProducerProdState {
   final List<Producer> producerList;
-  ProducerListTabSuccess({this.producerList});
+  final String convFee;
+  ProducerListTabSuccess({this.producerList,this.convFee});
 }
 
 class ProductListTabSuccess extends ProducerProdState {

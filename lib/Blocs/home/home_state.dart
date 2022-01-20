@@ -15,7 +15,8 @@ class AddToCartLoading extends HomeState {}
 
 class ProducerListSuccess extends HomeState {
   final List<Producer> producerList;
-  ProducerListSuccess({this.producerList});
+  final String convFee;
+  ProducerListSuccess({this.producerList,this.convFee});
 }
 
 class ProductListSuccess extends HomeState {

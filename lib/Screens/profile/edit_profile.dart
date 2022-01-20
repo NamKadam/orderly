@@ -82,7 +82,7 @@ class _EditProfileState extends State<EditProfile>{
             postResultList = value.result;
             if(postResultList.length<=0){
               _validZip='Please enter valid Zipcode';
-
+              address="";
             }else{
               _validZip="";
               address='${postResultList[0].postalCode}, ${postResultList[0].state},'
@@ -468,7 +468,7 @@ class _EditProfileState extends State<EditProfile>{
                       icon: Icon(Icons.clear),
                       controller: _textZipController,
                       focusNode: _focusZip,
-                      maxLength: 5,
+                      maxLength: 6,
                       keyboardType: TextInputType.number,
                       inputFormatters: <TextInputFormatter>[
                         FilteringTextInputFormatter.digitsOnly
@@ -508,7 +508,7 @@ class _EditProfileState extends State<EditProfile>{
                       },
                     )),
                 //address from zipcode
-                if(address!=null)
+                if(address!="")
                   Column(
                     children: [
                       Padding(
