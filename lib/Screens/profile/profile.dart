@@ -10,6 +10,7 @@ import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/imageFile.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
 import 'package:orderly/Screens/profile/edit_profile.dart';
+import 'package:orderly/Screens/user/choiceScreen.dart';
 import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/authentication.dart';
@@ -87,7 +88,13 @@ class _ProfileState extends State<Profile>{
       if (state is LogoutSuccess) //added on 9/12/2020
       {
         // Navigator.popAndPushNamed(context, Routes.roleType);
-        Navigator.pushReplacementNamed(context, Routes.roleType);
+        // Navigator.of(context).pushReplacementNamed(Routes.roleType);
+        // Navigator.pushReplacementNamed(context, Routes.roleType);
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => ChoiceScreen()),
+              (Route<dynamic> route) => false,
+        );
 
       }
       },
@@ -270,6 +277,7 @@ class _CardViewWidgetState extends State<CardViewWidget>{
     String url() {
       if (Platform.isIOS) {
         // return "whatsapp://wa.me/$numbers/?text=${Uri.parse("Hello")}";
+        // https://api.whatsapp.com/send?phone
         return "https://wa.me/$numbers/?text=${Uri.parse("Hello")}";
       } else {
         return "whatsapp://send?phone=$numbers&text=${Uri.parse("Hello")}";

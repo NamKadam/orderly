@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -101,12 +102,22 @@ class _SplashScreenState extends State<SplashScreen> {
           ),
           Positioned(
             bottom: 15.0,
-              child: Text("version "+Application.version,style: TextStyle(
+              child:Platform.isAndroid
+              ?
+              Text("version "+Application.version,style: TextStyle(
                 fontSize: 16.0,
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w500,
                 color: AppTheme.textColor
-              ),))
+              ),)
+              :
+              Text("version "+Application.Iosversion,style: TextStyle(
+                  fontSize: 16.0,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w500,
+                  color: AppTheme.textColor
+              ),)
+          )
         ],
       )),
     );

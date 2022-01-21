@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -199,7 +201,7 @@ class _MyOrdersState extends State<MyOrders> {
                                             Container(
                                                 margin:
                                                     EdgeInsets.only(top: 5.0),
-                                                width: 200.0,
+                                                width: Platform.isAndroid?200.0:190,
                                                 height: 45.0,
                                                 child: TextFormField(
                                                   controller: _searchcontroller,

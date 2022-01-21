@@ -37,6 +37,7 @@ class AddEditAddressState extends State<AddEditAddress> {
   final _textMobileController = TextEditingController();
   final _textStreetController = TextEditingController();
   final _textHouseFlatNoController = TextEditingController();
+  final _textAddressController = TextEditingController();
   final _focusName = FocusNode();
   final _focusLastName = FocusNode();
   final _focusMobile = FocusNode();
@@ -44,8 +45,9 @@ class AddEditAddressState extends State<AddEditAddress> {
   final _focusEmail = FocusNode();
   final _focusStreet = FocusNode();
   final _focusHouseNo = FocusNode();
+  final _focusAddress = FocusNode();
 
-  var _validFirstName, _validLastName, _validMobile, _validZip, _validEmail,_validStreet,_validHouseNo, address;
+  var _validFirstName, _validLastName, _validMobile, _validZip, _validEmail,_validStreet,_validHouseNo,_validAddress, address;
   dynamic postResultList = <Result>[];
   bool _apiCall = false;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -70,6 +72,7 @@ class AddEditAddressState extends State<AddEditAddress> {
     _textZipController.text = widget.addressData.zipcode;
     _textMobileController.text = widget.addressData.mobile;
     address=widget.addressData.address;
+    _textAddressController.text=address;
     _textStreetController.text=widget.addressData.streetNo;
     _textHouseFlatNoController.text=widget.addressData.flatNo;
   }
@@ -85,10 +88,14 @@ class AddEditAddressState extends State<AddEditAddress> {
             postResultList = value.result;
             if(postResultList.length<=0){
               _validZip='Please enter valid Zipcode';
+              _textAddressController.text="";
             }else{
-              _validZip="";
-              address='${postResultList[0].postalCode}, ${postResultList[0].state},'
+              _validZip=null;
+              _textAddressController.text='${postResultList[0].postalCode}, ${postResultList[0].state},'
                   '${postResultList[0].country}, ${postResultList[0].postalLocation},${postResultList[0].province}';
+              address=_textAddressController.text;
+              // address='${postResultList[0].postalCode}, ${postResultList[0].state},'
+              //     '${postResultList[0].country}, ${postResultList[0].postalLocation},${postResultList[0].province}';
             }
             print(value.result);
 
@@ -340,34 +347,57 @@ class AddEditAddressState extends State<AddEditAddress> {
               if (postResultList.length > 0 || widget.flagAddEdit=="1")
                 Column(
                   children: [
-                    Padding(
-                        padding: EdgeInsets.only(
-                          top: postResultList.length > 0 ? 0 : 10,
-                          left: 20.0,
-                          right: 20.0,
-                        ),
-                        child: Container(
-                            height: 50.0,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              border:
-                              Border.all(color: Theme.of(context).primaryColor),
-                              color: AppTheme.verifyPhone.withOpacity(0.4),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                // '   ${postResultList[0].postalCode}, ${postResultList[0].state},${postResultList[0].country}, ${postResultList[0].postalLocation}',
-                                "  "+address,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14.0,
-                                ),
-                              ),
-                            ))),
+                    // Padding(
+                    //     padding: EdgeInsets.only(
+                    //       top: postResultList.length > 0 ? 0 : 10,
+                    //       left: 20.0,
+                    //       right: 20.0,
+                    //     ),
+                    //     child: Container(
+                    //         height: 50.0,
+                    //         alignment: Alignment.center,
+                    //         decoration: BoxDecoration(
+                    //           border:
+                    //           Border.all(color: Theme.of(context).primaryColor),
+                    //           color: AppTheme.verifyPhone.withOpacity(0.4),
+                    //           borderRadius: BorderRadius.circular(10),
+                    //         ),
+                    //         child: Align(
+                    //           alignment: Alignment.centerLeft,
+                    //           child: Text(
+                    //             // '   ${postResultList[0].postalCode}, ${postResultList[0].state},${postResultList[0].country}, ${postResultList[0].postalLocation}',
+                    //             "  "+address,
+                    //             maxLines: 1,
+                    //             overflow: TextOverflow.ellipsis,
+                    //             style: TextStyle(
+                    //               fontWeight: FontWeight.w400,
+                    //               fontSize: 14.0,
+                    //             ),
+                    //           ),
+                    //         ))),
+                    //address
+                    Container(
+                        margin: EdgeInsets.only(top: 15.0, left: 20.0, right: 20.0),
+                        child: AppTextInput(
+                          enabled: false,
+                          maxLines: 2,
+                          // hintText: Translate.of(context).translate('address'),
+                          // errorText: Translate.of(context).translate(_validAddress),
+                          // icon: Icon(Icons.clear),
+                          controller: _textAddressController,
+                          // focusNode: _focusAddress,
+                          keyboardType: TextInputType.text,
+                          textInputAction: TextInputAction.next,
+                          onChanged: (text) {
+                            setState(() {
+                            _validAddress = UtilValidator.validate(
+                                data: _textAddressController.text,
+                            );
+
+                            });
+                          },
+
+                        )),
                    //street no
                     Container(
                         margin: EdgeInsets.only(top: 15.0, left: 20.0, right: 20.0),

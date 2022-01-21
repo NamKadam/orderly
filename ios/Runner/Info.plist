@@ -44,10 +44,12 @@
           <array>
             <string>https</string>
             <string>http</string>
+            <string>whatsapp</string>
           </array>
 	<array>
         <string>UIInterfaceOrientationPortrait</string>
     </array>
+
 	<false/>
 </dict>
 </plist>

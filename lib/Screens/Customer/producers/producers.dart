@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -864,7 +865,7 @@ class _ExpandedSectionState extends State<ExpandedSection>
                 imageUrl: product.productImage,
                 imageBuilder: (context, imageProvider) {
                   return Container(
-                    height: 80,
+                    height: Platform.isAndroid?80:74,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.zero,
                       image: DecorationImage(
@@ -880,7 +881,7 @@ class _ExpandedSectionState extends State<ExpandedSection>
                     highlightColor: Theme.of(context).highlightColor,
                     enabled: true,
                     child: Container(
-                      height: 80,
+                      height: Platform.isAndroid?80:74,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.zero,
                         color: Colors.white,
@@ -894,7 +895,7 @@ class _ExpandedSectionState extends State<ExpandedSection>
                     highlightColor: Theme.of(context).highlightColor,
                     enabled: true,
                     child: Container(
-                      height: 80,
+                      height: Platform.isAndroid?80:74,
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.zero,

@@ -170,7 +170,6 @@ class _HomeState extends State<Home> {
 
   }
 
-
   //// ADDING THE SCROLL LISTINER
   _scrollListener() {
     if (_scrollController.offset >=
@@ -661,7 +660,7 @@ class _HomeState extends State<Home> {
                   imageUrl: product[index].productImage,
                   imageBuilder: (context, imageProvider) {
                     return Container(
-                      height: 110,
+                      height: Platform.isAndroid?110:98,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.zero,
                         image: DecorationImage(
@@ -677,7 +676,7 @@ class _HomeState extends State<Home> {
                       highlightColor: Theme.of(context).highlightColor,
                       enabled: true,
                       child: Container(
-                        height: 110,
+                        height: Platform.isAndroid?110:98,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.zero,
                           color: Colors.white,
@@ -691,7 +690,7 @@ class _HomeState extends State<Home> {
                       highlightColor: Theme.of(context).highlightColor,
                       enabled: true,
                       child: Container(
-                        height: 110,
+                        height: Platform.isAndroid?110:98,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.zero,
