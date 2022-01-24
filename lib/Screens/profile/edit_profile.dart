@@ -42,6 +42,8 @@ class _EditProfileState extends State<EditProfile>{
   final _textMobileController = TextEditingController();
   final _textStreetController = TextEditingController();
   final _textHouseFlatNoController = TextEditingController();
+  final _textAddressController = TextEditingController();
+
   final _focusName = FocusNode();
   final _focusLastName = FocusNode();
   final _focusEmail = FocusNode();
@@ -51,7 +53,7 @@ class _EditProfileState extends State<EditProfile>{
   final _focusHouseNo = FocusNode();
   dynamic postResultList = <Result>[];
 
-  var _validFirstName,_validLastName,_validEmail,_validMobile,_validZip,_validStreet,_validHouseNo,address;
+  var _validFirstName,_validLastName,_validEmail,_validMobile,_validZip,_validAddress,address;
   ProfileBloc _profileBloc;
   bool _apiCall = false;
 
@@ -70,6 +72,7 @@ class _EditProfileState extends State<EditProfile>{
     _textEmailController.text=Application.user.emailId.toString()=="null"?"":Application.user.emailId.toString();
     _textMobileController.text=Application.user.mobile.toString();
     address=Application.user.address;
+    _textAddressController.text=Application.user.address;
     _textZipController.text=Application.user.zipcode.toString()!="null"?Application.user.zipcode.toString():"";
 
   }
@@ -82,11 +85,12 @@ class _EditProfileState extends State<EditProfile>{
             postResultList = value.result;
             if(postResultList.length<=0){
               _validZip='Please enter valid Zipcode';
-              address="";
+              _textAddressController.text="";
             }else{
-              _validZip="";
+              _validZip=null;
               address='${postResultList[0].postalCode}, ${postResultList[0].state},'
                   '${postResultList[0].country}, ${postResultList[0].postalLocation},${postResultList[0].province}';
+              _textAddressController.text=address;
             }
             print(value.result);
 
@@ -319,12 +323,7 @@ class _EditProfileState extends State<EditProfile>{
         data: _textZipController.text,
         type: ValidateType.pincode
       );
-      _validStreet = UtilValidator.validate(
-        data: _textStreetController.text,
-      );
-      _validHouseNo = UtilValidator.validate(
-        data: _textHouseFlatNoController.text,
-      );
+
       _validEmail = UtilValidator.validate(
           data: _textEmailController.text,
           type:ValidateType.email
@@ -508,31 +507,51 @@ class _EditProfileState extends State<EditProfile>{
                       },
                     )),
                 //address from zipcode
-                if(address!="")
+                if(_textAddressController.text!="")
                   Column(
                     children: [
-                      Padding(
-                          padding:EdgeInsets.only(top:postResultList.length>0?0:10
-                            ,),
-                          child:
+                      // Padding(
+                      //     padding:EdgeInsets.only(top:postResultList.length>0?0:10
+                      //       ,),
+                      //     child:
+                      //
+                      //     Container(
+                      //         height: 50.0,
+                      //         alignment: Alignment.center,
+                      //         decoration: BoxDecoration(
+                      //           border: Border.all(color: Theme.of(context).primaryColor),
+                      //           color: AppTheme.verifyPhone.withOpacity(0.4),
+                      //           borderRadius: BorderRadius.circular(10),
+                      //         ),
+                      //         child:Align(
+                      //           alignment: Alignment.centerLeft,
+                      //           child:
+                      //           Text(
+                      //           "  "+address
+                      //             , maxLines: 1,
+                      //             overflow: TextOverflow.ellipsis,
+                      //             style: TextStyle(fontWeight: FontWeight.w400,fontSize: 14.0,),),
+                      //         ))),
+                      //updated address part
+                      Container(
+                          margin: EdgeInsets.only(top:15.0),
+                          child:AppTextInput(
+                            enabled: false,
+                            maxLines: 2,
+                            controller: _textAddressController,
+                            // focusNode: _focusAddress,
+                            keyboardType: TextInputType.text,
+                            textInputAction: TextInputAction.next,
 
-                          Container(
-                              height: 50.0,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Theme.of(context).primaryColor),
-                                color: AppTheme.verifyPhone.withOpacity(0.4),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child:Align(
-                                alignment: Alignment.centerLeft,
-                                child:
-                                Text(
-                                "  "+address
-                                  , maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(fontWeight: FontWeight.w400,fontSize: 14.0,),),
-                              ))),
+                            onChanged: (text) {
+                              setState(() {
+                                _validAddress = UtilValidator.validate(
+                                  data: _textAddressController.text,
+                                );
+                              });
+                            },
+
+                          )),
                       // //street no
                       // Container(
                       //     margin: EdgeInsets.only(top: 15.0,),

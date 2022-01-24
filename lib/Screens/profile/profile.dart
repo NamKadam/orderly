@@ -136,6 +136,7 @@ class _ProfileState extends State<Profile>{
             //updated on 14/01/2022
               AppButton(
                 onPressed: (){
+                  Authentication.signOut(context: context, signInFlag: "0");
                  _loginBloc.add(OnLogout());
                 },
                 shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),

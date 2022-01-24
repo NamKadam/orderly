@@ -57,17 +57,17 @@ class _SignUpState extends State<SignUp>{
   final _textMobileController = TextEditingController();
   final _textStreetController = TextEditingController();
   final _textHouseFlatNoController = TextEditingController();
+  final _textAddressController = TextEditingController();
   final _focusName = FocusNode();
   final _focusLastName = FocusNode();
   final _focusEmail = FocusNode();
   final _focusMobile = FocusNode();
   final _focusZip = FocusNode();
-  final _focusStreet = FocusNode();
-  final _focusHouseNo = FocusNode();
+  final _focusAddress = FocusNode();
   dynamic postResultList = <Result>[];
   bool _apiCall = false;
   UserRegBloc _userRegBloc;
-  String _validFirstName="",_validLastName="",_validEmail="",_validMobile="",_validZip="",_validStreet="",_validHouseNo="";
+  var _validFirstName,_validLastName,_validEmail,_validMobile,_validZip,_validAddress;
   var address;
   bool flagEmailEnabled;
   bool flagPhoneEnabled;
@@ -85,6 +85,7 @@ class _SignUpState extends State<SignUp>{
     _validZip=null;
     _validEmail=null;
     _validMobile=null;
+    _validAddress=null;
     if(widget.user.displayName!=null) {
       var fullname = widget.user.displayName.toString().split(" ");
       var firstName = fullname[0];
@@ -132,10 +133,12 @@ class _SignUpState extends State<SignUp>{
             postResultList = value.result;
             if(postResultList.length<=0){
               _validZip='Please enter valid Zipcode';
+              _textAddressController.text="";
             }else{
-              _validZip="";
+              _validZip=null;
               address='${postResultList[0].postalCode}, ${postResultList[0].state},'
                   '${postResultList[0].country}, ${postResultList[0].postalLocation},${postResultList[0].province}';
+              _textAddressController.text=address;
             }
             print(value.result);
 
@@ -391,12 +394,7 @@ class _SignUpState extends State<SignUp>{
         data: _textZipController.text,
         type: ValidateType.pincode
       );
-      _validStreet = UtilValidator.validate(
-        data: _textStreetController.text,
-      );
-      _validHouseNo = UtilValidator.validate(
-        data: _textHouseFlatNoController.text,
-      );
+
       _validEmail = UtilValidator.validate(
         data: _textEmailController.text,
         type:ValidateType.email
@@ -412,7 +410,8 @@ class _SignUpState extends State<SignUp>{
     //   _showMessage("Please upload your image ");
     // }else
 
-    if (_validFirstName == null && _validLastName==null&&_validZip==null&&_validEmail==null&&_validMobile==null) {
+    if (_validFirstName == null && _validLastName==null&&_validZip==null&&_validEmail==null&&_validMobile==null &&_validAddress==null) {
+
 
       _userRegBloc.add(OnUserRegister(
         firstName: _textFirstNameController.text.toString(),
@@ -421,7 +420,8 @@ class _SignUpState extends State<SignUp>{
         email: _textEmailController.text.toString(),
         zipcode: _textZipController.text.toString(),
         // profile_photo: imageFile,
-        address:address,
+        // address:address,
+        address:_textAddressController.text,
           firebaseId:widget.user.uid.toString(),
         deviceId: widget.signUpDataNavigation.deviceId.toString(),
         deviceName: widget.signUpDataNavigation.deviceName.toString(),
@@ -606,7 +606,7 @@ class _SignUpState extends State<SignUp>{
                         ],
                         textInputAction: TextInputAction.next,
                         onChanged: (text) {
-                          if(text.length==6){
+                          if(text.length>=5){
                             _apiCall=true;
                             _callAPIForPincode();
                           }
@@ -641,31 +641,50 @@ class _SignUpState extends State<SignUp>{
                   if(postResultList.length>0)
                     Column(
                       children: [
-                        Padding(
-                          padding:EdgeInsets.only(top:postResultList.length>0?0:10
-                            ,left:20.0,right: 20.0,),
-                          child:
+                        // Padding(
+                        //   padding:EdgeInsets.only(top:postResultList.length>0?0:10
+                        //     ,left:20.0,right: 20.0,),
+                        //   child:
+                        //
+                        //   Container(
+                        //       height: 50.0,
+                        //       alignment: Alignment.center,
+                        //       decoration: BoxDecoration(
+                        //         border: Border.all(color: Theme.of(context).primaryColor),
+                        //         color: AppTheme.verifyPhone.withOpacity(0.4),
+                        //         borderRadius: BorderRadius.circular(10),
+                        //       ),
+                        //       child:Align(
+                        //         alignment: Alignment.centerLeft,
+                        //         child:
+                        //         Text(
+                        //
+                        //           // '   ${postResultList[0].postalCode}, ${postResultList[0].state},${postResultList[0].country}, ${postResultList[0].postalLocation}'
+                        //           " "+address,
+                        //
+                        //           maxLines: 1,
+                        //           overflow: TextOverflow.ellipsis,
+                        //           style: TextStyle(fontWeight: FontWeight.w400,fontSize: 14.0,),),
+                        //       ))),
 
-                          Container(
-                              height: 50.0,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Theme.of(context).primaryColor),
-                                color: AppTheme.verifyPhone.withOpacity(0.4),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child:Align(
-                                alignment: Alignment.centerLeft,
-                                child:
-                                Text(
+                        //updated addres part
+                        Container(margin: EdgeInsets.only(top:15.0,left:20.0,right:20.0),
+                            child:AppTextInput(
+                              enabled: false,
+                              maxLines: 2,
+                              controller: _textAddressController,
+                              // focusNode: _focusAddress,
+                              keyboardType: TextInputType.text,
+                              textInputAction: TextInputAction.next,
+                              onChanged: (text) {
+                                setState(() {
+                                  _validAddress = UtilValidator.validate(
+                                    data: _textAddressController.text,
+                                  );
+                                });
+                              },
 
-                                  // '   ${postResultList[0].postalCode}, ${postResultList[0].state},${postResultList[0].country}, ${postResultList[0].postalLocation}'
-                                  " "+address,
-
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(fontWeight: FontWeight.w400,fontSize: 14.0,),),
-                              ))),
+                            )),
                         //street no
                         // Container(
                         //     margin: EdgeInsets.only(top: 15.0,),

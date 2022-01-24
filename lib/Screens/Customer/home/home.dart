@@ -213,7 +213,6 @@ class _HomeState extends State<Home> {
       cartModel.addAllProduct(_cartList.cast<Cart>());
       Application.cartModel=cartModel;
       print(_cartList);
-
     }
     setBlocData();
   }
