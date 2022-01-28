@@ -1100,21 +1100,24 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                             print("currentDate:-" + currentDate);
 
                                                             // if (AddTime.dateTime == "") {
-                                                            if (AddTime.dateTime != "") {
-                                                              // AddTime.dateTime = currentDate;
-                                                              // AddTime.time=DateFormat('hh:mm a').format(DateTime.now());
-                                                              // AddTime.currentDate=AddTime.dateTime;
+                                                            if(AddTime.confirmedFlag==true){
+                                                              if (AddTime.dateTime != "") {
+                                                                // AddTime.dateTime = currentDate;
+                                                                // AddTime.time=DateFormat('hh:mm a').format(DateTime.now());
+                                                                // AddTime.currentDate=AddTime.dateTime;
 
-                                                              date=DateFormat('dd MMM yyyy').format(DateTime.parse(AddTime.dateTime));
-                                                              String day=AddTime.deliverySlot=="0"?"Morning":"Evening";
-                                                              date=date+" - "+day;
-                                                              print("date:-"+date+"- "+AddTime.deliverySlot=="0"?"Morning":"Evening");
+                                                                date=DateFormat('dd MMM yyyy').format(DateTime.parse(AddTime.dateTime));
+                                                                String day=AddTime.deliverySlot=="0"?"Morning":"Evening";
+                                                                date=date+" - "+day;
+                                                                print("date:-"+date+"- "+AddTime.deliverySlot=="0"?"Morning":"Evening");
 
-                                                            } else {
-                                                              AddTime.selectedDate=AddTime.currentDate;
-                                                              date=(DateFormat('dd MMM yyyy').format(DateTime.parse(AddTime.currentDate)))+" "+AddTime.time;
-                                                              print("date:-"+date);
+                                                              } else {
+                                                                AddTime.selectedDate=AddTime.currentDate;
+                                                                date=(DateFormat('dd MMM yyyy').format(DateTime.parse(AddTime.currentDate)))+" "+AddTime.time;
+                                                                print("date:-"+date);
+                                                              }
                                                             }
+
                                                             //for amt
                                                             // if(addTimeresult.chargeAmt!=null){
                                                             if(AddTime.chargedAmt!=null){

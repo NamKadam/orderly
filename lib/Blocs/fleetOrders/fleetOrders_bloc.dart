@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:orderly/Api/api.dart';
 import 'package:orderly/Blocs/address/address_event.dart';
@@ -67,12 +68,18 @@ class FleetOrdersBloc extends Bloc<FleetOrdersEvent,FleetOrdersState> {
       try {
         // if (response.msg == "Success") {
         final Iterable refactorCategory = response.ordersDet ?? [];
+        final Iterable refactorUserData = response.userData ?? [];
         final listOrders = refactorCategory.map((item) {
           return FleetOrdersDet.fromJson(item);
         }).toList();
+        //for user data
+        final listUserData = refactorUserData.map((item) {
+          return UserData.fromJson(item);
+        }).toList();
+        print(listUserData[0]);
 
         ///Sync UI
-        yield FleetOrdersDetListSuccess(fleetOrderDetList: listOrders);
+        yield FleetOrdersDetListSuccess(fleetOrderDetList: listOrders,fleetUserData:listUserData[0]);
         // } else {
         //   yield ProductListLoadFail();
         // }

@@ -86,9 +86,9 @@ class _PaymentState extends State<Payment>{
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    // Fluttertoast.showToast(
-    //     msg: "ERROR: " + response.code.toString() + " - " + response.message,
-    //     toastLength: Toast.LENGTH_SHORT);
+    Fluttertoast.showToast(
+        msg: "ERROR: " + response.code.toString() + " - " + response.message,
+        toastLength: Toast.LENGTH_SHORT);
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
@@ -112,9 +112,8 @@ class _PaymentState extends State<Payment>{
       'amount':amt,
       // 'amount':100,
       'name': 'Orderly',
-
       // 'order_ID':'order_HxKUd8b3dI9ZKl',
-      'description': 'Producer 1',
+      // 'description': widget.cartDet[0].producerName,
       'prefill': {'contact': Application.user.mobile, 'email': Application.user.emailId},
       'external': {
         'wallets': ['paytm']

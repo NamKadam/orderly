@@ -541,8 +541,6 @@ class _HomeState extends State<Home> {
     Widget buildListViewItemProd(int index, List<Product> product, CartModel model) {
       print("product:-"+product.toString());
       String currency="\u{20B9}";
-
-
       if (product  == null ||product.length<=0) {
         // return ListView.builder(
         //   padding: EdgeInsets.all(0),
@@ -603,10 +601,13 @@ class _HomeState extends State<Home> {
         //     widthFactor: 0.5,
         //     child:
           return Container(
-            padding: EdgeInsets.only(left: 8),
+            // padding: EdgeInsets.only(left: 8),
             child: Card(
                 elevation: 3.0,
-                shape: RoundedRectangleBorder(),
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Colors.white, width: 0.5),
+                  borderRadius: BorderRadius.circular(6),
+                ),
                 child: Shimmer.fromColors(
                   baseColor: Theme.of(context).hoverColor,
                   highlightColor: Theme.of(context).highlightColor,
@@ -647,10 +648,13 @@ class _HomeState extends State<Home> {
         // );
       }
       return Container(
-          padding: EdgeInsets.only(left: 8),
+          // padding: EdgeInsets.only(left: 8,right:8),
           child: Card(
             elevation: 3.0,
-            shape: RoundedRectangleBorder(),
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: Colors.white, width: 1),
+              borderRadius: BorderRadius.circular(6),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               // mainAxisAlignment: MainAxisAlignment.center,
@@ -831,14 +835,14 @@ class _HomeState extends State<Home> {
               actions: [
                 Row(
                   children: [
-                    IconButton(
-                      icon: Image.asset(
-                        Images.search,
-                        width: 30.0,
-                        height: 30.0,
-                      ),
-                      onPressed: () {},
-                    ),
+                    // IconButton(
+                    //   icon: Image.asset(
+                    //     Images.search,
+                    //     width: 30.0,
+                    //     height: 30.0,
+                    //   ),
+                    //   onPressed: () {},
+                    // ),
                     InkWell(
                         onTap: (){
 
@@ -1261,7 +1265,9 @@ class _HomeState extends State<Home> {
                                                         //     // ),
                                                         //   ),
                                                         // )
-                                                        GridView.builder(
+                                                        Padding(
+                                                            padding:EdgeInsets.only(left:8.0,right: 8.0),
+                                                            child:GridView.builder(
                                                           shrinkWrap: true, //updated for no scrol for gridview and applied whole scrollview
                                                              physics: NeverScrollableScrollPhysics(),
                                                              // physics: AlwaysScrollableScrollPhysics(),
@@ -1269,9 +1275,9 @@ class _HomeState extends State<Home> {
                                                               itemCount: totalProductList.length>0?totalProductList.length:6,
                                                                // controller: _scrollController,
                                                             gridDelegate:SliverGridDelegateWithFixedCrossAxisCount(
-                                                                  childAspectRatio: Platform.isAndroid?80 / 88:80/90,
-                                                                  crossAxisSpacing: 8,
-                                                                  mainAxisSpacing: 8,
+                                                                  childAspectRatio: Platform.isAndroid?80 / 92:80/94,
+                                                                  crossAxisSpacing: 5,
+                                                                  mainAxisSpacing: 5,
                                                                   crossAxisCount: 2,
                                                                 ),
                                                              itemBuilder: (context, index){
@@ -1279,7 +1285,7 @@ class _HomeState extends State<Home> {
                                                                return buildListViewItemProd(index,totalProductList,model);
 
                                                            },
-                                                        )
+                                                        ))
                                                             // :
                                                         // Center(child: Padding(
                                                         //     padding:

@@ -39,7 +39,6 @@
        tools:replace="android:allowBackup"
        android:requestLegacyExternalStorage="true"
        >
-
        <!--       <provider-->
 <!--           android:name="com.pichillilorenzo.flutter_inappwebview.InAppWebViewFileProvider"-->
 <!--           android:authorities="${applicationId}.flutter_inappwebview.fileprovider"-->

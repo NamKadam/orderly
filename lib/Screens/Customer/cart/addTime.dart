@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 class AddTime extends StatelessWidget {
   static bool isCheckedCharged = false;
   static bool isCheckedfree = false;
+  static bool confirmedFlag=false;
   static String dateTime = "";
   static String radioDay = '',
       deliveryType = '',
@@ -73,7 +74,7 @@ class TimeData extends StatefulWidget {
 }
 
 class _TimeDataState extends State<TimeData> {
-  String ShowchargedAmt = "", currentDate = "";
+  String ShowchargedAmt = "", currentDate = "",calendardate="";
 
   //set date
   Future _selectDate() async {
@@ -90,6 +91,7 @@ class _TimeDataState extends State<TimeData> {
     if (picked != null)
       setState(() {
         AddTime.dateTime = DateFormat("yyyy-MM-dd").format(picked);
+        // calendardate=DateFormat("yyyy-MM-dd").format(picked);
       });
   }
 
@@ -199,11 +201,11 @@ class _TimeDataState extends State<TimeData> {
                                     onChanged: (bool value) {
                                       getCharges();
                                       setState(() {
-                                        // AddTime.radioDay='';
-                                        // AddTime.dateTime='';
-                                        // AddTime.currentDate='';
+                                        AddTime.radioDay='';
+                                        AddTime.dateTime='';
+                                        AddTime.currentDate='';
                                         // // AddTime.currentDate=currentDate;
-                                        // AddTime.selectedDate=null;
+                                        AddTime.selectedDate=null;
                                         if(AddTime.isCheckedfree==true){
                                           AddTime.isCheckedfree=!AddTime.isCheckedfree;
                                         }
@@ -379,6 +381,7 @@ class _TimeDataState extends State<TimeData> {
                                                     width: 20.0,
                                                   ),
                                                   onTap: () {
+                                                    widget.scaffoldKey.currentState.hideCurrentSnackBar();
                                                     _selectDate();
                                                     debugPrint("clicked");
                                                   },
@@ -452,6 +455,8 @@ class _TimeDataState extends State<TimeData> {
                                                             value: 'Morning',
                                                             onChanged: (val) {
                                                               setState(() {
+                                                                widget.scaffoldKey.currentState.hideCurrentSnackBar();
+
                                                                 AddTime.radioDay =
                                                                     val;
                                                                 AddTime.deliverySlot =
@@ -513,6 +518,8 @@ class _TimeDataState extends State<TimeData> {
                                                           value: 'Evening',
                                                           onChanged: (val) {
                                                             setState(() {
+                                                              widget.scaffoldKey.currentState.hideCurrentSnackBar();
+
                                                               AddTime.radioDay =
                                                                   val;
                                                               AddTime.deliverySlot =
@@ -561,12 +568,13 @@ class _TimeDataState extends State<TimeData> {
                               borderRadius: BorderRadius.circular(50.0))),
                       // shape: shape,
                       onPressed: () {
+
                         if (AddTime.isCheckedCharged == true) {
                           AddTime.radioDay='';
                           AddTime.dateTime='';
                           AddTime.selectedDate=null;
                           AddTime.currentDate=currentDate;
-
+                          AddTime.confirmedFlag=true;
                           Navigator.pop(context);
                         } else if (AddTime.isCheckedfree == true) {
                           print("deleiverySlot:-" + AddTime.deliverySlot);
@@ -577,30 +585,44 @@ class _TimeDataState extends State<TimeData> {
                             if (AddTime.currentDate.compareTo(AddTime.selectedDate) == 0) {
                               if (AddTime.radioDay != '') {
                                 if (AddTime.time.contains("PM") && AddTime.deliverySlot == "0") {
+                                  AddTime.confirmedFlag=false;
+
                                   widget.scaffoldKey.currentState.showSnackBar(
                                       SnackBar(
+                                        // duration:const Duration(microseconds: 2),
                                           content: Text(
                                               "Please choose valid delivery time")));
                                 } else {
+                                  AddTime.confirmedFlag=true;
                                   Navigator.pop(context);
                                 }
                               } else {
+                                AddTime.confirmedFlag=false;
+
                                 widget.scaffoldKey.currentState.showSnackBar(
                                     SnackBar(
+                                        // duration:const Duration(microseconds: 2),
                                         content: Text(
                                             "Please select delivery slot")));
                               }
                             } else {
+                              AddTime.confirmedFlag=true;
                               Navigator.pop(context);
                             }
                           } else {
+                            AddTime.confirmedFlag=false;
+
                             widget.scaffoldKey.currentState.showSnackBar(
                                 SnackBar(
+
                                     content:
                                         Text("Please choose delivery date")));
                           }
                         } else {
+                          AddTime.confirmedFlag=false;
+
                           widget.scaffoldKey.currentState.showSnackBar(SnackBar(
+                              // duration:const Duration(microseconds: 2),
                               content: Text(
                                   "Please choose atleast 1 delivery Option")));
                         }

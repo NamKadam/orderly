@@ -939,14 +939,14 @@ class _FleetOrdersState extends State<FleetOrders> {
           actions: [
             Row(
               children: [
-                IconButton(
-                  icon: Image.asset(
-                    Images.search,
-                    width: 30.0,
-                    height: 30.0,
-                  ),
-                  onPressed: () {},
-                ),
+                // IconButton(
+                //   icon: Image.asset(
+                //     Images.search,
+                //     width: 30.0,
+                //     height: 30.0,
+                //   ),
+                //   onPressed: () {},
+                // ),
                 InkWell(
                     onTap: (){
 

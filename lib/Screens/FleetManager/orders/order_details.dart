@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:orderly/Blocs/fleetOrders/fleetOrders_bloc.dart';
 import 'package:orderly/Blocs/fleetOrders/fleetOrders_event.dart';
 import 'package:orderly/Blocs/fleetOrders/fleetOrders_state.dart';
+import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/model_fleetOrder_det.dart';
 import 'package:orderly/Screens/Customer/orders/order_list_item.dart';
@@ -43,6 +44,7 @@ class _OrderDetailsState extends State<OrderDetails> {
   bool isconnectedToInternet = false;
   bool flagNoData = false;
   List<FleetOrdersDet> _fleetOrderDetList;
+  UserData _fleetUserData;
   int offset = 0, Orderstatus = 0;
   String formattedString="",_validCancel="";
   final _textCancelController = TextEditingController();
@@ -54,6 +56,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     // TODO: implement initState
     super.initState();
     flagNoData = false;
+    // _fleetUserData=new UserData();
     _fleetOrdersBloc = BlocProvider.of<FleetOrdersBloc>(context);
 
     getDataAsPerStatus(widget.status);
@@ -756,6 +759,8 @@ class _OrderDetailsState extends State<OrderDetails> {
               return BlocListener<FleetOrdersBloc,FleetOrdersState>(listener: (context,state){
                 if(state is FleetOrdersDetListSuccess){
                   _fleetOrderDetList=state.fleetOrderDetList;
+                  _fleetUserData=state.fleetUserData;
+                  print(_fleetUserData);
                   flagNoData=false;
                 }
 
@@ -794,11 +799,165 @@ class _OrderDetailsState extends State<OrderDetails> {
               children: [
                 Padding(
                     padding: EdgeInsets.only(bottom: 150.0),
-                    child: ListView.builder(
+                    child:
+                    Column(
+                        children: [
+                        //for customer info
+                          if(_fleetUserData!=null)
+                        Card(
+                        elevation: 5.0,
+                        child:
+                        Theme(
+                            data: Theme.of(context).copyWith(
+                              unselectedWidgetColor: Theme.of(context).primaryColor, // here for close state
+                              // colorScheme: ColorScheme.light(
+                              //   primary: Theme.of(context).primaryColor,
+                              // ), // here for open state in replacement of deprecated accentColor
+                              // dividerColor: Colors.transparent, // if you want to remove the border
+                            ),child:ExpansionTile(
+                          // trailing:Icon(
+                          //   Icons.keyboard_arrow_down,
+                          //   color: Theme.of(context).primaryColor,
+                          // ),
+                          title: Padding(
+                            padding: const EdgeInsets.only(
+                              top: 5,
+                            ),
+                            child:
+                            Row(
+                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text( "Customer Info ",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14.0,
+                                            fontFamily: 'Poppins',
+                                            color: AppTheme.appColor),
+                                      ),
+                            // IconButton(
+                            //     icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
+                            // )
+                              ]
+                          )),
+                          children: [
+                          Padding(
+                            padding:EdgeInsets.only(left: 15.0,bottom: 10.0,right:10.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      //name
+                                      Text(
+                                        "Name: ",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14.0,
+                                            fontFamily: 'Poppins',
+                                            color: AppTheme.textColor),
+                                        // )
+                                      ),
+                                      Text(
+                                        _fleetUserData.userName,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 13.0,
+                                            fontFamily: 'Poppins',
+                                            color: AppTheme.textColor),
+                                        // )
+                                      ),
+                                    ]),
+                                SizedBox(height: 5.0,),
+                                //address
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Address: ",
+                                      // softWrap: true,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13.0,
+                                          fontFamily: 'Poppins',
+                                          color: AppTheme.textColor),
+                                      // )
+                                    ),
+                                    Flexible(child:Text(
+                                      _fleetUserData.streetNo+","+_fleetUserData.flatNo+","+_fleetUserData.address+","+_fleetUserData.city,
+                                      // softWrap: true,
+
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 13.0,
+                                          fontFamily: 'Poppins',
+                                          color: AppTheme.textColor),
+                                    )
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 5.0,),
+                                //mobile
+                                Row(
+                                  children: [
+                                    Text(
+                                      "Mobile: ",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13.0,
+                                          fontFamily: 'Poppins',
+                                          color: AppTheme.textColor),
+                                      // )
+                                    ),
+                                    Text(
+                                      _fleetUserData.mobile,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 13.0,
+                                          fontFamily: 'Poppins',
+                                          color: AppTheme.textColor),
+                                      // )
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height:5.0,),
+                                //email
+                                Row(
+                                  children: [
+                                    Text(
+                                      "Email: ",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13.0,
+                                          fontFamily: 'Poppins',
+                                          color: AppTheme.textColor),
+                                      // )
+                                    ),
+                                    Text(
+                                      _fleetUserData.emailId,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 13.0,
+                                          fontFamily: 'Poppins',
+                                          color: AppTheme.textColor),
+                                      // )
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          )
+                                ],
+                        ))
+                        ),
+                    SizedBox(height: 8.0,),
+                    Expanded(child:ListView.builder(
                         itemCount:_fleetOrderDetList!=null?_fleetOrderDetList.length:6,
                         itemBuilder: (context, index) {
                           return buildOrderList(index,_fleetOrderDetList);
-                        })),
+                        }))
+              ])),
 
                     Align(
                     alignment: Alignment.bottomCenter,
@@ -940,11 +1099,168 @@ class _OrderDetailsState extends State<OrderDetails> {
               ],
             )
                     :
-                ListView.builder(
-                    itemCount:_fleetOrderDetList!=null?_fleetOrderDetList.length:6,
-                    itemBuilder: (context, index) {
-                      return buildOrderList(index,_fleetOrderDetList);
-                    }),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        //for customer info
+                        if(_fleetUserData!=null)
+                          Card(
+                              elevation: 5.0,
+                              child:
+                              Theme(
+                                  data: Theme.of(context).copyWith(
+                                    unselectedWidgetColor: Theme.of(context).primaryColor, // here for close state
+                                    // colorScheme: ColorScheme.light(
+                                    //   primary: Theme.of(context).primaryColor,
+                                    // ), // here for open state in replacement of deprecated accentColor
+                                    // dividerColor: Colors.transparent, // if you want to remove the border
+                                  ),child:ExpansionTile(
+                                // trailing:Icon(
+                                //   Icons.keyboard_arrow_down,
+                                //   color: Theme.of(context).primaryColor,
+                                // ),
+                                title: Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 5,
+                                    ),
+                                    child:
+                                    Row(
+                                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text( "Customer Info ",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 14.0,
+                                                fontFamily: 'Poppins',
+                                                color: AppTheme.appColor),
+                                          ),
+                                          // IconButton(
+                                          //     icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
+                                          // )
+                                        ]
+                                    )),
+                                children: [
+                                  Padding(
+                                    padding:EdgeInsets.only(left: 15.0,bottom: 10.0,right:10.0),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              //name
+                                              Text(
+                                                "Name: ",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 14.0,
+                                                    fontFamily: 'Poppins',
+                                                    color: AppTheme.textColor),
+                                                // )
+                                              ),
+                                              Text(
+                                                _fleetUserData.userName,
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 13.0,
+                                                    fontFamily: 'Poppins',
+                                                    color: AppTheme.textColor),
+                                                // )
+                                              ),
+                                            ]),
+                                        SizedBox(height: 5.0,),
+                                        //address
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Address: ",
+                                              // softWrap: true,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 13.0,
+                                                  fontFamily: 'Poppins',
+                                                  color: AppTheme.textColor),
+                                              // )
+                                            ),
+                                            Flexible(child:Text(
+                                              _fleetUserData.streetNo+","+_fleetUserData.flatNo+","+_fleetUserData.address+","+_fleetUserData.city,
+                                              // softWrap: true,
+
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 13.0,
+                                                  fontFamily: 'Poppins',
+                                                  color: AppTheme.textColor),
+                                            )
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 5.0,),
+                                        //mobile
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "Mobile: ",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 13.0,
+                                                  fontFamily: 'Poppins',
+                                                  color: AppTheme.textColor),
+                                              // )
+                                            ),
+                                            Text(
+                                              _fleetUserData.mobile,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 13.0,
+                                                  fontFamily: 'Poppins',
+                                                  color: AppTheme.textColor),
+                                              // )
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height:5.0,),
+                                        //email
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "Email: ",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 13.0,
+                                                  fontFamily: 'Poppins',
+                                                  color: AppTheme.textColor),
+                                              // )
+                                            ),
+                                            Text(
+                                              _fleetUserData.emailId,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 13.0,
+                                                  fontFamily: 'Poppins',
+                                                  color: AppTheme.textColor),
+                                              // )
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ))
+                          ),
+                        SizedBox(height: 8.0,),
+                        Expanded(child:ListView.builder(
+                            itemCount:_fleetOrderDetList!=null?_fleetOrderDetList.length:6,
+                            itemBuilder: (context, index) {
+                              return buildOrderList(index,_fleetOrderDetList);
+                            })),
+                      ],
+                    )
+
           ));
         }));
   }

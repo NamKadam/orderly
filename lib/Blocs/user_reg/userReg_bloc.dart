@@ -74,10 +74,6 @@ class UserRegBloc extends Bloc<UserRegEvent, UserRegState> {
 
     }
 
-
-
-
-
     ///Event for Vendor Reg
     // if (event is OnUserRegister) {
     //   ///Notify loading to UI

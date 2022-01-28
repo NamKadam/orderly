@@ -21,7 +21,9 @@ class FleetOrdersListSuccess extends FleetOrdersState {
 
 class FleetOrdersDetListSuccess extends FleetOrdersState {
   final List<FleetOrdersDet> fleetOrderDetList;
-  FleetOrdersDetListSuccess({this.fleetOrderDetList});
+  final UserData fleetUserData;
+
+  FleetOrdersDetListSuccess({this.fleetOrderDetList,this.fleetUserData});
 }
 
 class FleetOrdersDetStatusSuccess extends FleetOrdersState {

@@ -491,7 +491,7 @@ class _CardViewWidgetState extends State<CardViewWidget>{
             color: AppTheme.textColor),
       ),
       Text(
-        versionName,
+        Platform.isAndroid?versionName:Application.Iosversion,
         style: TextStyle(
             fontSize: 14.0,
             fontFamily: 'Poppins',
