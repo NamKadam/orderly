@@ -519,7 +519,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                               .textTheme
                                               .button
                                               .copyWith(
-                                              fontSize: 13.0,
+                                              fontSize: 12.0,
                                               color: AppTheme.textColor,
                                               fontWeight: FontWeight.w400,
                                               fontFamily: "Poppins"),
@@ -548,14 +548,14 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                         model.cart[index].ratePerHour
                                             .toString() +
                                             " " + Utils.getCurrencyPerLocale(
-                                            model.cart[index].currency) + " /" +
+                                            model.cart[index].currency) + "/" +
                                             model.cart[index].unit,
                                         style: Theme
                                             .of(context)
                                             .textTheme
                                             .button
                                             .copyWith(
-                                            fontSize: 13.0,
+                                            fontSize: 14.0,
                                             color: Theme
                                                 .of(context)
                                                 .primaryColor,
@@ -776,15 +776,12 @@ class _ShoppingCartState extends State<ShoppingCart> {
     return Scaffold(
         key: _scaffoldKey,
         appBar: new AppBar(
-          title: Text(
-            'Cart',
-            style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
-                fontSize: 18.0,
-                color: AppTheme.textColor),
-          ),
-          leading: InkWell(
+          title:
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+          InkWell(
               onTap: () {
                 clearData();
                 AppBloc.authBloc.add(OnSaveCart(cartModel));
@@ -794,9 +791,35 @@ class _ShoppingCartState extends State<ShoppingCart> {
               child: Icon(
                 Icons.arrow_back_ios,
                 color: AppTheme.textColor,
+                size: 25.0,
               )),
+              Text(
+                'Cart',
+                style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500,
+                    fontSize: 18.0,
+                    color: AppTheme.textColor),
+              ),
+              // Your widgets here
+            ],
+          ),
+
+          // leading: InkWell(
+          //     onTap: () {
+          //       clearData();
+          //       AppBloc.authBloc.add(OnSaveCart(cartModel));
+          //       // AppBloc.authBloc.add(OnSaveCart(Application.cartModel));
+          //       Navigator.pop(context,cartModel);
+          //       },
+          //     child: Icon(
+          //       Icons.arrow_back_ios,
+          //       color: AppTheme.textColor,
+          //     )),
           backgroundColor: Colors.transparent,
           elevation: 0,
+          automaticallyImplyLeading:false,
+
         ),
         body: BlocListener<CartBloc, CartState>(
           listener: (context, state) {},

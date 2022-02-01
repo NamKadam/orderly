@@ -244,9 +244,11 @@ class SignInState extends State<SignIn>{
                         navigateData:signUpDataNavigation),
                     SizedBox(height: 20.0,),
                     //divider
-                    _DividerORWidget(),
+                    Container(
+                      width: 260.0,
+                        child:_DividerORWidget()),
                     //phone number
-                    Padding(padding: EdgeInsets.only(top:10.0,left: 20.0,right: 10.0),
+                    Padding(padding: EdgeInsets.only(top:15.0,left: 20.0,right: 10.0),
                         child:Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
@@ -276,6 +278,7 @@ class SignInState extends State<SignIn>{
                                   mainAxisSize: MainAxisSize.max,
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: <Widget>[
+                                    SizedBox(width:2.0),
                                     Image.asset(Images.phone,height: 45.0,width:40.0),
 
                                     const SizedBox(
@@ -340,7 +343,7 @@ class _DividerORWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final Widget _dividerWidget = Expanded(
       child: Divider(
-        height: 2.0,
+        height: 0.5,
         color: AppTheme.textColor,
       ),
     );
@@ -505,6 +508,7 @@ class _LoginWithGoogleState extends State<LoginWithGoogle>{
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
+                      SizedBox(width:2.0),
                       Image.asset(Images.google,height: 45.0,width:40.0),
                       const SizedBox(
                         width: 14.0,
@@ -674,6 +678,7 @@ class _LoginWithFBState extends State<LoginWithFB>{
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
+                    SizedBox(width:2.0),
                     Image.asset(Images.fb,height: 45.0,width:40.0),
 
                     const SizedBox(

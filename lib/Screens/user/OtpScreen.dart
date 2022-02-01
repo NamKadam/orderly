@@ -226,7 +226,8 @@ class _OtpScreenState extends State<OtpScreen>{
   }
   // Return "OTP" input field
   get _getInputField {
-    return Row(
+    return
+      Row(
       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         _otpTextField(_firstDigit),
@@ -287,7 +288,7 @@ class _OtpScreenState extends State<OtpScreen>{
         Container(
             width: MediaQuery.of(context).size.width,
             height: 40.0,
-            margin: EdgeInsets.all(15.0),
+            margin: EdgeInsets.all(4.0),
             alignment: Alignment.center,
             child: Text(
               digit != null ? digit.toString() : "",
@@ -540,86 +541,89 @@ class _OtpScreenState extends State<OtpScreen>{
             fit: BoxFit.cover,
           ),
         ),
-        child: SingleChildScrollView(
-          child:
-        Column(
-          mainAxisSize: MainAxisSize.max,
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: 10.0,),
-            Image.asset(Images.logo,height: 180.0,width:180.0),
+        child: Container(
+          margin: EdgeInsets.only(left: 25.0,right: 25.0),
+     child:SingleChildScrollView(
+  child:
+  Column(
+    mainAxisSize: MainAxisSize.max,
+    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      SizedBox(height: 10.0,),
+      Image.asset(Images.logo,height: 180.0,width:180.0),
+      Text(Translate.of(context).translate('otp_verification'),style: TextStyle(color:AppTheme.textColor,
+          fontFamily: 'Poppins',fontWeight:FontWeight.w400,fontSize: 14.0),),
+      Text(widget.otpVerify.countrycode+" "+widget.otpVerify.phone,style: TextStyle(color:AppTheme.textColor,
+          fontFamily: 'Poppins',fontWeight:FontWeight.w400,fontSize: 14.0),),
+      SizedBox(height: 15.0,),
+      _getInputField,
 
-            Text(Translate.of(context).translate('otp_verification'),style: TextStyle(color:AppTheme.textColor,
-                    fontFamily: 'Poppins',fontWeight:FontWeight.w400,fontSize: 14.0),),
-                Text(widget.otpVerify.countrycode+" "+widget.otpVerify.phone,style: TextStyle(color:AppTheme.textColor,
-                    fontFamily: 'Poppins',fontWeight:FontWeight.w400,fontSize: 14.0),),
-              SizedBox(height: 15.0,),
-            _getInputField,
-             
-            //for login api call
-            BlocBuilder<LoginBloc,LoginState>(builder: (context,login){
-              return BlocListener<LoginBloc,LoginState>(listener: (context,state){
-                if (state is LoginFail) {
-                  _showMessage(
-                    // Translate.of(context).translate(state.code), //commented on 9/12/2020
-                    Translate.of(context).translate(state.msg),//added on 9/12/2020
-                  );
-                }
-                if (state is LoginSuccess) {
-                print("isRegistered:-"+state.userModel.isRegistered);
-                  if(state.userModel.isRegistered=="false"){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+      //for login api call
+      BlocBuilder<LoginBloc,LoginState>(builder: (context,login){
+        return BlocListener<LoginBloc,LoginState>(listener: (context,state){
+          if (state is LoginFail) {
+            _showMessage(
+              // Translate.of(context).translate(state.code), //commented on 9/12/2020
+              Translate.of(context).translate(state.msg),//added on 9/12/2020
+            );
+          }
+          if (state is LoginSuccess) {
+            print("isRegistered:-"+state.userModel.isRegistered);
+            if(state.userModel.isRegistered=="false"){
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
                   SignUp(user:authResult.user,signUpDataNavigation:widget.navigateData,phone: widget.otpVerify.phone.toString(),)));
+            }
+            else {
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
+                  MainNavigation(userType: widget.otpVerify.flagRoleType)));
+            }
+          }
+        },
+          child:Padding(padding: EdgeInsets.only(left:10.0,right: 10.0,top:15.0),
+              child:
+              AppButton(
+                onPressed: (){
+                  if(_firstDigit!=null && _secondDigit!=null && _thirdDigit!=null &&
+                      _fourthDigit!=null && _fifthDigit!=null && _sixthDigit!=null){
+                    checkotp(widget.otpVerify.phone);
+                  }else{
+                    _showMessage("Please enter Otp");
                   }
-                  else {
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>
-                        MainNavigation(userType: widget.otpVerify.flagRoleType)));
-                  }
-                }
-              },
-                child:Padding(padding: EdgeInsets.all(20.0),
-                    child:
-                    AppButton(
-                      onPressed: (){
-                        if(_firstDigit!=null && _secondDigit!=null && _thirdDigit!=null &&
-                            _fourthDigit!=null && _fifthDigit!=null && _sixthDigit!=null){
-                          checkotp(widget.otpVerify.phone);
-                        }else{
-                          _showMessage("Please enter Otp");
-                        }
-                      },
-                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),
-                      text: 'Verify',
-                      loading: login is LoginLoading,
-                      disableTouchWhenLoading: true,
-                    )
-                ),
-              );
-            }),
-            // Padding(padding: EdgeInsets.all(20.0),
-            //     child:
-            //     AppButton(
-            //       onPressed: (){
-            //         if(_firstDigit!=null && _secondDigit!=null && _thirdDigit!=null &&
-            //             _fourthDigit!=null && _fifthDigit!=null && _sixthDigit!=null){
-            //           checkotp(widget.otpVerify!.phone);
-            //         }else{
-            //           _showMessage("Please enter Otp");
-            //         }
-            //         },
-            //       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),
-            //       text: 'Verify',
-            //       // loading: login is LoginLoading,
-            //       // disableTouchWhenLoading: true,
-            //     )
-            // ),
+                },
+                shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),
+                text: 'Verify',
+                loading: login is LoginLoading,
+                disableTouchWhenLoading: true,
+              )
+          ),
+        );
+      }),
+      // Padding(padding: EdgeInsets.all(20.0),
+      //     child:
+      //     AppButton(
+      //       onPressed: (){
+      //         if(_firstDigit!=null && _secondDigit!=null && _thirdDigit!=null &&
+      //             _fourthDigit!=null && _fifthDigit!=null && _sixthDigit!=null){
+      //           checkotp(widget.otpVerify!.phone);
+      //         }else{
+      //           _showMessage("Please enter Otp");
+      //         }
+      //         },
+      //       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),
+      //       text: 'Verify',
+      //       // loading: login is LoginLoading,
+      //       // disableTouchWhenLoading: true,
+      //     )
+      // ),
 
-            _getOtpKeyboard
+      _getOtpKeyboard
 
-          ],
-        ),
-      )),
+    ],
+  ),
+)),
+        )
+
     );
 
   }

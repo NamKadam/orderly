@@ -823,7 +823,7 @@ class _HomeState extends State<Home> {
                 textAlign: TextAlign.left,
                 style: TextStyle(
                     fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
+                    fontWeight: FontWeight.w500,
                     fontSize: 18.0,
 
                     color: AppTheme.textColor),
@@ -833,6 +833,8 @@ class _HomeState extends State<Home> {
 
               automaticallyImplyLeading: false,
               actions: [
+                Padding(padding: EdgeInsets.only(right: 8.0),
+                    child:
                 Row(
                   children: [
                     // IconButton(
@@ -848,69 +850,69 @@ class _HomeState extends State<Home> {
 
                         },
                         child:Stack(children: [
-                      // IconButton(
-                      //   icon:
-                        Image.asset(
-                          Images.notiIcon,
-                          width: 35.0,
-                          height: 35.0,
-                        ),
-                        // tooltip: "Save Todo and Retrun to List",
-                      //   onPressed: () {},
-                      // ),
-                      Positioned(
-                        right: 5,
-                        top: 3,
-                        child: new Container(
-                          padding: EdgeInsets.all(1),
-                          decoration: new BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(8.5),
+                          // IconButton(
+                          //   icon:
+                          Image.asset(
+                            Images.notiIcon,
+                            width: 37.0,
+                            height: 37.0,
                           ),
-                          constraints: BoxConstraints(
-                            minWidth: 15,
-                            minHeight: 12,
-                          ),
-                          child: Text(
-                            "0",
-                            style: new TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w400,
-                                fontFamily: 'Poppins'
+                          // tooltip: "Save Todo and Retrun to List",
+                          //   onPressed: () {},
+                          // ),
+                          Positioned(
+                            right: 5,
+                            top:1,
+                            child: new Container(
+                              padding: EdgeInsets.all(1),
+                              decoration: new BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(8.5),
+                              ),
+                              constraints: BoxConstraints(
+                                minWidth: 17,
+                                minHeight: 4,
+                              ),
+                              child: Text(
+                                "0",
+                                style: new TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'Poppins'
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
                             ),
-                            textAlign: TextAlign.center,
                           ),
-                        ),
-                      ),
-                      // if(Application.user.userType=="1")//for fleet
-                      // Positioned(
-                      //   right: 5,
-                      //   top: 5,
-                      //   child: new Container(
-                      //     padding: EdgeInsets.all(1),
-                      //     decoration: new BoxDecoration(
-                      //       color: Colors.red,
-                      //       borderRadius: BorderRadius.circular(8.5),
-                      //     ),
-                      //     constraints: BoxConstraints(
-                      //       minWidth: 17,
-                      //       minHeight: 17,
-                      //     ),
-                      //     child: Text(
-                      //       "0",
-                      //       style: new TextStyle(
-                      //           color: Colors.white,
-                      //           fontSize: 10,
-                      //           fontWeight: FontWeight.w400,
-                      //           fontFamily: 'Poppins'
-                      //       ),
-                      //       textAlign: TextAlign.center,
-                      //     ),
-                      //   ),
-                      // )
-                    ],
-                    )),
+                          // if(Application.user.userType=="1")//for fleet
+                          // Positioned(
+                          //   right: 5,
+                          //   top: 5,
+                          //   child: new Container(
+                          //     padding: EdgeInsets.all(1),
+                          //     decoration: new BoxDecoration(
+                          //       color: Colors.red,
+                          //       borderRadius: BorderRadius.circular(8.5),
+                          //     ),
+                          //     constraints: BoxConstraints(
+                          //       minWidth: 17,
+                          //       minHeight: 17,
+                          //     ),
+                          //     child: Text(
+                          //       "0",
+                          //       style: new TextStyle(
+                          //           color: Colors.white,
+                          //           fontSize: 10,
+                          //           fontWeight: FontWeight.w400,
+                          //           fontFamily: 'Poppins'
+                          //       ),
+                          //       textAlign: TextAlign.center,
+                          //     ),
+                          //   ),
+                          // )
+                        ],
+                        )),
                     // if(Application.user.userType=="0") //for customer
                     InkWell(
                       onTap: () async{
@@ -927,19 +929,19 @@ class _HomeState extends State<Home> {
                       child: Stack(
                         children: [
                           Image.asset(
-                              Images.cart,
-                              width: 35.0,
-                              height: 35.0,
-                            ),
-                            // tooltip: "Save Todo and Retrun to List",
-                            // onPressed: () {
-                            //   // Navigator.push(context, MaterialPageRoute(
-                            //   //     builder: (context)=> ShoppingCart()
-                            //   // ));
-                            // },
+                            Images.cart,
+                            width: 37.0,
+                            height: 37.0,
+                          ),
+                          // tooltip: "Save Todo and Retrun to List",
+                          // onPressed: () {
+                          //   // Navigator.push(context, MaterialPageRoute(
+                          //   //     builder: (context)=> ShoppingCart()
+                          //   // ));
+                          // },
                           // ),
                           Positioned(
-                            right: 5,
+                            right: 2,
                             top:1,
                             child: new Container(
                               padding: EdgeInsets.all(1),
@@ -948,8 +950,8 @@ class _HomeState extends State<Home> {
                                 borderRadius: BorderRadius.circular(8.5),
                               ),
                               constraints: BoxConstraints(
-                                minWidth: 15,
-                                minHeight: 12,
+                                minWidth: 17,
+                                minHeight: 2,
                               ),
                               child: Text(
                                 Application.cartModel!=null?Application.cartModel.cart.length.toString():"0",
@@ -967,7 +969,8 @@ class _HomeState extends State<Home> {
                       ),
                     )
                   ],
-                )
+                ))
+
               ],
             ),
             //   automaticallyImplyLeading:false,
@@ -1090,6 +1093,7 @@ class _HomeState extends State<Home> {
                                   child:
                                     Column(
                                         children: [
+                                          SizedBox(height: 5.0,),
                                           Container(
                                             height: 90,
                                             child: buildCategory(_producerList),

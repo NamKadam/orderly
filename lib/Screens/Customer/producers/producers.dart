@@ -447,7 +447,7 @@ class _ProducersState extends State<Producers> {
                       width:250.0,
                         height:180.0,
                         child:Padding(
-                        padding: EdgeInsets.only(left:15.0,top:20.0),
+                        padding: EdgeInsets.only(left:18.0,top:25.0),
                         child: Stack(
                           // mainAxisAlignment: MainAxisAlignment.start,
                           // crossAxisAlignment: CrossAxisAlignment.start,
@@ -464,7 +464,7 @@ class _ProducersState extends State<Producers> {
                                       fontSize: 14.0,
                                       color: Colors.black),
                                 ),
-                                SizedBox(height: 3.0,),
+                                SizedBox(height: 5.0,),
 
                                 ReadMoreText(_producerTabList[index].producerDesc,
                                     style: TextStyle(
@@ -484,7 +484,7 @@ class _ProducersState extends State<Producers> {
 
                             //for view All
                             Positioned(
-                              bottom:5.0,
+                              bottom:15.0,
                                 child:Container(
                                     height: 30.0,
                                 width: 100.0,
@@ -497,7 +497,7 @@ class _ProducersState extends State<Producers> {
                                         BorderRadius.all(Radius.circular(15))),
                               ),
                               child: Text(
-                                "VIEW All",
+                                _producerTabList[index].expand == false?"VIEW All":"VIEW LESS",
                                 style: TextStyle(
                                     fontWeight: FontWeight.w600,
                                     fontFamily: 'Poppins',
@@ -530,7 +530,7 @@ class _ProducersState extends State<Producers> {
                             ))
                             )
                           ],
-                        )))
+                        ))),
 
                     //   SizedBox(
                     //     height: 200,
@@ -853,10 +853,13 @@ class _ExpandedSectionState extends State<ExpandedSection>
                   ))));
     }
     return Container(
-        padding: EdgeInsets.only(left: 8),
+        // padding: EdgeInsets.only(left: 8),
         child: Card(
           elevation: 3.0,
-          shape: RoundedRectangleBorder(),
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: Colors.white, width: 1),
+            borderRadius: BorderRadius.circular(6),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             // mainAxisAlignment: MainAxisAlignment.center,
@@ -1076,8 +1079,8 @@ class _ExpandedSectionState extends State<ExpandedSection>
               height: MediaQuery.of(context).size.height*0.51,
               child: widget.productList != null
                   ? Padding(
-                      padding: EdgeInsets.only(
-                        top: 10.0,
+                      padding: EdgeInsets.all(
+                        8.0,
                       ),
                       child: PagedGridView<int, Product>(
                         // shrinkWrap: true,
@@ -1089,8 +1092,8 @@ class _ExpandedSectionState extends State<ExpandedSection>
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
                             childAspectRatio: 80 / 80,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
+                            crossAxisSpacing: 5,
+                            mainAxisSpacing: 5,
                             crossAxisCount: 2,
                           ),
                           builderDelegate: PagedChildBuilderDelegate<Product>(

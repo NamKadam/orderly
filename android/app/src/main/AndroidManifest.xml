@@ -48,6 +48,9 @@
 <!--               android:name="android.support.FILE_PROVIDER_PATHS"-->
 <!--               android:resource="@xml/provider_paths" />-->
 <!--       </provider>-->
+     <!--for map api key=AIzaSyCn0nT7DUAbyrfT8lAc9-JZYfEMZtGM16g-->
+       <meta-data android:name="com.google.android.geo.API_KEY"
+           android:value="AIzaSyCeFeVNT03dsOphQzraHPQmd6nUA3ULJ5c"/>
 
         <activity
             android:name=".MainActivity"
@@ -74,6 +77,7 @@
               android:name="io.flutter.embedding.android.SplashScreenDrawable"
               android:resource="@drawable/launch_background"
               />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

@@ -43,7 +43,7 @@ class _ProfileState extends State<Profile>{
     return Scaffold(
       appBar: AppBar(title:
       Text("Profile",
-        style: TextStyle(fontFamily: 'Poppins',fontWeight: FontWeight.w400,
+        style: TextStyle(fontFamily: 'Poppins',fontWeight: FontWeight.w500,
             fontSize: 18.0,
             color: AppTheme.textColor),),
         backgroundColor: Colors.white,
@@ -204,10 +204,9 @@ class HeaderWidget extends StatelessWidget{
 
         ),
         child:
-        CircleAvatar(
-          //   child: Image.asset(Images.manager,
-          //     fit: BoxFit.fitWidth,),
-          backgroundColor: Colors.white,
+        ClipRect(
+            child: Image.asset(Images.profileActive,
+              fit: BoxFit.fitWidth,),
         )
 
     );

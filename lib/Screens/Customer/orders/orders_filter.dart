@@ -29,23 +29,41 @@ class _OrdersFilterState extends State<OrdersFilter> {
     // TODO: implement build
     return Scaffold(
       appBar: new AppBar(
-        title: Text(
-          'Filter',
-          style: TextStyle(
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w600,
-              fontSize: 18.0,
-              color: AppTheme.textColor),
+        title:
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+          InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Icon(
+                Icons.arrow_back_ios,
+                color: AppTheme.textColor,
+              )),
+            Text(
+              'Filter',
+              style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w500,
+                  fontSize: 17.0,
+                  color: AppTheme.textColor),
+            ),
+            // Your widgets here
+          ],
         ),
-        leading: InkWell(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: AppTheme.textColor,
-            )),
+
+        // leading: InkWell(
+        //     onTap: () {
+        //       Navigator.pop(context);
+        //     },
+        //     child: Icon(
+        //       Icons.arrow_back_ios,
+        //       color: AppTheme.textColor,
+        //     )),
         backgroundColor: Colors.transparent,
+        automaticallyImplyLeading: false,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -404,7 +422,7 @@ class _OrderStatusState extends State<OrderStatusTime> {
               Padding(
                   padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
                   child: Text(
-                    'Order Time Filter',
+                    'Order Status',
                     style: TextStyle(
                       color: Theme.of(context).primaryColor,
                       fontSize: 14.0,

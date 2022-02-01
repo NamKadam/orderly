@@ -162,8 +162,8 @@ class _SignUpState extends State<SignUp>{
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(60),
           border: Border.all(
-            color:
-            Theme.of(context).primaryColor,  // red as border color
+            color:AppTheme.textColor
+            // Theme.of(context).primaryColor,  // red as border color
           ),
           color:
           Colors.white,
@@ -191,8 +191,8 @@ class _SignUpState extends State<SignUp>{
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(60),
           border: Border.all(
-            color:
-            Theme.of(context).primaryColor,  // red as border color
+            color:AppTheme.textColor,
+            // Theme.of(context).primaryColor,  // red as border color
           ),
           color:
           Colors.white,
@@ -200,7 +200,7 @@ class _SignUpState extends State<SignUp>{
         ),
         child:
         CircleAvatar(
-          child: Image.asset(Images.profile_pic,
+          child: Image.asset(Images.profile,
             fit: BoxFit.fill,
           height: 120,
           width: 120,),

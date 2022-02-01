@@ -163,17 +163,24 @@ class _ProfAddressState extends State<ProfAddress> {
             Theme.of(context)
                 .primaryColor,
           ),
+          child:ListTileTheme( //used to remove internal padding between Radio button and title
+          horizontalTitleGap: 3,
+          //used to remove horizantal spacing between radio icon and text
           child: RadioListTile(
             activeColor: Theme.of(context)
                 .primaryColor,
+            dense: true,
+
             title:
             Padding(
                 padding:
-                EdgeInsets.all(10.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                        child:Column(
+                EdgeInsets.only(top:10.0),
+                child:
+                // Row(
+                //   children: [
+                    // Expanded(
+                    //     child:
+                        Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -242,7 +249,8 @@ class _ProfAddressState extends State<ProfAddress> {
                         // },),
 
                       ],
-                    )),
+                    )
+                    // ),
                    // Row(
                    //   mainAxisAlignment: MainAxisAlignment.end,
                    //    children: [
@@ -258,8 +266,8 @@ class _ProfAddressState extends State<ProfAddress> {
                    //              height: 18.0, width:18.0)),
                    //    ],
                    //  )
-                  ],
-                )
+                //   ],
+                // )
                ),
            secondary:setDeleteButton(index, _addressList),
            // IconButton(
@@ -279,7 +287,7 @@ class _ProfAddressState extends State<ProfAddress> {
               });
             },
           ),
-        ));
+        )));
   }
 
   //fromprofile
@@ -436,30 +444,6 @@ class _ProfAddressState extends State<ProfAddress> {
   Widget setUpdateButton(int index,List<Address> _addressList){
     if(widget.fromProf==true){
       return ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          side: BorderSide(color: Theme.of(context).primaryColor, width: 1),
-          primary: Colors.white,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                  Radius.circular(50))),
-        ),
-        child:Text("Edit",style: TextStyle(fontWeight: FontWeight.w500,
-            fontFamily: 'Poppins',
-            fontSize: 14.0,
-            color: AppTheme.textColor),),
-        onPressed: () async{
-          flagAddEdit = "1"; //for edit
-          final result=await Navigator.push(context, MaterialPageRoute(builder: (context)=>
-              AddEditAddress(flagAddEdit: flagAddEdit,addressData:_addressList[index])));
-          if(result!=null){
-            _onRefresh();
-          }
-        },);
-    }
-     else  if(_addressList[index].ischecked==true)
-       {
-         // _addressList[index].ischecked=false;
-        return ElevatedButton(
           style: ElevatedButton.styleFrom(
             side: BorderSide(color: Theme.of(context).primaryColor, width: 1),
             primary: Colors.white,
@@ -467,7 +451,7 @@ class _ProfAddressState extends State<ProfAddress> {
                 borderRadius: BorderRadius.all(
                     Radius.circular(50))),
           ),
-          child:Text("Edit",style: TextStyle(fontWeight: FontWeight.w500,
+          child:Text("Update",style: TextStyle(fontWeight: FontWeight.w500,
               fontFamily: 'Poppins',
               fontSize: 14.0,
               color: AppTheme.textColor),),
@@ -478,7 +462,35 @@ class _ProfAddressState extends State<ProfAddress> {
             if(result!=null){
               _onRefresh();
             }
-          },);
+          },
+      );
+
+    }
+     else  if(_addressList[index].ischecked==true)
+       {
+         // _addressList[index].ischecked=false;
+        return Container(
+            width: 240.0,
+            child:  ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            side: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+            primary: Colors.white,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                    Radius.circular(50))),
+          ),
+          child:Text("Update Address",style: TextStyle(fontWeight: FontWeight.w500,
+              fontFamily: 'Poppins',
+              fontSize: 14.0,
+              color: AppTheme.textColor),),
+          onPressed: () async{
+            flagAddEdit = "1"; //for edit
+            final result=await Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                AddEditAddress(flagAddEdit: flagAddEdit,addressData:_addressList[index])));
+            if(result!=null){
+              _onRefresh();
+            }
+          },));
     }else{
         return Container();
       }

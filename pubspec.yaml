@@ -84,6 +84,12 @@ dependencies:
   dashed_circle: ^0.0.2
   # save file
 #  path_provider: ^2.0.1
+# for map
+  google_maps_flutter: ^0.5.21
+  geocoder: ^0.2.1
+  #for chart
+  syncfusion_flutter_charts: ^19.4.47
+
 
 
 

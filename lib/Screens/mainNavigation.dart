@@ -236,7 +236,7 @@ class _MainNavigationState extends State<MainNavigation> {
             textAlign:TextAlign.left,
             style: TextStyle(
                 fontFamily: 'Poppins',
-                fontWeight: FontWeight.w400,
+                fontWeight: FontWeight.w500,
                 fontSize: 18.0,
                 color: AppTheme.textColor),
           ),

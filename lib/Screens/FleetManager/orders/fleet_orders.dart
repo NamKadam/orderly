@@ -10,6 +10,8 @@ import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/model_fleetOrder_det.dart';
 import 'package:orderly/Models/model_fleet_orders.dart';
+import 'package:orderly/Screens/FleetManager/orders/fleet_lineChart.dart';
+import 'package:orderly/Screens/FleetManager/orders/fleet_map.dart';
 import 'package:orderly/Screens/FleetManager/orders/fleet_order_det_retReplace.dart';
 import 'package:orderly/Screens/FleetManager/orders/order_details.dart';
 import 'package:orderly/Utils/application.dart';
@@ -173,6 +175,7 @@ class _FleetOrdersState extends State<FleetOrders> {
       );
     }
   }
+
 
   Widget buildCategory(List<Map> orderCat) {
     if (orderCat == null) {
@@ -543,53 +546,76 @@ class _FleetOrdersState extends State<FleetOrders> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          _orderLists[index].orderNumber.toString(),
-                                          // widget.users.firstName+" "+widget.users.lastName,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .caption
-                                              .copyWith(
-                                              fontSize: 14.0,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppTheme.textColor,
-                                              fontFamily: "Poppins"),
+                                        Row(
+                                          mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              _orderLists[index].orderNumber.toString(),
+                                              // widget.users.firstName+" "+widget.users.lastName,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .caption
+                                                  .copyWith(
+                                                  fontSize: 14.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: AppTheme.textColor,
+                                                  fontFamily: "Poppins"),
+                                            ),
+
+
+                                          ],
                                         ),
-                                        Text(
-                                            // DateFormat('EEEE, d MMM, yyyy').format(DateTime.parse( _fleetOrderList[index].date)),
-                                            "",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .button
-                                              .copyWith(
-                                              fontSize: 12.0,
-                                              color: AppTheme.textColor,
-                                              fontWeight: FontWeight.w400,
-                                              fontFamily: "Poppins"),
-                                        ),
-                                        SizedBox(height: 15.0,),
-                                        Text(
-                                          "No.Of Items",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .button
-                                              .copyWith(
-                                              fontSize: 14.0,
-                                              color: AppTheme.textColor,
-                                              fontWeight: FontWeight.w600,
-                                              fontFamily: "Poppins"),
-                                        ),
-                                        Text(
-                                            _orderLists[index].noOfItems.toString(),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .button
-                                              .copyWith(
-                                              fontSize: 12.0,
-                                              color: AppTheme.textColor,
-                                              fontWeight: FontWeight.w300,
-                                              fontFamily: "Poppins"),
-                                        ),
+
+
+                                        SizedBox(height: 30.0,),
+
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                              Text(
+                                                "No.Of Items",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .button
+                                                    .copyWith(
+                                                    fontSize: 14.0,
+                                                    color: AppTheme.textColor,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontFamily: "Poppins"),
+                                              ),
+                                              Text(
+                                                _orderLists[index].noOfItems.toString(),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .button
+                                                    .copyWith(
+                                                    fontSize: 12.0,
+                                                    color: AppTheme.textColor,
+                                                    fontWeight: FontWeight.w300,
+                                                    fontFamily: "Poppins"),
+                                              ),
+                                            ],),
+                                            Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                getTextStatusName(index,_orderLists),
+                                                Text("Order",
+                                                  style: TextStyle(
+                                                      fontWeight: FontWeight.w400,
+                                                      fontFamily: 'Poppins',
+                                                      fontSize: 12.0,
+                                                      color: AppTheme.textColor
+                                                  ),)
+                                              ],
+                                            ),
+                                          ],
+                                        )
+
 
                                       ],
                                     )),
@@ -603,31 +629,38 @@ class _FleetOrdersState extends State<FleetOrders> {
               ),
             ),
             Positioned(
-              right: 5.0,
-              top: 10.0,
+              right: 2.0,
+              top: 0,
               child: Container(
                 // width:30.0,height:30.0,
                   decoration: BoxDecoration(
                     // color: Colors.greenAccent,
                     // borderRadius: BorderRadius.circular(20.0),
                   ),
-                  margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                  // margin: const EdgeInsets.symmetric(horizontal: 10.0),
                   child:
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Row(
                     children: [
-                      getTextStatusName(index,_orderLists),
-
-                      Text("Order",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontFamily: 'Poppins',
-                            fontSize: 12.0,
-                            color: AppTheme.textColor
-                        ),)
+                      IconButton(icon: Image.asset(
+                        Images.mapNew,
+                        width: 20.0,
+                        height: 20.0,
+                      ),onPressed: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                            FleetMap()));
+                      },),
+                      //for chart
+                      IconButton(icon: Image.asset(
+                        Images.temp,
+                        width: 25.0,
+                        height: 20.0,
+                      ),onPressed: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                            ChartLineApp()));
+                      },)
                     ],
                   )
+
               ),
             ),
           ],

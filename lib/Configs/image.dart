@@ -38,6 +38,9 @@ class Images {
   static const String claim='assets/images/claim.png';
   static const String claimActive='assets/images/claim-active.png';
   static const String addItem='assets/images/add-item.png';
+  static const String map='assets/images/map.png';
+  static const String mapNew='assets/images/map_new.png';
+  static const String temp='assets/images/temp.png';
 
   ///Singleton factory
   static final Images _instance = Images._internal();

@@ -186,24 +186,26 @@ class _MyOrdersState extends State<MyOrders> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Row(
-                                          children: [
-                                            IconButton(
-                                              icon: Image.asset(
-                                                Images.search,
-                                                width: 25.0,
-                                                height: 25.0,
-                                              ),
-                                              onPressed: () {
-                                                _handleSearchStart();
-                                              },
-                                            ),
-                                            Container(
-                                                margin:
-                                                    EdgeInsets.only(top: 5.0),
-                                                width: Platform.isAndroid?200.0:190,
-                                                height: 45.0,
-                                                child: TextFormField(
+                                        // Row(
+                                        //   children: [
+                                            // IconButton(
+                                            //   icon: Image.asset(
+                                            //     Images.search,
+                                            //     width: 25.0,
+                                            //     height: 25.0,
+                                            //   ),
+                                            //   onPressed: () {
+                                            //     _handleSearchStart();
+                                            //   },
+                                            // ),
+                                            Expanded(
+                                                // margin:
+                                                //     EdgeInsets.only(top: 5.0),
+                                                // width: Platform.isAndroid?200.0:190,
+                                                // height: 45.0,
+                                                child:
+                                                TextFormField(
+
                                                   controller: _searchcontroller,
                                                   style: TextStyle(
                                                       fontFamily: 'Poppins',
@@ -214,9 +216,20 @@ class _MyOrdersState extends State<MyOrders> {
                                                   keyboardType:
                                                       TextInputType.text,
                                                   decoration: InputDecoration(
+
                                                       border: InputBorder.none,
                                                       hintText:
-                                                          "Search for all filters",
+                                                          "Search for all Orders",
+                                                      prefixIcon:  IconButton(
+                                                        icon: Image.asset(
+                                                          Images.search,
+                                                          width: 25.0,
+                                                          height: 25.0,
+                                                        ),
+                                                        onPressed: () {
+                                                          _handleSearchStart();
+                                                        },
+                                                      ),
                                                       hintStyle: TextStyle(
                                                           color: AppTheme
                                                               .textColor)),
@@ -226,8 +239,8 @@ class _MyOrdersState extends State<MyOrders> {
                                                     searchOperation(value);
                                                   },
                                                 )),
-                                          ],
-                                        ),
+                                        //   ],
+                                        // ),
                                         Row(
                                           children: [
                                             Container(
