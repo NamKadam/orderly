@@ -581,7 +581,8 @@ class _TimeDataState extends State<TimeData> {
                 Padding(
                     padding:
                         EdgeInsets.only(left: 20.0, right: 20.0, top: 30.0),
-                    child: ElevatedButton(
+                    child:
+                    ElevatedButton(
                       style: ElevatedButton.styleFrom(
                           side: BorderSide(
                               color: Theme.of(context).primaryColor, width: 1),

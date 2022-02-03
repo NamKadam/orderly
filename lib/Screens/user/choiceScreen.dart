@@ -166,27 +166,72 @@ class _ChoiceScreenState extends State<ChoiceScreen>{
               ),
          Padding(padding: EdgeInsets.all(20.0),
              child:
-             AppButton(
-               onPressed: (){
-                 if(flagClickCust==true){
-                   flagRoleType="0";//for customer
-                   Navigator.pushNamed(context, Routes.signIn,arguments: flagRoleType);
-                 }
-                 else if(flagClickManager==true){
-                   flagRoleType="1";//for fleet manager
+             // AppButton(
+             //   onPressed: (){
+             //     if(flagClickCust==true){
+             //       flagRoleType="0";//for customer
+             //       Navigator.pushNamed(context, Routes.signIn,arguments: flagRoleType);
+             //     }
+             //     else if(flagClickManager==true){
+             //       flagRoleType="1";//for fleet manager
+             //
+             //       Navigator.push(context, MaterialPageRoute(builder: (context) =>
+             //           VerifyPhone(flagRoleType:flagRoleType)
+             //       ));
+             //
+             //     }else{
+             //       Fluttertoast.showToast(msg: "Please select one option");
+             //     }
+             //   },
+             //   shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),
+             //   text: Translate.of(context).translate('started'),
+             //   // loading: login is LoginLoading,
+             //   // disableTouchWhenLoading: true,
+             // )
+           //updated on 2/02/2022
+             ElevatedButton(
+               style: ElevatedButton.styleFrom(
+                   side: BorderSide(
+                       color: Theme.of(context).primaryColor, width: 1),
+                   primary: (flagClickCust == true ||flagClickManager == true)?
+                   Theme.of(context).primaryColor:Colors.white,
+                   shape: RoundedRectangleBorder(
+                       borderRadius: BorderRadius.circular(50.0))),
+               // shape: shape,
+               onPressed: () {
+                     if(flagClickCust==true){
+                       flagRoleType="0";//for customer
+                       Navigator.pushNamed(context, Routes.signIn,arguments: flagRoleType);
+                     }
+                     else if(flagClickManager==true){
+                       flagRoleType="1";//for fleet manager
 
-                   Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                       VerifyPhone(flagRoleType:flagRoleType)
-                   ));
+                       Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                           VerifyPhone(flagRoleType:flagRoleType)
+                       ));
 
-                 }else{
-                   Fluttertoast.showToast(msg: "Please select one option");
-                 }
+                     }else{
+                       Fluttertoast.showToast(msg: "Please select one option");
+                     }
+
                },
-               shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),
-               text: Translate.of(context).translate('started'),
-               // loading: login is LoginLoading,
-               // disableTouchWhenLoading: true,
+               child: Row(
+                 crossAxisAlignment: CrossAxisAlignment.center,
+                 mainAxisAlignment: MainAxisAlignment.center,
+                 children: <Widget>[
+                   Padding(
+                       padding: EdgeInsets.all(10.0),
+                       child: Text(
+                         Translate.of(context).translate('started'),
+                         style: Theme.of(context)
+                             .textTheme
+                             .button
+                             .copyWith(
+                             color: (flagClickCust == true || flagClickManager == true)?Colors.white:AppTheme.textColor,
+                             fontWeight: FontWeight.w600),
+                       )),
+                 ],
+               ),
              )
          )
 

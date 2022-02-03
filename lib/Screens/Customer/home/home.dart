@@ -649,7 +649,15 @@ class _HomeState extends State<Home> {
       }
       return Container(
           // padding: EdgeInsets.only(left: 8,right:8),
-          child: Card(
+          child:InkWell(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => HomeItemDetail(
+                productList:product,index: index,
+                cartModel:model
+              )));
+              },
+              child:
+          Card(
             elevation: 3.0,
             shape: RoundedRectangleBorder(
               side: BorderSide(color: Colors.white, width: 1),
@@ -808,7 +816,8 @@ class _HomeState extends State<Home> {
 
               ],
             ),
-          ));
+          ))
+      );
     }
 
     // TODO: implement build

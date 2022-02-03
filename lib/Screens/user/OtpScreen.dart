@@ -542,7 +542,7 @@ class _OtpScreenState extends State<OtpScreen>{
           ),
         ),
         child: Container(
-          margin: EdgeInsets.only(left: 25.0,right: 25.0),
+          margin: EdgeInsets.only(left: 20.0,right: 20.0),
      child:SingleChildScrollView(
   child:
   Column(
@@ -557,7 +557,9 @@ class _OtpScreenState extends State<OtpScreen>{
       Text(widget.otpVerify.countrycode+" "+widget.otpVerify.phone,style: TextStyle(color:AppTheme.textColor,
           fontFamily: 'Poppins',fontWeight:FontWeight.w400,fontSize: 14.0),),
       SizedBox(height: 15.0,),
-      _getInputField,
+      Padding(
+        padding:EdgeInsets.only(left:25.0,right:25.0),
+          child:_getInputField),
 
       //for login api call
       BlocBuilder<LoginBloc,LoginState>(builder: (context,login){

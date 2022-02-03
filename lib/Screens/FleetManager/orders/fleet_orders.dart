@@ -989,15 +989,15 @@ class _FleetOrdersState extends State<FleetOrders> {
                       //   icon:
                       Image.asset(
                         Images.notiIcon,
-                        width: 35.0,
-                        height: 35.0,
+                        width: 37.0,
+                        height: 37.0,
                       ),
                       // tooltip: "Save Todo and Retrun to List",
                       //   onPressed: () {},
                       // ),
                       Positioned(
                         right: 5,
-                        top: 3,
+                        top: 1,
                         child: new Container(
                           padding: EdgeInsets.all(1),
                           decoration: new BoxDecoration(
@@ -1005,8 +1005,8 @@ class _FleetOrdersState extends State<FleetOrders> {
                             borderRadius: BorderRadius.circular(8.5),
                           ),
                           constraints: BoxConstraints(
-                            minWidth: 15,
-                            minHeight: 12,
+                            minWidth: 17,
+                            minHeight: 4,
                           ),
                           child: Text(
                             "0",

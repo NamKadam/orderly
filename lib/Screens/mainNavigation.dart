@@ -264,15 +264,15 @@ class _MainNavigationState extends State<MainNavigation> {
                       //   icon:
                       Image.asset(
                         Images.notiIcon,
-                        width: 35.0,
-                        height: 35.0,
+                        width: 37.0,
+                        height: 37.0,
                       ),
                       // tooltip: "Save Todo and Retrun to List",
                       //   onPressed: () {},
                       // ),
                       Positioned(
                         right: 5,
-                        top: 3,
+                        top: 1,
                         child: new Container(
                           padding: EdgeInsets.all(1),
                           decoration: new BoxDecoration(
@@ -280,8 +280,8 @@ class _MainNavigationState extends State<MainNavigation> {
                             borderRadius: BorderRadius.circular(8.5),
                           ),
                           constraints: BoxConstraints(
-                            minWidth: 15,
-                            minHeight: 12,
+                            minWidth: 17,
+                            minHeight: 4,
                           ),
                           child: Text(
                             "0",
@@ -334,8 +334,8 @@ class _MainNavigationState extends State<MainNavigation> {
                     children: [
                       Image.asset(
                         Images.cart,
-                        width: 35.0,
-                        height: 35.0,
+                        width: 37.0,
+                        height: 37.0,
                       ),
                       // tooltip: "Save Todo and Retrun to List",
                       // onPressed: () {
@@ -345,7 +345,7 @@ class _MainNavigationState extends State<MainNavigation> {
                       // },
                       // ),
                       Positioned(
-                        right: 5,
+                        right: 2,
                         top:1,
                         child: new Container(
                           padding: EdgeInsets.all(1),
@@ -354,8 +354,8 @@ class _MainNavigationState extends State<MainNavigation> {
                             borderRadius: BorderRadius.circular(8.5),
                           ),
                           constraints: BoxConstraints(
-                            minWidth: 15,
-                            minHeight: 12,
+                            minWidth: 17,
+                            minHeight: 2,
                           ),
                           child: Text(
                             Application.cartModel!=null?Application.cartModel.cart.length.toString():"0",

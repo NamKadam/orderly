@@ -239,7 +239,8 @@ class _VerifyPhoneState extends State<VerifyPhone>{
                 }
 
                   },
-                  shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(50))),
                   text: Translate.of(context).translate('verify_number'),
                   // loading: login is LoginLoading,
                   // disableTouchWhenLoading: true,

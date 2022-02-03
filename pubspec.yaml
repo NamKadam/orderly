@@ -89,7 +89,7 @@ dependencies:
   geocoder: ^0.2.1
   #for chart
   syncfusion_flutter_charts: ^19.4.47
-
+  flutter_dash: ^0.0.1
 
 
 
