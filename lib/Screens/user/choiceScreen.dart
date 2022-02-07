@@ -99,7 +99,8 @@ class _ChoiceScreenState extends State<ChoiceScreen>{
                              InkWell(
                              onTap: (){
                                setState(() {
-                                 flagClickCust=!flagClickCust;
+                                 // flagClickCust=!flagClickCust;
+                                 flagClickCust=true;
                                  flagClickManager=false;
 
                                });
@@ -137,7 +138,8 @@ class _ChoiceScreenState extends State<ChoiceScreen>{
                                   onTap: (){
                                     setState(() {
                                      flagClickCust=false;
-                                      flagClickManager=!flagClickManager;
+                                      // flagClickManager=!flagClickManager;
+                                      flagClickManager=true;
                                     });
                                     // Navigator.pushNamed(context, Routes.signIn);
                                   },

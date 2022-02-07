@@ -10,6 +10,7 @@ import 'package:orderly/Models/model_invent_list.dart';
 import 'package:orderly/Models/model_myOrders.dart';
 import 'package:orderly/Models/model_producer_list.dart';
 import 'package:orderly/Models/model_product_List.dart';
+import 'package:orderly/Models/model_tempLatLng.dart';
 import 'package:orderly/Models/model_trackOrder.dart';
 import 'package:orderly/Models/model_view_cart.dart';
 import 'dart:convert';
@@ -37,6 +38,7 @@ class Api {
   static const String GET_TRACK_ORDER=HOST_URL+"track_order";
   static const String GET_FLEET_ORDER=HOST_URL+"fleet_manager_orders";
   static const String GET_FLEET_ORDER_DET=HOST_URL+"fleet_manager_orders_details";
+  static const String GET_FLEET_ORDER_DET_TEMP=HOST_URL+"fetch_temprature";
   static const String UPDATE_FLEET_STATUS=HOST_URL+"update_order_status";
   static const String GET_CLAIM_ORDER=HOST_URL+"fetch_claims_details";
 
@@ -184,6 +186,18 @@ class Api {
     if (response.statusCode == 200) {
       final responseJson = json.decode(response.body);
       return FleetOrderDetResp.fromJson(responseJson);
+    }
+  }
+
+  //for fleet order det temp
+  static Future<dynamic> getFleetOrdersDetTemp(params) async {
+    final response = await http.post(
+      Uri.parse(GET_FLEET_ORDER_DET_TEMP),
+      body: params,
+    );
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+      return FleetTempResp.fromJson(responseJson);
     }
   }
 

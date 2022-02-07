@@ -16,6 +16,7 @@ import 'package:orderly/Models/model_myOrders.dart';
 import 'package:orderly/Models/model_scoped_cart.dart';
 import 'package:orderly/Models/model_producer_list.dart';
 import 'package:orderly/Models/model_product_List.dart';
+import 'package:orderly/Models/model_tempLatLng.dart';
 import 'package:orderly/Models/model_view_cart.dart';
 import 'package:orderly/Repository/UserRepository.dart';
 import 'package:orderly/Utils/application.dart';
@@ -89,6 +90,32 @@ class FleetOrdersBloc extends Bloc<FleetOrdersEvent,FleetOrdersState> {
       }
     }
 
+    //for temp and latlng
+    if (event is OnLoadingFleetOrdersDetTemp) {
+      yield FleetOrdersLoading();
+
+      final FleetTempResp response = await fleetOrdersRepo.fetchFleetOrdersDetTemp(
+          orderId: event.orderid,
+          status: event.orderStatus,
+      );
+      try {
+        // if (response.msg == "Success") {
+        final Iterable refactorCategory = response.ordertemp ?? [];
+        final listOrdersTemp = refactorCategory.map((item) {
+          return Ordertemp.fromJson(item);
+        }).toList();
+
+
+        ///Sync UI
+        yield FleetOrderDetTempListSuccess(fleetTempList: listOrdersTemp);
+        // } else {
+        //   yield ProductListLoadFail();
+        // }
+      } catch (e) {
+        print(e);
+        yield FleetOrdersDetTempLoadFail();
+      }
+    }
     //fleet order status
     if (event is UpdateFleetOrdersStatus) {
       yield FleetOrdersStatusLoading();

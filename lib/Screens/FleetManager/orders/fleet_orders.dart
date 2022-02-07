@@ -569,9 +569,9 @@ class _FleetOrdersState extends State<FleetOrders> {
 
                                         SizedBox(height: 30.0,),
 
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
+                                        // Row(
+                                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        //   children: [
                                             Column(
                                               mainAxisAlignment: MainAxisAlignment.start,
                                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -599,22 +599,22 @@ class _FleetOrdersState extends State<FleetOrders> {
                                                     fontFamily: "Poppins"),
                                               ),
                                             ],),
-                                            Column(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                getTextStatusName(index,_orderLists),
-                                                Text("Order",
-                                                  style: TextStyle(
-                                                      fontWeight: FontWeight.w400,
-                                                      fontFamily: 'Poppins',
-                                                      fontSize: 12.0,
-                                                      color: AppTheme.textColor
-                                                  ),)
-                                              ],
-                                            ),
-                                          ],
-                                        )
+                                            // Column(
+                                            //   mainAxisAlignment: MainAxisAlignment.start,
+                                            //   crossAxisAlignment: CrossAxisAlignment.start,
+                                            //   children: [
+                                            //     getTextStatusName(index,_orderLists),
+                                            //     Text("Order",
+                                            //       style: TextStyle(
+                                            //           fontWeight: FontWeight.w400,
+                                            //           fontFamily: 'Poppins',
+                                            //           fontSize: 12.0,
+                                            //           color: AppTheme.textColor
+                                            //       ),)
+                                            //   ],
+                                            // ),
+                                        //   ],
+                                        // )
 
 
                                       ],
@@ -629,8 +629,8 @@ class _FleetOrdersState extends State<FleetOrders> {
               ),
             ),
             Positioned(
-              right: 2.0,
-              top: 0,
+              right: 5,
+              top: 7,
               child: Container(
                 // width:30.0,height:30.0,
                   decoration: BoxDecoration(
@@ -639,27 +639,42 @@ class _FleetOrdersState extends State<FleetOrders> {
                   ),
                   // margin: const EdgeInsets.symmetric(horizontal: 10.0),
                   child:
-                  Row(
+                  // Row(
+                  //   children: [
+                  //     IconButton(icon: Image.asset(
+                  //       Images.mapNew,
+                  //       width: 20.0,
+                  //       height: 20.0,
+                  //     ),onPressed: (){
+                  //       Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                  //           FleetMap()));
+                  //     },),
+                  //     //for chart
+                  //     IconButton(icon: Image.asset(
+                  //       Images.temp,
+                  //       width: 25.0,
+                  //       height: 20.0,
+                  //     ),onPressed: (){
+                  //       Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                  //           ChartLineApp()));
+                  //     },)
+                  //   ],
+                  // )
+
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      IconButton(icon: Image.asset(
-                        Images.mapNew,
-                        width: 20.0,
-                        height: 20.0,
-                      ),onPressed: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>
-                            FleetMap()));
-                      },),
-                      //for chart
-                      IconButton(icon: Image.asset(
-                        Images.temp,
-                        width: 25.0,
-                        height: 20.0,
-                      ),onPressed: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>
-                            ChartLineApp()));
-                      },)
+                      getTextStatusName(index,_orderLists),
+                      Text("Order",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontFamily: 'Poppins',
+                            fontSize: 12.0,
+                            color: AppTheme.textColor
+                        ),)
                     ],
-                  )
+                  ),
 
               ),
             ),

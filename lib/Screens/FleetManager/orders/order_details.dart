@@ -9,8 +9,11 @@ import 'package:orderly/Blocs/fleetOrders/fleetOrders_state.dart';
 import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/model_fleetOrder_det.dart';
+import 'package:orderly/Models/model_tempLatLng.dart';
 import 'package:orderly/Screens/Customer/orders/order_list_item.dart';
 import 'package:orderly/Screens/Customer/orders/orders_filter.dart';
+import 'package:orderly/Screens/FleetManager/orders/fleet_lineChart.dart';
+import 'package:orderly/Screens/FleetManager/orders/fleet_map.dart';
 import 'package:orderly/Screens/FleetManager/orders/fleet_orders.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
 import 'package:orderly/Utils/connectivity_check.dart';
@@ -44,11 +47,14 @@ class _OrderDetailsState extends State<OrderDetails> {
   bool isconnectedToInternet = false;
   bool flagNoData = false;
   List<FleetOrdersDet> _fleetOrderDetList;
+  List<Ordertemp> _fleetOrderDetListTemp;
   UserData _fleetUserData;
-  int offset = 0, Orderstatus = 0;
+  int offset = 0, Orderstatus = 0,selectedIndex=0;
   String formattedString="",_validCancel="";
   final _textCancelController = TextEditingController();
   final _focusCancel = FocusNode();
+  String flagMapTemp=""; //used for click event of map and temp
+
 
 
   @override
@@ -58,9 +64,7 @@ class _OrderDetailsState extends State<OrderDetails> {
     flagNoData = false;
     // _fleetUserData=new UserData();
     _fleetOrdersBloc = BlocProvider.of<FleetOrdersBloc>(context);
-
     getDataAsPerStatus(widget.status);
-
     setBlocData();
 
     _scrollController.addListener(() {
@@ -336,6 +340,7 @@ class _OrderDetailsState extends State<OrderDetails> {
         itemCount: 6,
       );
     }
+
     return Card(
         elevation: 0.0,
         child: Theme(
@@ -347,7 +352,7 @@ class _OrderDetailsState extends State<OrderDetails> {
               ||widget.status==8 ||widget.status==12
             ?
               Padding(
-                  padding: EdgeInsets.all(5.0),
+                  padding: EdgeInsets.all(8.0),
                   child:Column(
                     children: [
                       Row(
@@ -444,15 +449,50 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     // )
                                   ),
                                   //quantity
-                                  Text(
-                                      "Quantity: "+fleetOrderDetList[index].qty.toString(),
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 13.0,
-                                        fontFamily: 'Poppins',
-                                        color: AppTheme.textColor),
-                                    // )
-                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        "Quantity: "+fleetOrderDetList[index].qty.toString(),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 13.0,
+                                            fontFamily: 'Poppins',
+                                            color: AppTheme.textColor),
+                                        // )
+                                      ),
+                                      //map and temp
+                                      if(widget.status==2 ||widget.status==3 || widget.status==9||widget.status==10 ||
+                                          widget.status==13||widget.status==14)
+
+                                      Row(
+                                              children: [
+                                                InkWell(child: Image.asset(
+                                                  Images.mapNew,
+                                                  width: 20.0,
+                                                  height: 20.0,
+                                                ),onTap: (){
+                                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                                                      FleetMap(orderDet:_fleetOrderDetList,index:index)));
+
+                                                },),
+                                                SizedBox(width: 8.0,),
+
+                                                //for chart
+                                                InkWell(child: Image.asset(
+                                                  Images.temp,
+                                                  width: 25.0,
+                                                  height: 20.0,
+                                                ),onTap: (){
+                                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                                                      ChartLineApp(orderDet:_fleetOrderDetList,index:index)));
+
+                                                },)
+                                              ],
+                                            ),
+                                    ],
+                                  )
+
                                 ],
                               )),
                         ],
@@ -532,7 +572,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                                   ),
                                 ))
                           ],
-                        )
+                        ),
+
+
                     ],
                   )
                 )
@@ -639,15 +681,48 @@ class _OrderDetailsState extends State<OrderDetails> {
                                       // )
                                     ),
                                     //quantity
-                                    Text(
-                                      "Quantity: "+fleetOrderDetList[index].qty.toString(),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 13.0,
-                                          fontFamily: 'Poppins',
-                                          color: AppTheme.textColor),
-                                      // )
-                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "Quantity: "+fleetOrderDetList[index].qty.toString(),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 13.0,
+                                              fontFamily: 'Poppins',
+                                              color: AppTheme.textColor),
+                                          // )
+                                        ),
+                                        //map and temp
+                                        if(widget.status==2 ||widget.status==3 || widget.status==9||widget.status==10 ||
+                                            widget.status==13||widget.status==14)
+                                        Row(
+                                          children: [
+                                           InkWell(child:Image.asset(
+                                              Images.mapNew,
+                                              width: 20.0,
+                                              height: 20.0,
+                                            ),onTap: (){
+
+                                              Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                                                  FleetMap(orderDet:_fleetOrderDetList,index:index)));
+                                            },),
+                                            SizedBox(width: 8.0,),
+                                            //for chart
+                                            InkWell(child:Image.asset(
+                                              Images.temp,
+                                              width: 25.0,
+                                              height: 20.0,
+                                            ),onTap: ()
+                                            {
+                                              Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                                                  ChartLineApp(orderDet:_fleetOrderDetList,index:index)));
+
+                                            },)
+                                          ],
+                                        ),
+                                      ],
+                                    )
                                   ],
                                 )),
                           ],
@@ -754,7 +829,8 @@ class _OrderDetailsState extends State<OrderDetails> {
           backgroundColor: Colors.white,
           elevation: 0,
         ),
-        body: BlocBuilder<FleetOrdersBloc, FleetOrdersState>(
+        body:
+        BlocBuilder<FleetOrdersBloc, FleetOrdersState>(
             builder: (context, status) {
               return BlocListener<FleetOrdersBloc,FleetOrdersState>(listener: (context,state){
                 if(state is FleetOrdersDetListSuccess){
@@ -786,6 +862,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                 if(state is FleetOrdersStatusLoadFail){
                   _showMessage("Order Status Failed.");
                 }
+
               },
               child:
               Container(

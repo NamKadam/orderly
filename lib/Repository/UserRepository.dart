@@ -94,6 +94,13 @@ class UserRepository {
     return await Api.getFleetOrdersDet(params);
   }
 
+  //for temp and latLng
+  Future<dynamic> fetchFleetOrdersDetTemp({String orderId,String status}) async
+  {
+    final params = {"order_details_id":orderId,"order_status":status};
+    return await Api.getFleetOrdersDetTemp(params);
+  }
+
   //fleet return Replace
   Future<dynamic> fetchFleetReturnReplace({String producerId}) async
   {

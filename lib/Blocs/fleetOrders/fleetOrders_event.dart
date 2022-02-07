@@ -12,6 +12,11 @@ class OnLoadingFleetOrdersDet extends FleetOrdersEvent {
   String orderid,status,producerId;
   OnLoadingFleetOrdersDet({this.orderid,this.status,this.producerId});
 }
+//for temperature
+class OnLoadingFleetOrdersDetTemp extends FleetOrdersEvent {
+  String orderid,orderStatus;
+  OnLoadingFleetOrdersDetTemp({this.orderid,this.orderStatus});
+}
 
 class UpdateFleetOrdersStatus extends FleetOrdersEvent {
   String orderid,status,rejectReason;
