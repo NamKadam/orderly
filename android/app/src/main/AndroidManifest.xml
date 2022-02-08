@@ -48,9 +48,10 @@
 <!--               android:name="android.support.FILE_PROVIDER_PATHS"-->
 <!--               android:resource="@xml/provider_paths" />-->
 <!--       </provider>-->
-     <!--for map api key=AIzaSyCn0nT7DUAbyrfT8lAc9-JZYfEMZtGM16g-->
+     <!--for map api key=AIzaSyCeFeVNT03dsOphQzraHPQmd6nUA3ULJ5c-->
        <meta-data android:name="com.google.android.geo.API_KEY"
-           android:value="AIzaSyCeFeVNT03dsOphQzraHPQmd6nUA3ULJ5c"/>
+           android:value="AIzaSyC08LZ461W_8xfd0alHTiPz8iLcYYrUdps"/>
+
 
         <activity
             android:name=".MainActivity"

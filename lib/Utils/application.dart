@@ -5,8 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Application {
   static bool debug = false;
-  static String version = '1.0.9';
-  static String Iosversion = '1.0.9';
+  static String version = '2.0.0';
+  static String Iosversion = '2.0.0';
   static SharedPreferences preferences;
 
 

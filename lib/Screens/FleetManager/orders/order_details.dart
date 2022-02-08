@@ -962,7 +962,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                       // )
                                     ),
                                     Flexible(child:Text(
-                                      _fleetUserData.streetNo+","+_fleetUserData.flatNo+","+_fleetUserData.address+","+_fleetUserData.city,
+                                      _fleetUserData.flatNo+","+_fleetUserData.streetNo+","+_fleetUserData.address+","+_fleetUserData.city,
                                       // softWrap: true,
 
                                       style: TextStyle(

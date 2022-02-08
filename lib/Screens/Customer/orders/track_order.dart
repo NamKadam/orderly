@@ -72,9 +72,12 @@ class _TrackOrderUpdatedState extends State<TrackOrderUpdated> {
             try{
               if(_trackOrderList[j].ohStatus==i.toString()){
                 statictrackOrderList[i].date=_trackOrderList[j].orderDate;
+              }else{
+                statictrackOrderList[i].date=_trackOrderList[0].orderDate;
               }
             }catch(e){
-              statictrackOrderList[i].date="";
+              // statictrackOrderList[i].date="";
+              statictrackOrderList[i].date=_trackOrderList[0].orderDate;
 
             }
           }
@@ -100,9 +103,13 @@ class _TrackOrderUpdatedState extends State<TrackOrderUpdated> {
             try{
               if(_trackOrderList[j].ohStatus==i.toString()){
                 statictrackOrderList[i].date=_trackOrderList[j].orderDate;
+              }else{
+                statictrackOrderList[i].date=_trackOrderList[0].orderDate;
+
               }
             }catch(e){
-              statictrackOrderList[j].date="";
+              // statictrackOrderList[j].date="";
+              statictrackOrderList[j].date=_trackOrderList[0].orderDate;
             }
           }
         }
@@ -129,9 +136,13 @@ class _TrackOrderUpdatedState extends State<TrackOrderUpdated> {
             try{
               if(_trackOrderList[j].ohStatus==i.toString()){
                 statictrackOrderList[i].date=_trackOrderList[j].orderDate;
+              }else{
+                statictrackOrderList[i].date=_trackOrderList[0].orderDate;
+
               }
             }catch(e){
-              statictrackOrderList[j].date="";
+              // statictrackOrderList[j].date="";
+              statictrackOrderList[i].date=_trackOrderList[0].orderDate;
 
             }
           }

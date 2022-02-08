@@ -184,7 +184,8 @@ class _ChartLineAppState extends State<ChartLineApp> {
                    majorGridLines: const MajorGridLines(width: 0),
                    edgeLabelPlacement: EdgeLabelPlacement.shift,
                    interval: 1,
-                   title: AxisTitle(text: 'Time (minutes)')
+                   // title: AxisTitle(text: 'Time (minutes)')
+                   title: AxisTitle(text: 'Temperature Records(10)')
                ),
 
                primaryYAxis:NumericAxis(
