@@ -28,11 +28,12 @@ class _FleetOrderDetRetReplaceState extends State<FleetOrderDetRetReplace>{
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope( //willpopscope is used for ios part to disable swipe where back button is used
+        onWillPop: () async => false,
+    child:
+      Scaffold(
       key: _scaffoldKey,
       appBar: new AppBar(
-
-
         leading: InkWell(
             onTap: () {
               Navigator.pop(context);
@@ -318,7 +319,7 @@ class _FleetOrderDetRetReplaceState extends State<FleetOrderDetRetReplace>{
           ],
         ),
       ),
-    );
+    ));
   }
 
 }

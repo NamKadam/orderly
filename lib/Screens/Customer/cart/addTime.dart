@@ -34,7 +34,10 @@ class AddTime extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
+    return WillPopScope( //willpopscope is used for ios part to disable swipe where back button is used
+        onWillPop: () async => false,
+    child:
+      Scaffold(
         key: _scaffoldKey,
         appBar: new AppBar(
           title:
@@ -86,7 +89,7 @@ class AddTime extends StatelessWidget {
           automaticallyImplyLeading:false,
 
         ),
-        body: TimeData(scaffoldKey: _scaffoldKey));
+        body: TimeData(scaffoldKey: _scaffoldKey)));
   }
 }
 
@@ -479,7 +482,6 @@ class _TimeDataState extends State<TimeData> {
                                                           onChanged: (val) {
                                                             setState(() {
                                                               widget.scaffoldKey.currentState.hideCurrentSnackBar();
-
                                                               AddTime.radioDay =
                                                                   val;
                                                               AddTime.deliverySlot =

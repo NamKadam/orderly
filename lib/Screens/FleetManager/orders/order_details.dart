@@ -807,7 +807,10 @@ class _OrderDetailsState extends State<OrderDetails> {
   Widget build(BuildContext context) {
     // TODO: implement build
     print("buildStatus:-"+widget.status.toString());
-    return Scaffold(
+    return WillPopScope( //willpopscope is used for ios part to disable swipe where back button is used
+        onWillPop: () async => false,
+    child:
+      Scaffold(
         key: _scaffoldKey,
         appBar: new AppBar(
           title: Text(
@@ -1339,6 +1342,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                     )
 
           ));
-        }));
+        }))
+    );
   }
 }

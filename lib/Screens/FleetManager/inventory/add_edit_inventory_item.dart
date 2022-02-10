@@ -336,7 +336,10 @@ class _AddEditInventoryItemState extends State<AddEditInventoryItem>{
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
+    return WillPopScope( //willpopscope is used for ios part to disable swipe where back button is used
+        onWillPop: () async => false,
+    child:
+      Scaffold(
       key: _scaffoldKey,
       appBar: new AppBar(
         title: Text(
@@ -601,7 +604,7 @@ class _AddEditInventoryItemState extends State<AddEditInventoryItem>{
         );
       })
 
-    );
+    ));
   }
 
 }

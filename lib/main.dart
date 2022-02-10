@@ -322,6 +322,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/preferences.dart';
 import 'package:orderly/Utils/pushNotify.dart';
@@ -358,6 +359,8 @@ import 'Utils/translate.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  //to set stripe publishable key
+  // Stripe.publishableKey = Application.publishableKey;
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   await Firebase.initializeApp();

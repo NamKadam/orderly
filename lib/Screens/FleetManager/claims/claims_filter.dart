@@ -624,7 +624,10 @@ class _ClaimsFilterState extends State<ClaimsFilter> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
+    return WillPopScope( //willpopscope is used for ios part to disable swipe where back button is used
+        onWillPop: () async => false,
+    child:
+      Scaffold(
       appBar: new AppBar(
         title: Text(
           'Filter',
@@ -674,7 +677,7 @@ class _ClaimsFilterState extends State<ClaimsFilter> {
           ],
         ),
       ),
-    );
+    ));
   }
 }
 

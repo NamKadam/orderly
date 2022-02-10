@@ -16,10 +16,12 @@ import 'package:orderly/Models/model_scoped_cart.dart';
 import 'package:orderly/Models/model_view_cart.dart';
 import 'package:orderly/Screens/Customer/cart/addTime.dart';
 import 'package:orderly/Screens/Customer/orders/myOrders.dart';
+import 'package:orderly/Screens/Customer/payment/StripeService.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
 import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/preferences.dart';
+import 'package:orderly/Utils/progressDialog.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Utils/util_preferences.dart';
 import 'package:orderly/Widgets/app_button.dart';
@@ -64,7 +66,10 @@ class _PaymentState extends State<Payment>{
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
 
+    // StripeService.init();
   }
+
+
 
   //   JSONObject orderRequest = new JSONObject();
   //   orderRequest.put("amount", 50000); // amount in the smallest currency unit
@@ -149,6 +154,19 @@ class _PaymentState extends State<Payment>{
     setState(() {});
     displayPaymentSheet();
   }
+
+  //without cloud firestore for stripe
+  // payViaNewCard(BuildContext context) async {
+  //   PsProgressDialog.showProgressWithoutMsg(context);
+  //   // var response = await StripeService.payWithNewCard(amount: '15000', currency: 'USD');
+  //
+  //   var response = await StripeService.payWithNewCard(amount: widget.total, currency: 'INR');
+  //   Scaffold.of(context).showSnackBar(SnackBar(
+  //     content: Text(response.message),
+  //     duration: new Duration(milliseconds: response.success == true ? 1200 : 3000),
+  //   ));
+  // }
+
 
   Future<void> displayPaymentSheet() async {
     try {
@@ -243,7 +261,10 @@ class _PaymentState extends State<Payment>{
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
+    return WillPopScope( //willpopscope is used for ios part to disable swipe where back button is used
+        onWillPop: () async => false,
+    child:
+      Scaffold(
       key: _scaffoldKey,
       appBar: new AppBar(
         title: Text(
@@ -314,11 +335,7 @@ class _PaymentState extends State<Payment>{
                         });
                       },
                     )),
-
-
-
-            ),
-
+               ),
             //for stripe
             // Card(
             //   elevation: 5.0,
@@ -422,7 +439,7 @@ class _PaymentState extends State<Payment>{
           ],
         )),
       ),
-    );
+    ));
   }
 
 }

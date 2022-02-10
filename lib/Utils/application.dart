@@ -7,6 +7,7 @@ class Application {
   static bool debug = false;
   static String version = '2.0.0';
   static String Iosversion = '2.0.0';
+  static String publishableKey="pk_test_51KGJyKSHMcdDIkB864XwME4MINAjLPUDi8jkT1OubzhTczywcrnQiqWFiToYYJ6er2hJOstRtwhE3bCr49jzci7y00cbqfDLBl";
   static SharedPreferences preferences;
 
 
