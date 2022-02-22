@@ -140,10 +140,10 @@ class TimeLineState extends State<TimeLineWidget> {
                   //           Text(widget.taskList[index].timeStatus)
                   //         ])),
                       //commented on 2/02/2021
-                     setHighlightedSimpleTrackLineCircle(widget.trackOrderList, index),
+                     // setHighlightedSimpleTrackLineCircle(widget.trackOrderList, index),
 
                   //updated on 2/02/2022 for dashed line
-                  // setDashedLineHollowCircle(widget.trackOrderList, index),
+                  setDashedLineHollowCircle(widget.trackOrderList, index),
                   Expanded(
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

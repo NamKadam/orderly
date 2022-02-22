@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,14 +21,15 @@ import 'package:orderly/Screens/FleetManager/orders/fleet_orders.dart';
 import 'package:orderly/Screens/profile/profile.dart';
 import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/application.dart';
+import 'package:orderly/Utils/pushNotify.dart';
 import 'package:orderly/Utils/routes.dart';
 
 import 'package:orderly/Utils/translate.dart';
 
 
 class MainNavigation extends StatefulWidget {
-  String flagOrder="",userType;
-  MainNavigation({Key key,@required this.flagOrder,this.userType}):super(key: key);
+  String flagOrder="",userType,fcmFlagNavigate;
+  MainNavigation({Key key,@required this.flagOrder,this.userType,@required this.fcmFlagNavigate}):super(key: key);
 
   _MainNavigationState createState() => _MainNavigationState();
 }
@@ -166,7 +168,6 @@ class _MainNavigationState extends State<MainNavigation> {
         ),
       ];
     }
-
   }
 
   ///On change tab bottom menu
@@ -216,6 +217,12 @@ class _MainNavigationState extends State<MainNavigation> {
         title = "Home";
       } else { //for fleet manager
         title = "Orders";
+      }
+
+
+      //for fcm flag navigation
+      if(widget.fcmFlagNavigate=="fleet_order"){
+
       }
     }
 

@@ -4,10 +4,16 @@ class PushNotification {
     this.body,
     this.dataTitle,
     this.dataBody,
+    this.flag,
+    this.userType,
+    this.userId
   });
 
   String title;
   String body;
   String dataTitle;
   String dataBody;
+  String flag;
+  String userType;
+  String userId;
 }

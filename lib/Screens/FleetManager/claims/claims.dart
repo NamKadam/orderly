@@ -337,11 +337,12 @@ class _ClaimsState extends State<Claims> {
           flagNoData=true;
         }
             return SafeArea(
-                child:SmartRefresher(
-            enablePullDown: true,
-            onRefresh: _onRefresh,
-            controller: _controller,
-            child:
+                child:
+            //     SmartRefresher(
+            // enablePullDown: true,
+            // onRefresh: _onRefresh,
+            // controller: _controller,
+            // child:
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -438,7 +439,7 @@ class _ClaimsState extends State<Claims> {
                       children:[
                     Container(
                       color: Colors.transparent,
-                      height: 180,
+                      height: 150,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -527,8 +528,8 @@ class _ClaimsState extends State<Claims> {
                           child: searchClaimresult.length != 0 || _searchcontroller.text.isNotEmpty
                               ?
                           ListView.builder(
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
+                              // scrollDirection: Axis.vertical,
+                              // shrinkWrap: true,
                               itemCount: searchClaimresult!=null?searchClaimresult.length:6,
                               itemBuilder: (context, index) {
                                 return buildClaimList(index,searchClaimresult);
@@ -632,7 +633,6 @@ class _ClaimsState extends State<Claims> {
                                 return buildClaimList(index,mArraylistClaim);
                               })
 
-
                         ))
                    ]
                     ))
@@ -652,9 +652,8 @@ class _ClaimsState extends State<Claims> {
                   ],
                 )
 
-
-            ));
-
+              // )
+            );
 
       })
 
