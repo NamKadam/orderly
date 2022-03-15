@@ -80,6 +80,8 @@ class UtilPreferences {
     return Application.preferences.setStringList(key, value);
   }
 
+
+
   static Future<String> getTokenId() async {
     final FirebaseMessaging _fcm = FirebaseMessaging.instance;
 

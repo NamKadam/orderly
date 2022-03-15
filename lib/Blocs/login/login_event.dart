@@ -1,12 +1,11 @@
 abstract class LoginEvent {}
 
 class OnLogin extends LoginEvent {
-  // final String username;
-  //   final String password;
-  var fbId;
+
+  var fbId,fcmId,deviceId;
 
   // OnLogin({this.username, this.password}); //commented on 8/02/2021
-  OnLogin({this.fbId});
+  OnLogin({this.fbId,this.fcmId,this.deviceId});
 
 }
 

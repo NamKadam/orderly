@@ -1,13 +1,18 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mime/mime.dart';
 import 'package:orderly/Api/api.dart';
+import 'package:orderly/Blocs/authentication/authentication_event.dart';
 import 'package:orderly/Blocs/profile/bloc.dart';
 import 'package:orderly/Blocs/profile/profile_bloc.dart';
 import 'package:orderly/Configs/image.dart';
@@ -17,12 +22,18 @@ import 'package:orderly/Models/zipcode/postalcode.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
 import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/application.dart';
+import 'package:orderly/Utils/progressDialog.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Utils/utilOther.dart';
 import 'package:orderly/Utils/validate.dart';
 import 'package:orderly/Widgets/app_button.dart';
 import 'package:orderly/Widgets/app_text_input.dart';
 import 'package:http/http.dart' as http;
+import 'package:orderly/app_bloc.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:http/http.dart';
+import 'package:shimmer/shimmer.dart';
+
 
 class EditProfile extends StatefulWidget{
 
@@ -56,6 +67,7 @@ class _EditProfileState extends State<EditProfile>{
   var _validFirstName,_validLastName,_validEmail,_validMobile,_validZip,_validAddress,address;
   ProfileBloc _profileBloc;
   bool _apiCall = false;
+  bool flagCameraGallery=false;
 
 
   @override
@@ -63,6 +75,7 @@ class _EditProfileState extends State<EditProfile>{
     // TODO: implement initState
     super.initState();
     _profileBloc=BlocProvider.of<ProfileBloc>(context);
+
     getUserData();
   }
 
@@ -74,6 +87,7 @@ class _EditProfileState extends State<EditProfile>{
     address=Application.user.address;
     _textAddressController.text=Application.user.address;
     _textZipController.text=Application.user.zipcode.toString()!="null"?Application.user.zipcode.toString():"";
+
 
   }
   void _callAPIForPincode() {
@@ -107,7 +121,7 @@ class _EditProfileState extends State<EditProfile>{
 
   ///Build Avatar image
   Widget _buildAvatar() {
-    if (_image!=null) {
+    if(flagCameraGallery==true){
       return Container(
         width: 120,
         height: 120,
@@ -135,7 +149,59 @@ class _EditProfileState extends State<EditProfile>{
         ),
 
       );
+
+    }else if(Application.profile_pic!=null && flagCameraGallery==false ){
+      return CachedNetworkImage(
+        // imageUrl: user.image,
+        imageUrl: Application.profile_pic, //updated on 9/02/2021
+        imageBuilder: (context, imageProvider) {
+          return Container(
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: imageProvider,
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.circular(60),
+            ),
+          );
+        },
+        placeholder: (context, url) {
+          return Shimmer.fromColors(
+            baseColor: Theme.of(context).hoverColor,
+            highlightColor: Theme.of(context).highlightColor,
+            enabled: true,
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(60),
+              ),
+            ),
+          );
+        },
+        errorWidget: (context, url, error) {
+          return Shimmer.fromColors(
+            baseColor: Theme.of(context).hoverColor,
+            highlightColor: Theme.of(context).highlightColor,
+            enabled: true,
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(60),
+              ),
+              child: Icon(Icons.error),
+            ),
+          );
+        },
+      );
+
     }
+
     //updated on 30/11/2020
     return Container(
         width: 120,
@@ -160,6 +226,41 @@ class _EditProfileState extends State<EditProfile>{
 
     );
   }
+
+  Future<void> _showMessage(String message) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Upload',
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(
+                  message,
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              child: Text(
+                'Ok',
+              ),
+              onPressed: () {
+                  Navigator.of(context).pop();
+                  },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
   //updated on 15/06/2021
   Future<void> customCameraGalleryDialog(BuildContext context)async {
@@ -302,7 +403,7 @@ class _EditProfileState extends State<EditProfile>{
     if (croppedFile != null) {
 
       setState(() {
-
+        flagCameraGallery=true;
         _image = croppedFile;
         imageFile.imagePath=_image.path;
       });
@@ -364,6 +465,45 @@ class _EditProfileState extends State<EditProfile>{
      }
   }
 
+  Future<void> uploadImage(ImageFile imageFile) async{
+    MultipartRequest request = new http.MultipartRequest('POST', Uri.parse(Api.UPLOAD_IMAGE));
+
+    request.fields['fb_id'] = Application.user.fbId;
+
+    List<MultipartFile> imageUploadReqListSingle = <MultipartFile>[];
+    final mimeTypeDataProfile = lookupMimeType(imageFile.imagePath.toString(), headerBytes: [0xFF, 0xD8]).split('/');
+    //initialize multipart request
+    //attach the file in the request
+    final multipartFile = await http.MultipartFile.fromPath(
+        'image', imageFile.imagePath.toString(),
+        contentType: MediaType(mimeTypeDataProfile[0], mimeTypeDataProfile[1]));
+
+    imageUploadReqListSingle.add(multipartFile);
+    request.files.addAll(imageUploadReqListSingle);
+    PsProgressDialog.showProgressWithoutMsg(context);
+
+    try {
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+      var responseData = json.decode(response.body);
+      print(responseData);
+      if (responseData['msg'] == "Successed") {
+        var image = responseData['profile_pic'];
+
+        ///Begin start AuthBloc Event AuthenticationSave
+
+        _showMessage("Image Uploaded succesfully");
+        AppBloc.authBloc.add(OnSaveImage(image));
+        ///Notify loading to UI
+
+      }
+    } catch (error) {
+      ///Notify loading to UI
+      // yield RegisterUserFail(msg: message);
+      print(error);
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -390,27 +530,74 @@ class _EditProfileState extends State<EditProfile>{
                 Padding(
                   padding: EdgeInsets.all(8.0),
                   child:
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Stack(
-                        alignment: Alignment.bottomRight,
-                        children: <Widget>[
-                          _buildAvatar(),
-                          IconButton(
-                            icon:
-                            Image.asset(Images.camera,height: 40.0,width:35.0),
-                            onPressed:(){
-                              customCameraGalleryDialog(context);
-                            },
-                          )
-                        ],
-                      )
-                    ],
-                  ),
+                   Column(
+                     mainAxisAlignment: MainAxisAlignment.center,
+                     children: [
+                       Row(
+                         mainAxisAlignment: MainAxisAlignment.center,
+                         children: <Widget>[
+                           Stack(
+                             alignment: Alignment.bottomRight,
+                             children: <Widget>[
+                               _buildAvatar(),
+                               IconButton(
+                                 icon:
+                                 Image.asset(Images.camera,height: 40.0,width:35.0),
+                                 onPressed:(){
+                                   customCameraGalleryDialog(context);
+                                 },
+                               )
+                             ],
+                           )
+                         ],
+                       ),
+                       Container(
+                         margin: EdgeInsets.only(top:10.0),
+                         width: 150.0,
+                         child: ElevatedButton(
+                           style: ElevatedButton.styleFrom(
+                             side: BorderSide(color: Theme.of(context).primaryColor, width: 1),
+                             primary: Theme.of(context).primaryColor,
+
+                             shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),
+                           ),
+                           // shape: shape,
+                           onPressed: (){
+                             if(imageFile==null){
+                               _showMessage("Please upload your image ");
+                             }else if(flagCameraGallery==true){
+                               // PsProgressDialog.showProgressWithoutMsg(context);
+                               uploadImage(imageFile);
+
+                             }else{
+                               _showMessage("Image Uploaded Successfully.");
+
+                             }
+                           },
+                           child:
+                               Text(
+                                 "Upload",
+                                 style: Theme.of(context)
+                                     .textTheme
+                                     .button
+                                     .copyWith(color: Colors.white, fontWeight: FontWeight.w600),
+                               ),
+
+                         ),
+                       )
+                       // AppButton(
+                       //   onPressed: (){},
+                       //   shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(50))),
+                       //   text: 'Upload',
+                       //   // loading: login is LoginLoading,
+                       //   // disableTouchWhenLoading: true,
+                       // ),
+                     ],
+                   )
+
                 ),
                 //first name
-                Container(margin: EdgeInsets.only(top:25.0),
+                Container(margin: EdgeInsets.only(top:15.0),
                     child:AppTextInput(
                       hintText: Translate.of(context).translate('first_name'),
                       errorText: Translate.of(context).translate(_validFirstName),
@@ -694,14 +881,13 @@ class _EditProfileState extends State<EditProfile>{
                         _textMobileController.clear();
                       },
                     )),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     //cancel
                     Expanded(
-                        child:Padding(padding: EdgeInsets.only(left:20.0,right:20.0,top:50.0,bottom: 10.0),
+                        child:Padding(padding: EdgeInsets.only(left:20.0,right:20.0,top:20.0,bottom: 10.0),
 
                             child:ElevatedButton(
                               style: ElevatedButton.styleFrom(
@@ -733,10 +919,11 @@ class _EditProfileState extends State<EditProfile>{
                         )),
                     //save
                   Expanded(
-                      child:Padding(padding: EdgeInsets.only(left:20.0,right:20.0,top:50.0,bottom: 10.0),
+                      child:Padding(padding: EdgeInsets.only(left:20.0,right:20.0,top:20.0,bottom: 10.0),
                       child:  BlocBuilder<ProfileBloc,ProfileState>(builder: (context,profile){
                         return BlocListener<ProfileBloc,ProfileState>(listener: (context,state){
-                        if(state is EditProfSuccess){Application.user.mobile=state.user.mobile;
+                        if(state is EditProfSuccess){
+                          Application.user.mobile=state.user.mobile;
                         Application.user.emailId=state.user.emailId;
                         Application.user.firstName=state.user.firstName;
                         Application.user.lastName=state.user.lastName;
@@ -763,9 +950,9 @@ class _EditProfileState extends State<EditProfile>{
                 )
               ],
             ),
-
-
-    )));
+          )
+      )
+      );
   }
 
 }

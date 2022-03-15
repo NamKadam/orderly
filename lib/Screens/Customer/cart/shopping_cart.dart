@@ -17,10 +17,12 @@ import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/model_scoped_cart.dart';
 import 'package:orderly/Models/model_product_List.dart';
 import 'package:orderly/Models/model_view_cart.dart';
+import 'package:orderly/Screens/Customer/address/address.dart';
+import 'package:orderly/Screens/Customer/address/sourceAddress.dart';
 import 'package:orderly/Screens/Customer/cart/addTime.dart';
 import 'package:orderly/Screens/Customer/cart/cart_list_item.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
-import 'package:orderly/Screens/profile/profAddress/prof_address.dart';
+import 'package:orderly/Screens/profile/profAddress/profAddress.dart';
 import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/connectivity_check.dart';
@@ -1204,7 +1206,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
                                                                   print("cartList:-" + cartModel.cart.toString());
                                                                   Navigator.push(context,
                                                                       MaterialPageRoute(builder: (context)
-                                                                      =>ProfAddress(
+                                                                      =>SourceAddress(
                                                                         // cartDetails: Application.cartModel.cart,
                                                                         cartDetails: cartModel.cart,
                                                                         // subTotal:Application.cartModel.totalCartValue.toString(),

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +12,7 @@ import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/model_address.dart';
 import 'package:orderly/Models/model_scoped_cart.dart';
 import 'package:orderly/Models/model_view_cart.dart';
+import 'package:orderly/Screens/Customer/address/destinationAddress.dart';
 import 'package:orderly/Screens/Customer/cart/addTime.dart';
 import 'package:orderly/Screens/Customer/orders/order_list_item.dart';
 import 'package:orderly/Screens/Customer/orders/orders_filter.dart';
@@ -19,36 +22,37 @@ import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/connectivity_check.dart';
 import 'package:orderly/Utils/translate.dart';
+import 'package:orderly/Utils/util_preferences.dart';
 import 'package:orderly/Widgets/app_button.dart';
 import 'package:orderly/Widgets/app_dialogs.dart';
 import 'package:orderly/Widgets/app_text_input.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shimmer/shimmer.dart';
 
-class ProfAddress extends StatefulWidget {
+class SourceAddress extends StatefulWidget {
   bool fromProf;
   List<Cart> cartDetails;
   String convFee,total,subTotal;
 
-  ProfAddress({Key key,
-    @required this.cartDetails, @required this.convFee,
-    @required this.total,@required this.subTotal,@required this.fromProf})
+  SourceAddress({Key key,@required this.fromProf,@required this.cartDetails,@required this.convFee,
+  @required this.total,@required this.subTotal})
       : super(key: key);
-  _ProfAddressState createState() => _ProfAddressState();
+  _SourceAddressState createState() => _SourceAddressState();
 
 }
 
-class _ProfAddressState extends State<ProfAddress> {
+class _SourceAddressState extends State<SourceAddress> {
   String flagAddEdit = "";
   List<OrderStatusTimeFilter> OrderList = [];
-  int id;
+  var id=null,destId=null;
   String radioItem = '';
   AddressBloc _addressBloc;
-  bool isconnectedToInternet = false,isFirstTimeChecked=true;
-  List<Address> _addressList;
-  bool flagNoDataAvail=false;
+  bool isconnectedToInternet = false;
+  static bool isFirstTimeChecked=false;
+  List<Address> addressList;
+  bool flagNoDataAvail=false,isChecked=false;
   final _controller = RefreshController(initialRefresh: false);
-  int pos=0;
+  int pos=0,destPos=0;
 
 
   @override
@@ -82,15 +86,15 @@ class _ProfAddressState extends State<ProfAddress> {
 
   ///On Refresh List
   Future<void> _onRefresh() async {
-    _addressList=null;
+    addressList=null;
     await Future.delayed(Duration(milliseconds: 1000));
     _addressBloc.add(OnLoadingAddressList());
     _controller.refreshCompleted();
   }
 
-  Widget buildAddressListRadio(int index,List<Address> _addressList){
-    // print(_addressList);
-    if(_addressList==null){
+  Widget buildAddressListRadio(int index,List<Address> addressList){
+    // print(addressList);
+    if(addressList==null){
       return ListView.builder(
         padding: EdgeInsets.all(0),
         shrinkWrap: true,
@@ -148,12 +152,13 @@ class _ProfAddressState extends State<ProfAddress> {
       );
     }
 
-    if(isFirstTimeChecked==true) {
-      _addressList[0].ischecked=true;
-    }else{
-      _addressList[0].ischecked=false;
-
-    }
+    // if(isFirstTimeChecked==true) {
+    //   addressList[0].ischecked=true;
+    // }else{
+    //   addressList[0].ischecked=false;
+    //
+    // }
+    // id=addressList[index].uaId;
 
     return Card(
         elevation: 5.0,
@@ -185,7 +190,7 @@ class _ProfAddressState extends State<ProfAddress> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "${_addressList[index].userName}",
+                          "${addressList[index].userName}",
                           style: TextStyle(
                               fontWeight:
                               FontWeight
@@ -198,7 +203,7 @@ class _ProfAddressState extends State<ProfAddress> {
                           // )
                         ),
                         Text(
-                          _addressList[index].address,
+                          addressList[index].address,
                           style: TextStyle(
                               fontWeight:
                               FontWeight
@@ -212,7 +217,7 @@ class _ProfAddressState extends State<ProfAddress> {
                         ),
                         Text(
                           "Mobile: " +
-                              _addressList[
+                              addressList[
                               index]
                                   .mobile,
                           style: TextStyle(
@@ -228,8 +233,8 @@ class _ProfAddressState extends State<ProfAddress> {
                         ),
                         SizedBox(height: 8.0,),
                         //for  update button
-                        setUpdateButton(index, _addressList),
-                        // if(_addressList[index].ischecked==true)
+                        setUpdateButton(index, addressList),
+                        // if(addressList[index].ischecked==true)
                         //
                         //   ElevatedButton(
                         //   style: ElevatedButton.styleFrom(
@@ -269,206 +274,35 @@ class _ProfAddressState extends State<ProfAddress> {
                 //   ],
                 // )
                ),
-           secondary:setDeleteButton(index, _addressList),
+           secondary:setDeleteButton(index, addressList),
            // IconButton(
            //  onPressed: () {},
            //  icon: Image.asset(Images.delete,
            //      height: 18.0, width:18.0)),
-            value:_addressList[index].uaId,
+            value:addressList[index].uaId,
             groupValue:id,
             onChanged: (val) {
               setState(() {
-                pos=index;
-                radioItem = _addressList[index].userName;
-                id = _addressList[index].uaId;
-                print(radioItem + " " + id.toString());
-                 isFirstTimeChecked=!isFirstTimeChecked;//for first index checked radio
-                _addressList[index].ischecked=true;
+                  pos = index;
+                  radioItem = addressList[index].userName;
+                  id = addressList[index].uaId;
+                  print(radioItem + " " + id.toString());
+                  isFirstTimeChecked = !isFirstTimeChecked; //for first index checked radio
+                  addressList[index].ischecked = true;
+
+
               });
             },
           ),
         )));
   }
 
-  //fromprofile
-  Widget buildAddressList(int index,List<Address> _addressList){
-
-    if(_addressList==null){
-      return ListView.builder(
-        padding: EdgeInsets.all(0),
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: EdgeInsets.only(bottom: 15),
-            child:
-            Shimmer.fromColors(
-              child: Row(
-                children: <Widget>[
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.white,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: 10,
-                      right: 10,
-                      top: 5,
-                      bottom: 5,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          height: 10,
-                          width: 180,
-                          color: Colors.white,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 5),
-                        ),
-                        Container(
-                          height: 10,
-                          width: 150,
-                          color: Colors.white,
-                        ),
-
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              baseColor: Theme.of(context).hoverColor,
-              highlightColor: Theme.of(context).highlightColor,
-            ),
-          );
-        },
-        itemCount: 6,
-      );
-    }
-
-    return Card(
-        elevation: 5.0,
-        child: Theme(
-          data: Theme.of(context).copyWith(
-            unselectedWidgetColor:
-            Theme.of(context)
-                .primaryColor,
-          ),
-          child:
-            Padding(
-                padding:
-                EdgeInsets.all(15.0),
-                child:
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "${_addressList[index].userName}",
-                              style: TextStyle(
-                                  fontWeight:
-                                  FontWeight
-                                      .w600,
-                                  fontSize: 14.0,
-                                  fontFamily:
-                                  'Poppins',
-                                  color: AppTheme
-                                      .textColor),
-                              // )
-                            ),
-                         Text(
-                              _addressList[index].address,
-                              style: TextStyle(
-                                  fontWeight:
-                                  FontWeight
-                                      .w400,
-                                  fontSize: 12.0,
-                                  fontFamily:
-                                  'Poppins',
-                                  color: AppTheme
-                                      .textColor),
-                              // )
-                            ),
-                    Text(
-                              "Mobile: " +
-                                  _addressList[
-                                  index]
-                                      .mobile,
-                              style: TextStyle(
-                                  fontWeight:
-                                  FontWeight
-                                      .w400,
-                                  fontSize: 12.0,
-                                  fontFamily:
-                                  'Poppins',
-                                  color: AppTheme
-                                      .textColor),
-                              // )
-                            ),
-                    SizedBox(height: 8.0,),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                        Expanded(
-                        child:
-                    //for  update button
-                    setUpdateButton(index, _addressList),
-                        ),
-            SizedBox(width: 15,),
-            //for remove button
-            Expanded(
-                child:AppButton(
-                  onPressed: (){
-                    _addressBloc.add(OnDeleteAddress(addressId: _addressList[index].uaId.toString()));
-                    print('deleted');
-                    setState(() {
-                      _addressList.removeAt(index);
-                    });                  },
-                  shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                          Radius.circular(50))),
-                  text: 'Remove',
-                ))
-                        ])
-                   ],
-                        )),
-                ));
-  }
 
 
-  Widget setUpdateButton(int index,List<Address> _addressList){
-    if(widget.fromProf==true){
-      return ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            side: BorderSide(color: Theme.of(context).primaryColor, width: 1),
-            primary: Colors.white,
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                    Radius.circular(50))),
-          ),
-          child:Text("Update",style: TextStyle(fontWeight: FontWeight.w500,
-              fontFamily: 'Poppins',
-              fontSize: 14.0,
-              color: AppTheme.textColor),),
-          onPressed: () async{
-            flagAddEdit = "1"; //for edit
-            final result=await Navigator.push(context, MaterialPageRoute(builder: (context)=>
-                AddEditAddress(flagAddEdit: flagAddEdit,addressData:_addressList[index])));
-            if(result!=null){
-              _onRefresh();
-            }
-          },
-      );
-
-    }
-     else  if(_addressList[index].ischecked==true)
+  Widget setUpdateButton(int index,List<Address> addressList){
+    if(addressList[index].ischecked==true)
        {
-         // _addressList[index].ischecked=false;
+         // addressList[index].ischecked=false;
         return Container(
             width: 240.0,
             child:  ElevatedButton(
@@ -486,7 +320,7 @@ class _ProfAddressState extends State<ProfAddress> {
           onPressed: () async{
             flagAddEdit = "1"; //for edit
             final result=await Navigator.push(context, MaterialPageRoute(builder: (context)=>
-                AddEditAddress(flagAddEdit: flagAddEdit,addressData:_addressList[index])));
+                AddEditAddress(flagAddEdit: flagAddEdit,addressData:addressList[index])));
             if(result!=null){
               _onRefresh();
             }
@@ -498,16 +332,16 @@ class _ProfAddressState extends State<ProfAddress> {
   }
 
   //for delete
-  Widget setDeleteButton(int index,List<Address> _addressList){
-    if(_addressList[index].ischecked==true)
+  Widget setDeleteButton(int index,List<Address> addressList){
+    if(addressList[index].ischecked==true)
     {
-      _addressList[index].ischecked=false;
+      addressList[index].ischecked=false;
        return IconButton(
           onPressed: () {
-           _addressBloc.add(OnDeleteAddress(addressId: _addressList[index].uaId.toString()));
+           _addressBloc.add(OnDeleteAddress(addressId: addressList[index].uaId.toString()));
             print('deleted');
            setState(() {
-             _addressList.removeAt(index);
+             addressList.removeAt(index);
            });
           },
           icon: Image.asset(Images.delete,
@@ -519,21 +353,12 @@ class _ProfAddressState extends State<ProfAddress> {
 
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            Translate.of(context).translate('address'),
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
+        backgroundColor: Colors.white,
+
         floatingActionButton: FloatingActionButton(
             elevation: 0.0,
             child: new Icon(
@@ -544,19 +369,53 @@ class _ProfAddressState extends State<ProfAddress> {
             backgroundColor: Theme.of(context).primaryColor,
             onPressed: () async{
               flagAddEdit = "0"; //for add
-              final result=await Navigator.push(context, MaterialPageRoute(builder: (context)=>
+              final result=await
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>
                   AddEditAddress(flagAddEdit: flagAddEdit)));
               if(result!=null){
                 _onRefresh();
               }
 
             }),
+        appBar: AppBar(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              InkWell(
+                  onTap: () {
+                    id=null;
+                    destId=null;
+                    Navigator.pop(context);
+                  },
+                  child: Icon(
+                    Icons.arrow_back_ios,
+                    color: AppTheme.textColor,
+                    size: 25.0,
+                  )),
+              Text(
+                'Source Address',
+                style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500,
+                    fontSize: 18.0,
+                    color: AppTheme.textColor),
+              ),
+              // Your widgets here
+            ],
+          ),
+          backgroundColor: Colors.white,
+
+          elevation: 0,
+          automaticallyImplyLeading:false,
+        ),
+
         body: BlocBuilder<AddressBloc, AddressState>(builder: (context, state) {
           if (state is AddressListSuccess) {
-            _addressList = state.addressList;
-            if(pos==0) { //to have for first time only
-              id = state.addressList[0].uaId;
-            }
+            addressList = state.addressList;
+            // if(pos==0) { //to have for first time only
+            //   id = state.addressList[0].uaId;
+            // }
             flagNoDataAvail=false;
           }
           if(state is AddressLoading){
@@ -567,7 +426,7 @@ class _ProfAddressState extends State<ProfAddress> {
           }
 
           if (state is AddressDeleteSuccess) {
-            if(_addressList.length<=0)
+            if(addressList.length<=0)
               {
                 flagNoDataAvail=true;
               }
@@ -593,17 +452,12 @@ class _ProfAddressState extends State<ProfAddress> {
                               Padding(
                                   padding: EdgeInsets.only(bottom: 55.0),
                                   child: ListView.builder(
-                                      itemCount: _addressList!=null?_addressList.length:6,
+                                      itemCount: addressList!=null?addressList.length:6,
                                       itemBuilder: (context, index) {
-                                        if(widget.fromProf==true){
-                                          return buildAddressList(index, _addressList);
 
-                                        }else{
-                                          return buildAddressListRadio(index, _addressList);
+                                          return buildAddressListRadio(index, addressList);
 
-                                        }
                                       })),
-                              if(widget.fromProf!=true)
                               Align(
                                   alignment: Alignment.bottomCenter,
                                   child: Padding(
@@ -611,24 +465,43 @@ class _ProfAddressState extends State<ProfAddress> {
                                           left: 50.0, right: 100.0),
                                       child:
                                       AppButton(
-                                        onPressed: () {
-                                          if(_addressList[pos].streetNo=="" && _addressList[pos].flatNo==""){
+                                        onPressed: () async{
+                                          if(addressList[pos].streetNo=="" && addressList[pos].flatNo==""){
                                             Fluttertoast.showToast(msg: "Please add/edit street and flat No. to proceed");
-                                          }else {
-                                            Navigator.push(
+                                          }else if(id==null)
+                                            {
+                                              Fluttertoast.showToast(msg: "Please select source address");
+
+                                            }
+                                          else {
+                                            Map<String,dynamic> resultMap=await Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        Payment(
-                                                          cartDet: widget
+                                                        DestAddress(
+                                                          // destId:destId,
+                                                          radioSelectedSourceId:id,
+                                                          cartDetails: widget
                                                               .cartDetails,
                                                           total: widget.total,
                                                           subTotal: widget
                                                               .subTotal,
                                                           convFee: widget
                                                               .convFee,
-                                                          address: _addressList[pos],
+                                                          sourceAddress: addressList[pos],
+                                                          clickedPos: pos,
+                                                          // clickedDestPos:destPos
                                                         )));
+                                            if(resultMap!=null){
+                                              setState(() {
+                                                id=int.parse(resultMap['id'].toString());
+                                                // destId=resultMap["destId"];
+                                                pos=int.parse(resultMap['clickedPos'].toString());
+                                                addressList[pos].ischecked=true;
+                                                // destPos=int.parse(resultMap['clickedDestPos'].toString());
+                                                print("id:-"+id.toString());
+                                              });
+                                            }
                                           }
                                         },
                                         shape: const RoundedRectangleBorder(

@@ -19,8 +19,8 @@ class OnLoadingFleetOrdersDetTemp extends FleetOrdersEvent {
 }
 
 class UpdateFleetOrdersStatus extends FleetOrdersEvent {
-  String orderid,status,rejectReason;
-  UpdateFleetOrdersStatus({this.orderid,this.status,this.rejectReason});
+  String orderid,status,rejectReason,truckId,deviceId,flag;
+  UpdateFleetOrdersStatus({this.orderid,this.status,this.rejectReason,this.truckId,this.deviceId,this.flag});
 }
 
 //fleet orders return replace

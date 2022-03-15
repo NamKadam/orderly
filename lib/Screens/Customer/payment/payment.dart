@@ -34,11 +34,11 @@ import 'package:flutter_stripe/flutter_stripe.dart' as stripepay;
 class Payment extends StatefulWidget{
   List<Cart> cartDet;
   String convFee,total,subTotal;
-  Address address;
+  Address destAddress,sourceAddress;
 
   Payment({Key key,
     @required this.cartDet,@required this.convFee,
-    @required this.total,@required this.address,@required this.subTotal}):super(key:key);
+    @required this.total,@required this.destAddress,@required this.sourceAddress,@required this.subTotal}):super(key:key);
 
   _PaymentState createState()=>_PaymentState();
 }
@@ -201,10 +201,11 @@ class _PaymentState extends State<Payment>{
         amount: AddTime.chargedAmt==null?"0":AddTime.chargedAmt,
         subTotal: widget.subTotal,
         total: widget.total.toString(),
-        addressId: widget.address.uaId.toString(),
+        addressId: widget.sourceAddress.uaId.toString(),
         cartDetails: cartList,
         paymentId:paymentId,
-        paymentMode: radioPay
+        paymentMode: radioPay,
+      dest_address: widget.destAddress.uaId.toString()
     ));
   }
 

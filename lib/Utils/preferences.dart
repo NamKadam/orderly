@@ -11,6 +11,7 @@ class Preferences {
   static String fcmToken = 'token';
   static String deviceId='device_id';
   static String cart='cart';
+  static String profilePic='profile_pic';
 
 
 

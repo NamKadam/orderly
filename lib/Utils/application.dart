@@ -5,13 +5,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Application {
   static bool debug = false;
-  static String version = '2.0.0';
-  static String Iosversion = '2.0.0';
+  static String version = '2.0.2';
+  static String Iosversion = '2.0.2';
   static String publishableKey="pk_test_51KGJyKSHMcdDIkB864XwME4MINAjLPUDi8jkT1OubzhTczywcrnQiqWFiToYYJ6er2hJOstRtwhE3bCr49jzci7y00cbqfDLBl";
+  static String googleMapsKey="AIzaSyC08LZ461W_8xfd0alHTiPz8iLcYYrUdps";
   static SharedPreferences preferences;
 
 
   static User user;
+  static String profile_pic;
   // static List<Cart> cart;
   static CartModel cartModel;
   static String token;

@@ -218,12 +218,18 @@ class _MainNavigationState extends State<MainNavigation> {
       } else { //for fleet manager
         title = "Orders";
       }
-
-
       //for fcm flag navigation
-      if(widget.fcmFlagNavigate=="fleet_order"){
-
+      if(PushNotify.notification!=null){
+        if(userType=="1" && PushNotify.notification.flag=="fleet_order"){
+          _selectedIndex=0;
+        }else if(widget.fcmFlagNavigate=="logout"){  //for logout if userTpe is different
+          _selectedIndex=3;
+        }
+        else if(userType=="0" && PushNotify.notification.flag=="cust_order"){
+          _selectedIndex=2;//redirect to customer my orders part
+        }
       }
+
     }
 
     setState(() {
@@ -249,7 +255,6 @@ class _MainNavigationState extends State<MainNavigation> {
           ),
           backgroundColor: Colors.transparent,
           elevation: 0,
-
           automaticallyImplyLeading: false,
           actions: [
             Row(
@@ -366,7 +371,6 @@ class _MainNavigationState extends State<MainNavigation> {
                           ),
                           child: Text(
                             Application.cartModel!=null?Application.cartModel.cart.length.toString():"0",
-
                             style: new TextStyle(
                                 color: Colors.white,
                                 fontSize: 10,

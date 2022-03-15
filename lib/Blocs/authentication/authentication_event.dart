@@ -12,6 +12,12 @@ class OnSaveUser extends AuthenticationEvent {
 
 }
 
+class OnSaveImage extends AuthenticationEvent {
+  final String profilePic;
+  OnSaveImage(this.profilePic);
+
+}
+
 class OnSaveCart extends AuthenticationEvent {
   final CartModel cartModel;
   OnSaveCart(this.cartModel);

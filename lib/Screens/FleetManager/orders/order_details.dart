@@ -10,6 +10,8 @@ import 'package:orderly/Configs/image.dart';
 import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/model_fleetOrder_det.dart';
 import 'package:orderly/Models/model_tempLatLng.dart';
+import 'package:orderly/Models/model_truck.dart';
+import 'package:orderly/Network%20function/fetchTruck.dart';
 import 'package:orderly/Screens/Customer/orders/order_list_item.dart';
 import 'package:orderly/Screens/Customer/orders/orders_filter.dart';
 import 'package:orderly/Screens/FleetManager/orders/fleet_lineChart.dart';
@@ -54,6 +56,7 @@ class _OrderDetailsState extends State<OrderDetails> {
   final _textCancelController = TextEditingController();
   final _focusCancel = FocusNode();
   String flagMapTemp=""; //used for click event of map and temp
+  TruckList _truckListSelected;
 
 
 
@@ -784,7 +787,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                     )
 
             ),
-            // secondary:setDeleteButton(index, _addressList),
+            // secondary:setDeleteButton(index, addressList),
             // IconButton(
             //  onPressed: () {},
             //  icon: Image.asset(Images.delete,
@@ -1050,7 +1053,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                           children: [
                             Padding(
                                 padding: EdgeInsets.all(10.0),
-                                child: DropdownButtonHideUnderline(
+                                child:
+                                DropdownButtonHideUnderline(
                                     child: Container(
                                         width:
                                             MediaQuery.of(context).size.width,
@@ -1108,6 +1112,115 @@ class _OrderDetailsState extends State<OrderDetails> {
                                                         );
                                                       }).toList(),
                                                     )))))),
+                            //assign truck
+                            if(widget.status==0)
+                              FutureBuilder<List<TruckList>>(
+                                future: fetchTruck(),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<List<TruckList>> snapshot) {
+                                  if (!snapshot.hasData) return Container();
+
+                                  return Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                          padding: EdgeInsets.all(10.0),
+                                          child:
+                                          DropdownButtonHideUnderline(
+                                              child: Container(
+                                                  width:
+                                                  MediaQuery.of(context).size.width,
+                                                  decoration: BoxDecoration(
+                                                    // color: Theme.of(context).dividerColor,
+                                                    color: Color(0xFFFFD8BC)
+                                                        .withOpacity(0.6),
+                                                    borderRadius:
+                                                    BorderRadius.circular(10),
+                                                  ),
+                                                  child: Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: 8.0,
+                                                          top: 0.0,
+                                                          right: 5.0,
+                                                          bottom: 0.0),
+                                                      child:
+                                                      //updated on 15/06/2021
+                                                      new Theme(
+                                                          data: Theme.of(context)
+                                                              .copyWith(
+                                                            canvasColor:
+                                                            Color(0xFFFFD8BC),
+                                                          ), //custom color
+                                                          child:
+                                                        DropdownButton(
+                                                          hint: Padding(
+                                                              padding: EdgeInsets.all(15.0),
+                                                              child: Text(
+                                                                'Assign Truck',
+                                                                style: TextStyle(
+                                                                    fontWeight: FontWeight.w400,
+                                                                    fontSize: 14.0,
+                                                                    color: Colors.black,
+                                                                    fontFamily: 'Sofia pro'),
+                                                              )),
+                                                          isExpanded: true,
+                                                          iconSize: 30.0,
+                                                          style: TextStyle(fontWeight: FontWeight.w400,
+                                                              fontSize: 14.0,
+                                                              color: Colors.black45,
+                                                              fontFamily: 'Sofia pro'),
+                                                          items: snapshot.data
+                                                              .map((truck) =>
+                                                              DropdownMenuItem<
+                                                                  TruckList>(
+                                                                value: truck,
+                                                                child: Padding(
+                                                                    padding:
+                                                                    EdgeInsets.only(
+                                                                        left: 15.0),
+                                                                    child: Text(
+                                                                      truck.truckName,
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                          Colors.black,
+                                                                          fontSize: 14.0,
+                                                                          fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                          fontFamily:
+                                                                          'Sofia Pro'),
+                                                                    )),
+                                                              ))
+                                                              .toList(),
+                                                          value: _truckListSelected == null
+                                                              ? _truckListSelected
+                                                              : snapshot.data
+                                                              .where((i) =>
+                                                          i.truckName ==
+                                                              _truckListSelected
+                                                                  .truckName)
+                                                              .first as TruckList,
+                                                          onChanged: (TruckList truck) {
+                                                            setState(
+                                                                  () {
+                                                                _truckListSelected =
+                                                                    truck;
+                                                                // print(_dropDownValue);
+                                                              },
+                                                            );
+                                                          },
+                                                        )
+                                                      ))))),
+
+                                      SizedBox(
+                                        height: 5.0,
+                                      ),
+
+                                    ],
+                                  );
+                                },
+                              ),
 
                             //for app button
                            AppButton(
@@ -1154,11 +1267,17 @@ class _OrderDetailsState extends State<OrderDetails> {
                                   }
                                   if(Orderstatus==6 || Orderstatus==8 ||Orderstatus==12){
                                     _showCancelledPopUp(Orderstatus);
-                                  }else {
+                                  }else if(widget.status==0 && _truckListSelected==null){
+                                    Fluttertoast.showToast(msg: "Please assign Truck");
+                                  }
+                                  else {
                                     _fleetOrdersBloc.add(
                                         UpdateFleetOrdersStatus(
                                             orderid: formattedString,
                                             status: Orderstatus.toString(),
+                                          flag: _truckListSelected==null?"0":"1",
+                                          truckId:_truckListSelected!=null?_truckListSelected.truckId.toString():"",
+                                          deviceId:_truckListSelected!=null?_truckListSelected.deviceId.toString():"",
                                           rejectReason:""
                                         ));
                                   }

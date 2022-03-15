@@ -88,7 +88,8 @@ class CartBloc extends Bloc<CartEvent,CartState> {
         'order_status_id':'0',
         'address':event.addressId,
         'payment_transaction_id':event.paymentId,
-        'payment_mode':event.paymentMode
+        'payment_mode':event.paymentMode,
+        'dest_address':event.dest_address
       };
       print("params:-"+params.toString());
 

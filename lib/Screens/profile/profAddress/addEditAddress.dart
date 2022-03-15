@@ -15,6 +15,7 @@ import 'package:orderly/Utils/application.dart';
 import 'package:orderly/Utils/progressDialog.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Utils/utilOther.dart';
+import 'package:orderly/Utils/util_preferences.dart';
 import 'package:orderly/Utils/validate.dart';
 import 'package:orderly/Widgets/app_button.dart';
 import 'package:orderly/Widgets/app_text_input.dart';
@@ -94,6 +95,7 @@ class AddEditAddressState extends State<AddEditAddress> {
               _textAddressController.text='${postResultList[0].postalCode}, ${postResultList[0].state},'
                   '${postResultList[0].country}, ${postResultList[0].postalLocation},${postResultList[0].province}';
               address=_textAddressController.text;
+
               // address='${postResultList[0].postalCode}, ${postResultList[0].state},'
               //     '${postResultList[0].country}, ${postResultList[0].postalLocation},${postResultList[0].province}';
             }
@@ -152,7 +154,9 @@ class AddEditAddressState extends State<AddEditAddress> {
              state:postResultList[0].state,
              country: postResultList[0].country,
              streetNo: _textStreetController.text.toString(),
-              flatNo: _textHouseFlatNoController.text.toString()
+              flatNo: _textHouseFlatNoController.text.toString(),
+             latitude: postResultList[0].latitude,
+             longitude: postResultList[0].longitude
          ));
        }else{
          _addressBloc.add(OnEditAdress(
@@ -164,9 +168,11 @@ class AddEditAddressState extends State<AddEditAddress> {
              city:postResultList.length>0? postResultList[0].district:widget.addressData.city,
              state:postResultList.length>0?postResultList[0].state:widget.addressData.state,
              country:postResultList.length>0?postResultList[0].country:widget.addressData.country,
-           addressId: widget.addressData.uaId.toString(),
+             addressId: widget.addressData.uaId.toString(),
              streetNo: _textStreetController.text.toString(),
-             flatNo: _textHouseFlatNoController.text.toString()
+             flatNo: _textHouseFlatNoController.text.toString(),
+             latitude: postResultList.length>0?postResultList[0].latitude:widget.addressData.latitude,
+             longitude:postResultList.length>0?postResultList[0].longitude:widget.addressData.longitude
          ));
        }
 
@@ -214,7 +220,8 @@ class AddEditAddressState extends State<AddEditAddress> {
     return Scaffold(
         key: _scaffoldKey,
         appBar: new AppBar(
-          title: Text(
+          title:
+          Text(
             Translate.of(context).translate('address'),
             style: TextStyle(
                 fontFamily: 'Poppins',

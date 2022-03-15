@@ -7,12 +7,16 @@ class InitialProfileState extends ProfileState {}
 
 class FetchEditProf extends ProfileState {}
 class OnLoadingProf extends ProfileState {}
+class OnLoadingImage extends ProfileState {}
 
 class EditProfSuccess extends ProfileState {
   User user;
-
   EditProfSuccess({this.user});
+}
 
+class UploadImageSuccess extends ProfileState{
+  String msg;
+  UploadImageSuccess({this.msg});
 }
 
 class FAQProfSuccess extends ProfileState {

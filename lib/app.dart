@@ -84,7 +84,7 @@ class _AppState extends State<App> {
 
   getToken() async{
     String token=await FirebaseMessaging.instance.getToken();
-    print(token);
+    print("token:-"+token);
   }
 
   @override

@@ -14,7 +14,7 @@ class OnDeleteCartList extends CartEvent {
 }
 
 class PlaceOrder extends CartEvent {
-  String cartDetails,deliveryType,deliveryDate,deliverySlot,amount,subTotal,convFee,total,addressId,paymentId,paymentMode;
+  String cartDetails,deliveryType,deliveryDate,deliverySlot,amount,subTotal,convFee,total,addressId,paymentId,paymentMode,dest_address;
   PlaceOrder({this.cartDetails,this.deliveryType,this.deliveryDate,this.deliverySlot,
-    this.amount,this.subTotal,this.convFee,this.total,this.addressId,this.paymentId,this.paymentMode});
+    this.amount,this.subTotal,this.convFee,this.total,this.addressId,this.paymentId,this.paymentMode,this.dest_address});
 }

@@ -13,6 +13,7 @@ import 'package:orderly/Models/model_fleetOrder_det.dart';
 import 'package:orderly/Models/model_tempLatLng.dart';
 import 'package:orderly/Utils/connectivity_check.dart';
 import 'package:http/http.dart' as http;
+import 'package:orderly/Utils/googleMapServices.dart';
 import 'package:orderly/Utils/progressDialog.dart';
 import 'package:orderly/Widgets/app_dialogs.dart';
 
@@ -31,14 +32,19 @@ class _FleetMapState extends State<FleetMap> {
   Completer<GoogleMapController> _controller = Completer();
   static Position _currentPosition;
   Set<Marker> _markers = {};
+  final Set<Polyline> _polyLines={};
+  GoogleMapsServices _googleMapsServices=GoogleMapsServices();
+
+
   var currentAddress;
   String updatedAddress="";
   bool isconnectedToInternet = false;
-  List<Ordertemp> _fleetOrderDetListMap;
- static double latitude,longitude;
+  List<CurrentLocation> _fleetOrderDetListMap;
+ static double latitude,longitude,sourcelat,sourcelng,destlat,destlng;
   Timer timer;
   int timerCount=0;
 
+  static const LatLng showLocation = const LatLng(27.7089427, 85.3086209); //location to show in map
 
 
   @override
@@ -77,7 +83,7 @@ class _FleetMapState extends State<FleetMap> {
     if (isconnectedToInternet == true) {
       Map<String,String> params={
         'order_details_id':orderDet.orderDetailsId.toString(),
-        'order_status':"0",
+        'order_status':"3",
       };
       var response = await http.post(Uri.parse(Api.GET_FLEET_ORDER_DET_TEMP),
         body: params,
@@ -86,13 +92,23 @@ class _FleetMapState extends State<FleetMap> {
       try {
         if (response.statusCode == 200) {
           var resp = json.decode(response.body);
-          final Iterable refactorCategory = resp['ordertemp'] ?? [];
+          var orderTemp=resp['ordertemp'];
+          final Iterable refactorCategory =orderTemp['current_location'] ?? [];
           _fleetOrderDetListMap = refactorCategory.map((item) {
-            return Ordertemp.fromJson(item);
+            return CurrentLocation.fromJson(item);
           }).toList();
           latitude=double.parse(_fleetOrderDetListMap[0].latitude);
           longitude=double.parse(_fleetOrderDetListMap[0].longitude);
+          sourcelat=double.parse(orderTemp['source_latitude']);
+          sourcelng=double.parse(orderTemp['source_longitude']);
+          destlat=double.parse(orderTemp['destination_latitude']);
+          destlng=double.parse(orderTemp['destination_longitude']);
+          LatLng source=LatLng(sourcelat,sourcelng);
+          LatLng destination=LatLng(destlat,destlng);
+
           _setMarker();
+          String route=await _googleMapsServices.getRouteCoordinates(source, destination);
+          _createRoute(route);
           setState(() {
 
           });
@@ -112,7 +128,7 @@ class _FleetMapState extends State<FleetMap> {
 
   static final CameraPosition _kGooglePlex = CameraPosition(
 //    target: LatLng(37.42796133580664, -122.085749655962),
-//     target: LatLng(_currentPosition.latitude, _currentPosition.longitude),
+//     target: LatLng(showLocation.latitude, showLocation.longitude),
     target: LatLng(latitude, longitude),
     zoom: 14.4746,
   );
@@ -208,6 +224,7 @@ class _FleetMapState extends State<FleetMap> {
 //            ),
 
           // onCameraMove: ((_position) => _updatePosition(_position)),
+          polylines: _polyLines,
         ),
 
       ),
@@ -220,17 +237,103 @@ class _FleetMapState extends State<FleetMap> {
     );
   }
 
+  //add polyLines
+  void _createRoute(String encodedPolyLine){
+   LatLng lastPos=LatLng(sourcelat,sourcelng);
+    setState(() {
+      _polyLines.add(Polyline(
+          polylineId: PolylineId(lastPos.toString()),
+          width: 10,
+          points: convertToLatLng(_decodePoly(encodedPolyLine)),
+          color: Colors.black
+      ));
+    });
+  }
+
+
+  //this method will convert List of doubles into LatLng
+  List<LatLng> convertToLatLng(List points){
+    List<LatLng> result=<LatLng>[];
+    for(int i=0;i<points.length;i++){
+      if(i%2==0){
+        result.add(LatLng(points[i-1],points[i]));
+      }
+    }
+    return result;
+  }
+  // DECODE POLY
+  List _decodePoly(String poly) {
+    var list = poly.codeUnits;
+    var lList = new List();
+    int index = 0;
+    int len = poly.length;
+    int c = 0;
+
+    do {
+      var shift = 0;
+      int result = 0;
+
+
+      do {
+        c = list[index] - 63;
+        result |= (c & 0x1F) << (shift * 5);
+        index++;
+        shift++;
+      } while (c >= 32);
+
+      if (result & 1 == 1) {
+        result = ~result;
+      }
+      var result1 = (result >> 1) * 0.00001;
+      lList.add(result1);
+    } while (index < len);
+
+/*adding to previous value as done in encoding */
+    for (var i = 2; i < lList.length; i++) lList[i] += lList[i - 2];
+
+    print(lList.toString());
+
+    return lList;
+  }
+
 
   void _setMarker() {
     setState(() {
+      //1st marker
+      _markers.add(Marker(
+        // This marker id can be anything that uniquely identifies each marker.
+        markerId: MarkerId("marker_1"),
+        draggable: true,
+        position: LatLng(latitude,longitude),
+        // position: LatLng(27.7089427, 85.3086209),
+        infoWindow: InfoWindow(
+          title: currentAddress,
+//          snippet: 'Inducesmile.com',
+        ),
+        icon: BitmapDescriptor.defaultMarker,
+      ));
+      //2 marker
       _markers.add(Marker(
         // This marker id can be anything that uniquely identifies each marker.
         markerId: MarkerId("marker_2"),
         draggable: true,
         // position: LatLng(_currentPosition.latitude,_currentPosition.longitude),
-        position: LatLng(latitude,longitude),
+        position: LatLng(sourcelat, sourcelng),
         infoWindow: InfoWindow(
-          title: currentAddress,
+          title: "Source LatLng",
+//          snippet: 'Inducesmile.com',
+        ),
+        icon: BitmapDescriptor.defaultMarker,
+      ));
+//       //3rd marker
+      _markers.add(Marker(
+        // This marker id can be anything that uniquely identifies each marker.
+        markerId: MarkerId("marker_3"),
+        draggable: true,
+        // position: LatLng(_currentPosition.latitude,_currentPosition.longitude),
+        position: LatLng(destlat, destlng),
+        infoWindow: InfoWindow(
+          title: "Destination LatLng",
 //          snippet: 'Inducesmile.com',
         ),
         icon: BitmapDescriptor.defaultMarker,

@@ -383,31 +383,31 @@ class _AddEditInventoryItemState extends State<AddEditInventoryItem>{
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 //image
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child:
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      Stack(
-                        alignment: Alignment.bottomRight,
-                        children: <Widget>[
-                          _buildAvatar(),
-                          IconButton(
-                            icon:
-                            Image.asset(Images.camera,height: 40.0,width:35.0),
-                            onPressed:(){
-                              customCameraGalleryDialog(context);
-                            },
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                ),
+                // Padding(
+                //   padding: EdgeInsets.all(8.0),
+                //   child:
+                //   Row(
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     crossAxisAlignment: CrossAxisAlignment.end,
+                //     children: <Widget>[
+                //       Stack(
+                //         alignment: Alignment.bottomRight,
+                //         children: <Widget>[
+                //           _buildAvatar(),
+                //           IconButton(
+                //             icon:
+                //             Image.asset(Images.camera,height: 40.0,width:35.0),
+                //             onPressed:(){
+                //               customCameraGalleryDialog(context);
+                //             },
+                //           )
+                //         ],
+                //       )
+                //     ],
+                //   ),
+                // ),
                 //title
-                Container(margin: EdgeInsets.only(top:25.0,left:20.0,right:20.0),
+                Container(margin: EdgeInsets.only(top:35.0,left:20.0,right:20.0),
                     child:AppTextInput(
                       enabled: true,
                       hintText: Translate.of(context).translate('input_title'),

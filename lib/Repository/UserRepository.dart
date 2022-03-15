@@ -12,8 +12,8 @@ import 'package:orderly/Utils/util_preferences.dart';
 class UserRepository {
 
   ///Fetch api login
-  Future<dynamic> login({String fbId}) async {
-    final params = {"fb_id":fbId};
+  Future<dynamic> login({String fbId,String fcmId,String deviceId}) async {
+    final params = {"fb_id":fbId,"fcm_id":fcmId,"device_id":deviceId};
     return await Api.login(params);
   }
   //fleet login
@@ -33,6 +33,12 @@ class UserRepository {
       Preferences.user,
       jsonEncode(user.toJson()),
     );
+  }
+
+  //save image
+  Future<dynamic> saveImage(String image) async {
+    return await UtilPreferences.setString(
+      Preferences.profilePic,image);
   }
 
   //save cart
@@ -130,6 +136,11 @@ class UserRepository {
     return UtilPreferences.getString(Preferences.user);
   }
 
+  dynamic getProfile() {
+    return UtilPreferences.getString(Preferences.profilePic);
+  }
+
+
   //get cart details
   ///Get from Storage
   dynamic getCart() {
@@ -144,5 +155,6 @@ class UserRepository {
   Future<dynamic> deleteCart() async {
     return await UtilPreferences.remove(Preferences.cart);
   }
+
 }
 

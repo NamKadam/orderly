@@ -207,6 +207,8 @@ class _OtpScreenState extends State<OtpScreen>{
         // Navigator.pushNamed(context, Routes.signUp);
         _loginBloc.add(OnLogin(
           fbId: firebaseUser_Id.toString(),
+            fcmId: token,
+            deviceId: deviceId
         ));
 
       }else{//for fleet manager

@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:orderly/Screens/Customer/address/address.dart';
 import 'package:orderly/Screens/Customer/cart/addTime.dart';
 import 'package:orderly/Screens/Customer/cart/shopping_cart.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
 import 'package:orderly/Screens/profile/edit_profile.dart';
 import 'package:orderly/Screens/profile/faq.dart';
-import 'package:orderly/Screens/profile/profAddress/prof_address.dart';
+import 'package:orderly/Screens/profile/profAddress/profAddress.dart';
 import '../Screens/profile/privacyPolicy.dart';
 import '../Screens/profile/termsOfUse.dart';
 import 'package:orderly/Screens/user/OtpScreen.dart';
@@ -28,7 +29,7 @@ class Routes {
   static const String otpRegUser = "/otpREgUser"; //added on 9/02/2021
   static const String forgotPassword = "/forgotPassword";
   static const String editProfile = "/editProfile";
-  static const String address = "/address";
+  static const String profAddress = "/profaddress";
   static const String cart = "/cart";
   static const String terms='/terms';
   static const String privacy='/privacy';
@@ -79,13 +80,12 @@ class Routes {
      );
 
 
-      case address:
-        return MaterialPageRoute(
-          builder: (context) {
-            return ProfAddress(fromProf: settings.arguments,);
-          },
-          fullscreenDialog: false,
-        );
+
+
+      case profAddress:
+        return MaterialPageRoute(builder: (context){
+          return ProfAddress(fromProf: settings.arguments);
+        });
 
         //added on 6/02/2021
       // case otp:

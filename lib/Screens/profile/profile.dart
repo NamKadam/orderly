@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +18,7 @@ import 'package:orderly/Utils/authentication.dart';
 import 'package:orderly/Utils/routes.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Widgets/app_button.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Profile extends StatefulWidget{
@@ -26,6 +28,7 @@ class Profile extends StatefulWidget{
 class _ProfileState extends State<Profile>{
   LoginBloc _loginBloc;
   bool fromProf=true;
+  ImageFile imageFile;
 
 
   @override
@@ -33,6 +36,123 @@ class _ProfileState extends State<Profile>{
     // TODO: implement initState
     super.initState();
     _loginBloc = BlocProvider.of<LoginBloc>(context);
+    imageFile=new ImageFile();
+
+    if(Application.profile_pic!=null)
+    {
+      imageFile.imagePath=Application.profile_pic;
+    }
+  }
+
+  Widget _buildAvatar() {
+    print(Application.profile_pic);
+    if (Application.profile_pic != null) {
+      return CachedNetworkImage(
+        // imageUrl: user.image,
+        imageUrl: Application.profile_pic, //updated on 9/02/2021
+        imageBuilder: (context, imageProvider) {
+          return Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: imageProvider,
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          );
+        },
+        placeholder: (context, url) {
+          return Shimmer.fromColors(
+            baseColor: Theme
+                .of(context)
+                .hoverColor,
+            highlightColor: Theme
+                .of(context)
+                .highlightColor,
+            enabled: true,
+            child: Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          );
+        },
+        errorWidget: (context, url, error) {
+          return Shimmer.fromColors(
+            baseColor: Theme
+                .of(context)
+                .hoverColor,
+            highlightColor: Theme
+                .of(context)
+                .highlightColor,
+            enabled: true,
+            child: Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(Icons.error),
+            ),
+          );
+        },
+      );
+    }
+
+
+    // if (_image!=null) {
+    //   return Container(
+    //     width: 100,
+    //     height: 100,
+    //     margin: EdgeInsets.only(top:20.0),
+    //     decoration: BoxDecoration(
+    //       borderRadius: BorderRadius.circular(10),
+    //       border: Border.all(
+    //         color:
+    //         AppTheme.appColor,  // red as border color
+    //       ),
+    //       color:
+    //       Colors.white,
+    //     ),
+    //     child:
+    //     ClipRRect(
+    //       child: Image.file(
+    //         _image,
+    //         fit: BoxFit.fill,
+    //       ),
+    //
+    //       borderRadius: BorderRadius.circular(10),
+    //     ),
+    //   );
+    // }
+    //updated on 30/11/2020
+    return Container(
+        width: 100,
+        height: 100,
+        margin: EdgeInsets.only(top:20.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color:
+            AppTheme.appColor,  // red as border color
+          ),
+          color:
+          Colors.white,
+
+        ),
+        child:
+        ClipRect(
+          child: Image.asset(Images.profileActive,
+            fit: BoxFit.fitWidth,),
+        )
+
+    );
   }
 
 
@@ -78,7 +198,51 @@ class _ProfileState extends State<Profile>{
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            HeaderWidget(),
+            // HeaderWidget(),
+        Container(
+        padding: EdgeInsets.all(8.0),
+            color: Colors.white,
+            child:
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Align(
+                  alignment:Alignment.center,
+                  child:_buildAvatar(),
+                ),
+                //name
+                Padding(
+                    padding:EdgeInsets.all(10.0),
+                    child:Text(
+                      Application.user!=null
+                          ?
+                      Application.user.firstName+" "+Application.user.lastName
+                          :
+                      "",
+                      style: TextStyle(fontFamily: 'Poppins',fontWeight: FontWeight.w600,
+                          fontSize: 16.0,
+                          color:AppTheme.textColor),
+                    )),
+                //email
+                if(Application.user.emailId!="null")
+                  Text(
+                    Application.user.emailId,
+                    style: TextStyle(fontFamily: 'Poppins',fontWeight: FontWeight.w200,
+                        fontSize: 12.0,
+                        color:AppTheme.textColor),
+                  ),
+                //mobile
+                Padding(
+                    padding:EdgeInsets.only(top:2.0,bottom: 15.0),child:Text(
+                  "+91 "+Application.user.mobile,
+                  style: TextStyle(fontFamily: 'Poppins',fontWeight: FontWeight.w400,
+                      fontSize: 12.0,
+                      color:AppTheme.textColor),
+                ))
+              ],
+            )
+
+        ),
             SizedBox(height: 5.0,),//for spacing
             CardViewWidget(fromProf:fromProf),
             SizedBox(height: 5.0,), //for spacing
@@ -158,36 +322,89 @@ class _ProfileState extends State<Profile>{
 
 class HeaderWidget extends StatelessWidget{
 
-  File _image;
+
   ImageFile imageFile;
+
+  HeaderWidget(ImageFile imageFile);
 
   ///Build Avatar image
   Widget _buildAvatar() {
-    if (_image!=null) {
-      return Container(
-        width: 100,
-        height: 100,
-        margin: EdgeInsets.only(top:20.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color:
-            AppTheme.appColor,  // red as border color
-          ),
-          color:
-          Colors.white,
-        ),
-        child:
-        ClipRRect(
-          child: Image.file(
-            _image,
-            fit: BoxFit.fill,
-          ),
-
-          borderRadius: BorderRadius.circular(10),
-        ),
+    if (imageFile.imagePath!=null) {
+      return CachedNetworkImage(
+        // imageUrl: user.image,
+        imageUrl: imageFile.imagePath, //updated on 9/02/2021
+        imageBuilder: (context, imageProvider) {
+          return Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: imageProvider,
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          );
+        },
+        placeholder: (context, url) {
+          return Shimmer.fromColors(
+            baseColor: Theme.of(context).hoverColor,
+            highlightColor: Theme.of(context).highlightColor,
+            enabled: true,
+            child: Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          );
+        },
+        errorWidget: (context, url, error) {
+          return Shimmer.fromColors(
+            baseColor: Theme.of(context).hoverColor,
+            highlightColor: Theme.of(context).highlightColor,
+            enabled: true,
+            child: Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(Icons.error),
+            ),
+          );
+        },
       );
     }
+
+    // if (_image!=null) {
+    //   return Container(
+    //     width: 100,
+    //     height: 100,
+    //     margin: EdgeInsets.only(top:20.0),
+    //     decoration: BoxDecoration(
+    //       borderRadius: BorderRadius.circular(10),
+    //       border: Border.all(
+    //         color:
+    //         AppTheme.appColor,  // red as border color
+    //       ),
+    //       color:
+    //       Colors.white,
+    //     ),
+    //     child:
+    //     ClipRRect(
+    //       child: Image.file(
+    //         _image,
+    //         fit: BoxFit.fill,
+    //       ),
+    //
+    //       borderRadius: BorderRadius.circular(10),
+    //     ),
+    //   );
+    // }
     //updated on 30/11/2020
     return Container(
         width: 100,
@@ -302,6 +519,7 @@ class _CardViewWidgetState extends State<CardViewWidget>{
   void initState() {
     // TODO: implement initState
     super.initState();
+
     getVersionName();
   }
 
@@ -375,7 +593,7 @@ class _CardViewWidgetState extends State<CardViewWidget>{
               if(Application.user.userType=="0")
               InkWell(
                 onTap: (){
-                  Navigator.pushNamed(context, Routes.address,arguments:widget.fromProf );
+                  Navigator.pushNamed(context, Routes.profAddress,arguments:widget.fromProf );
 
                 },
               child:
@@ -389,7 +607,7 @@ class _CardViewWidgetState extends State<CardViewWidget>{
                       )),
 
                   IconButton(onPressed: (){
-                    Navigator.pushNamed(context, Routes.address);
+                    Navigator.pushNamed(context, Routes.profAddress,arguments:widget.fromProf );
                   },
                       icon: Image.asset(Images.arrow,height: 15.0,width:15.0)
 

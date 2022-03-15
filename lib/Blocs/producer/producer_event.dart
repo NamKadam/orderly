@@ -10,9 +10,9 @@ class OnLoadingProductTabList extends ProducerProdEvent {
   OnLoadingProductTabList({this.producerId,this.type,this.offset});
 }
 
-
-
 class OnAddToCartTab extends ProducerProdEvent{
   String producerId,productId,FbId,qty,price;
   OnAddToCartTab({this.producerId,this.productId,this.FbId,this.qty,this.price});
 }
+
+

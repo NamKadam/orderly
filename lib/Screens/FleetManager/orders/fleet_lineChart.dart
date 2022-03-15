@@ -30,12 +30,12 @@ class _ChartLineAppState extends State<ChartLineApp> {
   List<LiveData> _chartData=[];
   double time;
   Timer timer;
-  List<Ordertemp> _fleetOrderDetListTemp;
+  List<CurrentLocation> _fleetOrderDetListTemp;
   bool isconnectedToInternet = false;
   int timerCount=0;
 
   //Live data
-  List<LiveData> getChartData(List<Ordertemp> fleetOrderDetListTemp){
+  List<LiveData> getChartData(List<CurrentLocation> fleetOrderDetListTemp){
     print("len:-"+fleetOrderDetListTemp.length.toString());
 
     for(int i=0;i<fleetOrderDetListTemp.length;i++){
@@ -122,7 +122,7 @@ class _ChartLineAppState extends State<ChartLineApp> {
     if (isconnectedToInternet == true) {
       Map<String,String> params={
         'order_details_id':orderDet.orderDetailsId.toString(),
-        'order_status':"0",
+        'order_status':"3",
       };
       var response = await http.post(Uri.parse(Api.GET_FLEET_ORDER_DET_TEMP),
         body: params,
@@ -131,9 +131,9 @@ class _ChartLineAppState extends State<ChartLineApp> {
       try {
         if (response.statusCode == 200) {
           var resp = json.decode(response.body);
-          final Iterable refactorCategory = resp['ordertemp'] ?? [];
+          final Iterable refactorCategory = resp['ordertemp']['current_location'] ?? [];
           _fleetOrderDetListTemp = refactorCategory.map((item) {
-            return Ordertemp.fromJson(item);
+            return CurrentLocation.fromJson(item);
           }).toList();
           _chartData=getChartData(_fleetOrderDetListTemp);
           setState(() {

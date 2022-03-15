@@ -122,6 +122,8 @@ class SignInState extends State<SignIn>{
       lng=position.longitude.toString();
       signUpDataNavigation.long=lng;
       signUpDataNavigation.lat=lat;
+      // UtilPreferences.setString("latitude", lat);
+      // UtilPreferences.setString("longitude", lng);
       print("lat:-"+lat+" lng:-"+lng);
 
       // });
@@ -169,7 +171,7 @@ class SignInState extends State<SignIn>{
     UtilPreferences.setString(Preferences.fcmToken, fcmToken.toString());
     var token=UtilPreferences.getString(Preferences.fcmToken);
     signUpDataNavigation.fcmId=fcmToken.toString();
-    print('token:-'+fcmToken.toString());
+    print('tokenFCM:-'+fcmToken.toString());
 
     //for device Id
     var deviceInfo = DeviceInfoPlugin();
@@ -422,7 +424,9 @@ class _LoginWithGoogleState extends State<LoginWithGoogle>{
   Future<void> checkUser(User user) async{
 
     widget.userLoginBloc.add(OnLogin(
-        fbId: user.uid
+        fbId: user.uid,
+        fcmId: widget.navigateData.fcmId,
+      deviceId:widget.navigateData.deviceId
       )
     );
 

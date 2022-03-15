@@ -7,6 +7,10 @@ class EditProf extends ProfileEvent {
 
   EditProf({this.firstName, this.lastName,this.email,this.zipcode,this.address,this.mobile});
 }
+class UploadImage extends ProfileEvent{
+ ImageFile image;
+ UploadImage({this.image});
+}
 
 class FetchFAQ extends ProfileEvent {
   FetchFAQ();

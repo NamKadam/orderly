@@ -266,7 +266,6 @@ class _FleetOrdersState extends State<FleetOrders> {
     );
   }
 
-
   // to build widget as per status
   Widget buildListAsPerStatus(int status){
     // if(status!=4 && status !=5){

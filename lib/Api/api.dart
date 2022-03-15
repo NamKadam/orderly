@@ -56,6 +56,10 @@ class Api {
   static const String FAQ=HOST_URL+"faq_list";
   static const String INVOICE=HOST_URL+"download_invoice";
   static const String LOGOUT=HOST_URL+"logout";
+  static const String UPLOAD_IMAGE=HOST_URL+"uploadImage";
+  static const String FETCH_TRUCK=HOST_URL+"fetch_truck_listing";
+  // image: browse file
+  // fb_id:";
 
   ///Login api
   static Future<dynamic> login(params) async {

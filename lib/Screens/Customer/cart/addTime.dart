@@ -157,7 +157,10 @@ class _TimeDataState extends State<TimeData> {
       AddTime.deliveryType = "0";
       AddTime.deliverySlot = "";
     }
-    setState(() {});
+    if(mounted){
+      setState(() {});
+    }
+
   }
 
   getCurrentDate() {

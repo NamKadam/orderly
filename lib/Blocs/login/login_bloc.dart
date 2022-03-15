@@ -80,7 +80,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
       ///Fetch API via repository
       final ResultApiModel result = await userRepository.login(
-        fbId: event.fbId
+        fbId: event.fbId,
+          fcmId: event.fcmId,
+          deviceId: event.deviceId
       );
       ///Case API fail but not have token
       // if (result.msg=="Success") {

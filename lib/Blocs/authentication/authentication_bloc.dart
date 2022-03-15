@@ -25,6 +25,7 @@ class AuthBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
       ///Notify state AuthenticationBeginCheck
       yield AuthenticationBeginCheck();
       final hasUser = userRepository.getUser();
+      final hasProfile = userRepository.getProfile();
 
       if (hasUser!=null ) {
         ///Getting data from Storage
@@ -59,6 +60,22 @@ class AuthBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
         ///
         yield AuthenticationFail();
       }
+
+      //for profile pic
+      if(hasProfile!=null)
+      {
+        if (Application.user.fbId!=null && Application.user.isRegistered=="true") {
+          ///Set user
+          Application.profile_pic=hasProfile;
+          yield AuthenticationSuccess();
+
+        } else {
+
+          ///Notify loading to UI
+          yield AuthenticationFail();
+        }
+
+      }
     }
 
     if (event is OnSaveUser) {
@@ -90,6 +107,36 @@ class AuthBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
         throw Exception(message);
       }
     }
+    if (event is OnSaveImage) {
+      ///Save to Storage user via repository
+      final savePreferences = await userRepository.saveImage(event.profilePic);
+
+      ///Check result save user
+      if (savePreferences) {
+        ///Set token network
+        // httpManager.getOption.headers["Authorization"] =
+        //     "Bearer " + event.user.token;
+        // httpManager.postOption.headers["Authorization"] =
+        //     "Bearer " + event.user.token;
+
+        ///Set user
+        Application.profile_pic = event.profilePic;
+        // UtilPreferences.setString(Preferences.user, Application.user.toString());
+
+        ///Notify loading to UI
+        if(Application.user.fbId!=null && Application.user.isRegistered=="true") {
+          yield AuthenticationSuccess();
+        }else{
+          yield AuthenticationFail();
+        }
+
+
+      } else {
+        final String message = "Cannot save user data to storage phone";
+        throw Exception(message);
+      }
+    }
+
 
     //updated for cart List
     if (event is OnSaveCart) {

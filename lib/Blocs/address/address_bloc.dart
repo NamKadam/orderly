@@ -67,8 +67,11 @@ class AddressBloc extends Bloc<AddressEvent,AddressState> {
         'state':event.state,
         'country':event.country,
         'street_no':event.streetNo,
-        'flat_no':event.flatNo
+        'flat_no':event.flatNo,
+        'add_latitude':event.latitude,
+        'add_longitude':event.longitude
       };
+      print("addressAdd:-"+params.toString());
 
       var response = await http.post(
         Uri.parse(Api.ADD_ADDRESS),
@@ -101,8 +104,12 @@ class AddressBloc extends Bloc<AddressEvent,AddressState> {
         'country':event.country,
         'addressid':event.addressId,
         'street_no':event.streetNo,
-        'flat_no':event.flatNo
+        'flat_no':event.flatNo,
+        'add_latitude':event.latitude,
+        'add_longitude':event.longitude
       };
+      print("addressUpdate:-"+params.toString());
+
 
       var response = await http.post(
         Uri.parse(Api.EDIT_ADDRESS),

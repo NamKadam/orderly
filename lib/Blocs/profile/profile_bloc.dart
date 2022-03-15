@@ -84,6 +84,50 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     }
 
+    if(event is UploadImage) {
+      yield OnLoadingImage();
+
+      MultipartRequest request = new MultipartRequest(
+          'POST', Uri.parse(Api.UPLOAD_IMAGE));
+
+      request.fields['fb_id'] = Application.user.fbId;
+
+      List<MultipartFile> imageUploadReqListSingle = <MultipartFile>[];
+      final mimeTypeDataProfile = lookupMimeType(
+          event.image.imagePath.toString(), headerBytes: [0xFF, 0xD8]).split(
+          '/');
+      //initialize multipart request
+      //attach the file in the request
+      final multipartFile = await http.MultipartFile.fromPath(
+          'image', event.image.imagePath.toString(),
+          contentType: MediaType(
+              mimeTypeDataProfile[0], mimeTypeDataProfile[1]));
+
+      imageUploadReqListSingle.add(multipartFile);
+      request.files.addAll(imageUploadReqListSingle);
+      try {
+        final streamedResponse = await request.send();
+        final response = await http.Response.fromStream(streamedResponse);
+        var responseData = json.decode(response.body);
+        print(responseData);
+        if (responseData['msg'] == "Successed") {
+          var image = responseData['profile_pic'];
+
+          ///Begin start AuthBloc Event AuthenticationSave
+          AppBloc.authBloc.add(OnSaveImage(image));
+
+          ///Notify loading to UI
+          yield UploadImageSuccess(
+              msg: responseData['msg']
+          );
+        }
+      } catch (error) {
+    ///Notify loading to UI
+    // yield RegisterUserFail(msg: message);
+        print(error);
+    }
+    }
+
 
   }
 }
