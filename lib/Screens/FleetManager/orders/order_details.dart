@@ -1224,7 +1224,7 @@ class _OrderDetailsState extends State<OrderDetails> {
 
                             //for app button
                            AppButton(
-                                  onPressed: () {
+                                  onPressed: () async {
                                 if(formattedString==""){
                                   _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('Please check atleast one order')));
                                 }else
@@ -1271,6 +1271,10 @@ class _OrderDetailsState extends State<OrderDetails> {
                                     Fluttertoast.showToast(msg: "Please assign Truck");
                                   }
                                   else {
+                                    isconnectedToInternet = await ConnectivityCheck.checkInternetConnectivity();
+                                    if (isconnectedToInternet == true) {
+
+
                                     _fleetOrdersBloc.add(
                                         UpdateFleetOrdersStatus(
                                             orderid: formattedString,
@@ -1280,6 +1284,10 @@ class _OrderDetailsState extends State<OrderDetails> {
                                           deviceId:_truckListSelected!=null?_truckListSelected.deviceId.toString():"",
                                           rejectReason:""
                                         ));
+                                    } else {
+                                      CustomDialogs.showDialogCustom(
+                                          "Internet", "Please check your Internet Connection!", context);
+                                    }
                                   }
                                 }
 

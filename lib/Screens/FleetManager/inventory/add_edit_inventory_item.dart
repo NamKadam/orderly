@@ -12,10 +12,12 @@ import 'package:orderly/Configs/theme.dart';
 import 'package:orderly/Models/imageFile.dart';
 import 'package:orderly/Models/model_invent_list.dart';
 import 'package:orderly/Utils/application.dart';
+import 'package:orderly/Utils/connectivity_check.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Utils/utilOther.dart';
 import 'package:orderly/Utils/validate.dart';
 import 'package:orderly/Widgets/app_button.dart';
+import 'package:orderly/Widgets/app_dialogs.dart';
 import 'package:orderly/Widgets/app_text_input.dart';
 
 enum AppState {
@@ -55,6 +57,8 @@ class _AddEditInventoryItemState extends State<AddEditInventoryItem>{
   // var _validCategory;
   InventoryBloc _inventoryBloc;
 
+  bool isconnectedToInternet=false;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -73,7 +77,7 @@ class _AddEditInventoryItemState extends State<AddEditInventoryItem>{
   }
 
   ///On sign up
-  void _ValidateItem() {
+  Future<void> _ValidateItem() async {
     UtilOther.hiddenKeyboard(context);
     setState(() {
       _validTitle = UtilValidator.validate(
@@ -101,6 +105,10 @@ class _AddEditInventoryItemState extends State<AddEditInventoryItem>{
     // }else
 
     if (_validTitle == null && _validDesc==null&&_validRate==null&&_validItems==null) {
+      isconnectedToInternet = await ConnectivityCheck.checkInternetConnectivity();
+
+      if (isconnectedToInternet == true) {
+
       if(widget.flagAddEdit=="0") {
         _inventoryBloc.add(OnAddInventoryItem(
             title: _textTitleNameController.text,
@@ -116,6 +124,10 @@ class _AddEditInventoryItemState extends State<AddEditInventoryItem>{
             rate: _textRateHourController.text,
             qty: _textNoOfItemsController.text
         ));
+      }
+      } else {
+        CustomDialogs.showDialogCustom(
+            "Internet", "Please check your Internet Connection!", context);
       }
 
     }

@@ -12,12 +12,14 @@ import 'package:orderly/Models/model_address.dart';
 import 'package:orderly/Models/zipcode/postalcode.dart';
 import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/application.dart';
+import 'package:orderly/Utils/connectivity_check.dart';
 import 'package:orderly/Utils/progressDialog.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Utils/utilOther.dart';
 import 'package:orderly/Utils/util_preferences.dart';
 import 'package:orderly/Utils/validate.dart';
 import 'package:orderly/Widgets/app_button.dart';
+import 'package:orderly/Widgets/app_dialogs.dart';
 import 'package:orderly/Widgets/app_text_input.dart';
 import 'package:http/http.dart' as http;
 
@@ -53,6 +55,8 @@ class AddEditAddressState extends State<AddEditAddress> {
   bool _apiCall = false;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   AddressBloc _addressBloc;
+
+  bool isconnectedToInternet=false;
 
   @override
   void initState() {
@@ -112,7 +116,7 @@ class AddEditAddressState extends State<AddEditAddress> {
   }
 
 
-  void _ValidateAddress(String flagAddEdit) {
+  Future<void> _ValidateAddress(String flagAddEdit) async {
     UtilOther.hiddenKeyboard(context);
     setState(() {
       _validFirstName = UtilValidator.validate(
@@ -143,6 +147,9 @@ class AddEditAddressState extends State<AddEditAddress> {
 
     });
     if (_validFirstName == null && _validLastName==null&&_validZip==null&&_validStreet==null&&_validHouseNo==null&&_validEmail==null&&_validMobile==null) {
+      isconnectedToInternet = await ConnectivityCheck.checkInternetConnectivity();
+      if (isconnectedToInternet == true) {
+
        if(flagAddEdit=="0"){
          _addressBloc.add(OnAddAdress(
              fullName: _textFirstNameController.text.toString()+" "+_textLastNameController.text.toString(),
@@ -175,6 +182,10 @@ class AddEditAddressState extends State<AddEditAddress> {
              longitude:postResultList.length>0?postResultList[0].longitude:widget.addressData.longitude
          ));
        }
+      } else {
+        CustomDialogs.showDialogCustom(
+            "Internet", "Please check your Internet Connection!", context);
+      }
 
     }
   }
@@ -320,7 +331,8 @@ class AddEditAddressState extends State<AddEditAddress> {
                     ],
                     textInputAction: TextInputAction.next,
                     onChanged: (text) {
-                      if (text.length >= 5) {
+                      // if (text.length >= 5) {
+                      if (text.length == 6) {
                         _apiCall = true;
                         _callAPIForPincode();
                       }

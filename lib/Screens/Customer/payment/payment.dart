@@ -20,11 +20,13 @@ import 'package:orderly/Screens/Customer/payment/StripeService.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
 import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/application.dart';
+import 'package:orderly/Utils/connectivity_check.dart';
 import 'package:orderly/Utils/preferences.dart';
 import 'package:orderly/Utils/progressDialog.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Utils/util_preferences.dart';
 import 'package:orderly/Widgets/app_button.dart';
+import 'package:orderly/Widgets/app_dialogs.dart';
 import 'package:orderly/app_bloc.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -53,6 +55,8 @@ class _PaymentState extends State<Payment>{
       razorPaySecretKey='bN7b4z4jEpnPYM4SywN7E8Wu'; //account of  orderly used
   CartBloc _cartBloc;
   String cartList="",paymentId="";
+  bool isconnectedToInternet=false;
+
 
   @override
   void initState() {
@@ -189,8 +193,11 @@ class _PaymentState extends State<Payment>{
 
 
   //called method for payment
-  void doPayment()
+  void doPayment() async
   {
+    isconnectedToInternet = await ConnectivityCheck.checkInternetConnectivity();
+    if (isconnectedToInternet == true) {
+
     _cartBloc.add(PlaceOrder(
         deliveryType: AddTime.deliveryType,
         deliveryDate: AddTime.isCheckedCharged==true?AddTime.currentDate:AddTime.dateTime,
@@ -207,6 +214,10 @@ class _PaymentState extends State<Payment>{
         paymentMode: radioPay,
       dest_address: widget.destAddress.uaId.toString()
     ));
+    } else {
+      CustomDialogs.showDialogCustom(
+          "Internet", "Please check your Internet Connection!", context);
+    }
   }
 
   void clearData(){

@@ -6,7 +6,7 @@ class PushNotification {
     this.dataBody,
     this.flag,
     this.userType,
-    this.userId
+    this.image
   });
 
   String title;
@@ -15,5 +15,5 @@ class PushNotification {
   String dataBody;
   String flag;
   String userType;
-  String userId;
+  String image;
 }

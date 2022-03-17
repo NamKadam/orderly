@@ -9,9 +9,11 @@ import 'package:orderly/Models/model_myOrders.dart';
 import 'package:orderly/Screens/Customer/orders/return_replace.dart';
 import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/application.dart';
+import 'package:orderly/Utils/connectivity_check.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Utils/validate.dart';
 import 'package:orderly/Widgets/app_button.dart';
+import 'package:orderly/Widgets/app_dialogs.dart';
 import 'package:orderly/Widgets/app_star_rating.dart';
 import 'package:orderly/Widgets/app_text_input.dart';
 import 'package:readmore/readmore.dart';
@@ -36,6 +38,8 @@ class _ProductReviewState extends State<ProductReview> {
   String _validAddReview = "";
   int status;
   CustOrderDetBloc _custOrderDetBloc;
+
+  bool isconnectedToInternet=false;
 
   @override
   void initState() {
@@ -429,8 +433,10 @@ class _ProductReviewState extends State<ProductReview> {
                             borderRadius:
                             BorderRadius.all(Radius.circular(50))),
                         text: "SUBMIT",
-                        onPressed: () {
-                         _custOrderDetBloc.add(SendProductReview(
+                        onPressed: () async{
+                          isconnectedToInternet = await ConnectivityCheck.checkInternetConnectivity();
+                          if (isconnectedToInternet == true) {
+                            _custOrderDetBloc.add(SendProductReview(
                           orderNum: widget.order.orderNumber,
                            appExp: _rateApp.toInt().toString(),
                            VehicleQty: _rateVehicle.toInt().toString(),
@@ -441,6 +447,10 @@ class _ProductReviewState extends State<ProductReview> {
                            prodId: widget.order.productId.toString(),
                            comment: _textAddReviewController.text.toString()
                          ));
+                          } else {
+                            CustomDialogs.showDialogCustom(
+                                "Internet", "Please check your Internet Connection!", context);
+                          }
                         },
                       ))));
             })

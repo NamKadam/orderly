@@ -75,7 +75,8 @@ class SignInState extends State<SignIn>{
     } else if (Platform.isIOS) {
 // Platform messages may fail, so we use a try/catch PlatformException.
       try {
-        versionCode = await GetVersion.appID;
+
+        versionCode = await GetVersion.projectVersion;
         deviceName='ios';
         print("versionCode:-"+deviceName+" deviceName:-"+deviceName);
 
@@ -177,14 +178,14 @@ class SignInState extends State<SignIn>{
     var deviceInfo = DeviceInfoPlugin();
     if (Platform.isAndroid) { // import 'dart:io'
       var androidDeviceId = await deviceInfo.androidInfo;
-      print("androiId"+androidDeviceId.androidId);
+      print("androiId:-"+androidDeviceId.androidId);
 
       UtilPreferences.setString(Preferences.deviceId, androidDeviceId.androidId);
       signUpDataNavigation.deviceId=androidDeviceId.androidId.toString();
 
     } else {
       var iosDeviceId = await deviceInfo.iosInfo;
-      print("iosId"+ iosDeviceId.identifierForVendor);
+      print("iosId:-"+ iosDeviceId.identifierForVendor);
       UtilPreferences.setString(Preferences.deviceId, iosDeviceId.identifierForVendor);
       signUpDataNavigation.deviceId=iosDeviceId.identifierForVendor.toString();
 

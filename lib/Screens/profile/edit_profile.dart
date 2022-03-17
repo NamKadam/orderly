@@ -22,11 +22,13 @@ import 'package:orderly/Models/zipcode/postalcode.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
 import 'package:orderly/Utils/Utils.dart';
 import 'package:orderly/Utils/application.dart';
+import 'package:orderly/Utils/connectivity_check.dart';
 import 'package:orderly/Utils/progressDialog.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Utils/utilOther.dart';
 import 'package:orderly/Utils/validate.dart';
 import 'package:orderly/Widgets/app_button.dart';
+import 'package:orderly/Widgets/app_dialogs.dart';
 import 'package:orderly/Widgets/app_text_input.dart';
 import 'package:http/http.dart' as http;
 import 'package:orderly/app_bloc.dart';
@@ -68,6 +70,8 @@ class _EditProfileState extends State<EditProfile>{
   ProfileBloc _profileBloc;
   bool _apiCall = false;
   bool flagCameraGallery=false;
+
+  bool isconnectedToInternet=false;
 
 
   @override
@@ -411,7 +415,7 @@ class _EditProfileState extends State<EditProfile>{
     }
   }
 
-  void _ValidateProf() {
+  Future<void> _ValidateProf() async {
     UtilOther.hiddenKeyboard(context);
     setState(() {
       _validFirstName = UtilValidator.validate(
@@ -452,8 +456,10 @@ class _EditProfileState extends State<EditProfile>{
     //
     //  }else{ //for customer
        if (_validFirstName == null && _validLastName==null&&_validZip==null&&_validEmail==null&&_validMobile==null) {
+         isconnectedToInternet = await ConnectivityCheck.checkInternetConnectivity();
+         if (isconnectedToInternet == true) {
 
-         _profileBloc.add(EditProf(
+           _profileBloc.add(EditProf(
                       firstName: _textFirstNameController.text.toString(),
                       lastName: _textLastNameController.text.toString(),
                       email: _textEmailController.text.toString(),
@@ -461,8 +467,11 @@ class _EditProfileState extends State<EditProfile>{
                       zipcode: _textZipController.text,
                       mobile: _textMobileController.text
            ));
-       // }
-     }
+       }
+     }else {
+         CustomDialogs.showDialogCustom(
+             "Internet", "Please check your Internet Connection!", context);
+       }
   }
 
   Future<void> uploadImage(ImageFile imageFile) async{
@@ -661,11 +670,11 @@ class _EditProfileState extends State<EditProfile>{
                       ],
                       textInputAction: TextInputAction.next,
                       onChanged: (text) {
-                        if(text.length>=5){
+                        // if(text.length>=5){
+                        if(text.length==6){
                           _apiCall=true;
                           _callAPIForPincode();
                         }
-
                         // setState(() {
                         _validZip = UtilValidator.validate(
                           data: _textZipController.text,

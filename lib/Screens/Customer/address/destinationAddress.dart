@@ -81,7 +81,12 @@ class _DestAddressState extends State<DestAddress> {
   Future<void> _onRefresh() async {
     destaddressList=null;
     await Future.delayed(Duration(milliseconds: 1000));
-    _addressBloc.add(OnLoadingAddressList());
+    if (isconnectedToInternet == true) {
+      _addressBloc.add(OnLoadingAddressList());
+    } else {
+      CustomDialogs.showDialogCustom(
+          "Internet", "Please check your Internet Connection!", context);
+    }
     _controller.refreshCompleted();
   }
 

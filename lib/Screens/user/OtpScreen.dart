@@ -10,10 +10,12 @@ import 'package:orderly/Models/signup_navigateFields.dart';
 import 'package:orderly/Screens/mainNavigation.dart';
 import 'package:orderly/Screens/user/signup.dart';
 import 'package:orderly/Utils/Utils.dart';
+import 'package:orderly/Utils/connectivity_check.dart';
 import 'package:orderly/Utils/routes.dart';
 import 'package:orderly/Utils/translate.dart';
 import 'package:orderly/Utils/util_preferences.dart';
 import 'package:orderly/Widgets/app_button.dart';
+import 'package:orderly/Widgets/app_dialogs.dart';
 
 class OtpScreen extends StatefulWidget{
   final OTPVerify otpVerify;
@@ -40,6 +42,8 @@ class _OtpScreenState extends State<OtpScreen>{
   var verificationId,otp;
   AuthCredential authservice;
   LoginBloc _loginBloc;
+  bool isconnectedToInternet = false;
+
 
   var scaffoldKey = new GlobalKey<ScaffoldState>();
   var number,firebaseUser_Id;
@@ -202,23 +206,27 @@ class _OtpScreenState extends State<OtpScreen>{
       firebaseUser_Id=authResult.user.uid.toString();
 
       print("fb_id"+firebaseUser_Id);
+      isconnectedToInternet = await ConnectivityCheck.checkInternetConnectivity();
+      if (isconnectedToInternet == true) {
+        if (widget.otpVerify.flagRoleType == "0") { //for customer
+          // Navigator.pushNamed(context, Routes.signUp);
 
-      if(widget.otpVerify.flagRoleType=="0"){ //for customer
-        // Navigator.pushNamed(context, Routes.signUp);
-        _loginBloc.add(OnLogin(
-          fbId: firebaseUser_Id.toString(),
-            fcmId: token,
-            deviceId: deviceId
-        ));
-
-      }else{//for fleet manager
-        _loginBloc.add(OnFleetLogin(
-          fbId: firebaseUser_Id.toString(),
-          mobile: phone,
-          fcmId: token,
-          deviceId: deviceId
-        ));
-
+          _loginBloc.add(OnLogin(
+              fbId: firebaseUser_Id.toString(),
+              fcmId: token,
+              deviceId: deviceId
+          ));
+        } else { //for fleet manager
+          _loginBloc.add(OnFleetLogin(
+              fbId: firebaseUser_Id.toString(),
+              mobile: phone,
+              fcmId: token,
+              deviceId: deviceId
+          ));
+        }
+      }else{
+        CustomDialogs.showDialogCustom(
+            "Internet", "Please check your Internet Connection!", context);
       }
     } else {
       scaffoldKey.currentState.showSnackBar(SnackBar(
