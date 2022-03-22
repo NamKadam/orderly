@@ -465,10 +465,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                                         // )
                                       ),
                                       //map and temp
-                                      if(widget.status==2 ||widget.status==3 || widget.status==9||widget.status==10 ||
+                                      if(widget.status==2||widget.status==3|| widget.status==9||widget.status==10 ||
                                           widget.status==13||widget.status==14)
-
-                                      Row(
+                                        Row(
                                               children: [
                                                 InkWell(child: Image.asset(
                                                   Images.mapNew,
@@ -1273,9 +1272,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                                   else {
                                     isconnectedToInternet = await ConnectivityCheck.checkInternetConnectivity();
                                     if (isconnectedToInternet == true) {
-
-
-                                    _fleetOrdersBloc.add(
+                                      _fleetOrdersBloc.add(
                                         UpdateFleetOrdersStatus(
                                             orderid: formattedString,
                                             status: Orderstatus.toString(),

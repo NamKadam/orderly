@@ -4,7 +4,10 @@ import 'package:meta/meta.dart';
 @immutable
 abstract class ProducerProdEvent {}
 
-class OnLoadingProducerTabList extends ProducerProdEvent {}
+class OnLoadingProducerTabList extends ProducerProdEvent {
+  String latitude,longitude;
+  OnLoadingProducerTabList({this.latitude,this.longitude});
+}
 class OnLoadingProductTabList extends ProducerProdEvent {
   String producerId,type,offset;
   OnLoadingProductTabList({this.producerId,this.type,this.offset});

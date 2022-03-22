@@ -105,7 +105,7 @@ class _ProducersState extends State<Producers> {
   void setBlocData() async {
     isconnectedToInternet = await ConnectivityCheck.checkInternetConnectivity();
     if (isconnectedToInternet == true) {
-      _producerProdBloc.add(OnLoadingProducerTabList());
+      _producerProdBloc.add(OnLoadingProducerTabList(latitude:Application.user.latitude,longitude: Application.user.longitude));
     } else {
       CustomDialogs.showDialogCustom(
           "Internet", "Please check your Internet Connection!", context);

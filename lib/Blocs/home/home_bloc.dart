@@ -29,7 +29,11 @@ class HomeBloc extends Bloc<HomeEvent,HomeState> {
     if (event is OnLoadingProducerList) {
       yield ProducerLoading();
 
-      final ProducerListResp response = await homeRepository.fetchProducerCat();
+      final ProducerListResp response = await homeRepository.fetchProducerCat(
+      lat: event.latitude,
+      long: event.longitude
+
+      );
       try {
         if (response.msg == "Success") {
           String conveyanceFee=response.convfee;

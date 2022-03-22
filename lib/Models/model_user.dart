@@ -35,6 +35,8 @@ class User {
   dynamic address;
   dynamic producerid;
   dynamic signUpType;
+  dynamic latitude;
+  dynamic longitude;
 
 
   User(
@@ -49,7 +51,9 @@ class User {
       this.zipcode,
       this.address,
       this.producerid,
-      this.signUpType});
+      this.signUpType,
+      this.longitude,
+      this.latitude});
 
   User.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'];
@@ -64,6 +68,8 @@ class User {
     address = json['address'];
     producerid = json['producerid'];
     signUpType = json['signup_type'];
+    latitude=json['latitude'];
+    longitude=json['longitude'];
   }
 
   Map<String, dynamic> toJson() {
@@ -80,6 +86,8 @@ class User {
     data['address'] = this.address;
     data['producerid'] = this.producerid;
     data['signup_type'] = this.signUpType;
+    data['latitude'] = this.latitude;
+    data['longitude'] = this.longitude;
     return data;
   }
 }

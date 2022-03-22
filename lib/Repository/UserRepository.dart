@@ -50,8 +50,9 @@ class UserRepository {
 
 
   //category producer
-  Future<dynamic> fetchProducerCat() async {
-    return await Api.getProducerList();
+  Future<dynamic> fetchProducerCat({String lat,String long}) async {
+    final params={"cust_lat":lat,"cust_long":long};
+    return await Api.getProducerList(params);
   }
 
   //api for product list as per producer

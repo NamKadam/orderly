@@ -30,7 +30,10 @@ class ProducerProdBloc extends Bloc<ProducerProdEvent,ProducerProdState> {
     if (event is OnLoadingProducerTabList) {
       yield ProducerTabLoading();
 
-      final ProducerListResp response = await producerProdRepo.fetchProducerCat();
+      final ProducerListResp response = await producerProdRepo.fetchProducerCat(
+        lat: event.latitude,
+        long: event.longitude
+      );
       try {
         if (response.msg == "Success") {
           String conveyanceFee=response.convfee;
@@ -73,8 +76,6 @@ class ProducerProdBloc extends Bloc<ProducerProdEvent,ProducerProdState> {
         print(e);
       }
     }
-
-
 
     //for addTo Cart
     if(event is OnAddToCartTab){

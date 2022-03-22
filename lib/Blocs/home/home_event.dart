@@ -4,7 +4,10 @@ import 'package:meta/meta.dart';
 @immutable
 abstract class HomeEvent {}
 
-class OnLoadingProducerList extends HomeEvent {}
+class OnLoadingProducerList extends HomeEvent {
+  String latitude,longitude;
+  OnLoadingProducerList({this.latitude,this.longitude});
+}
 class OnLoadingProductList extends HomeEvent {
   String producerId,type,offset;
   OnLoadingProductList({this.producerId,this.type,this.offset});

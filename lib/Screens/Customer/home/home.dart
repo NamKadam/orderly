@@ -221,7 +221,8 @@ class _HomeState extends State<Home> {
   void setBlocData() async {
     isconnectedToInternet = await ConnectivityCheck.checkInternetConnectivity();
     if (isconnectedToInternet == true) {
-      _homeBloc.add(OnLoadingProducerList());
+      _homeBloc.add(OnLoadingProducerList(latitude: Application.user.latitude,
+      longitude:Application.user.longitude));
     } else {
       CustomDialogs.showDialogCustom(
           "Internet", "Please check your Internet Connection!", context);

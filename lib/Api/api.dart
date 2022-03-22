@@ -99,8 +99,10 @@ class Api {
   }
 
   //get prod list api
-  static Future<dynamic> getProducerList() async {
-    final response = await http.get(Uri.parse(GET_PRODUCER_LIST));
+  static Future<dynamic> getProducerList(params) async {
+    // final response = await http.get(Uri.parse(GET_PRODUCER_LIST));
+    final response = await http.post(Uri.parse(GET_PRODUCER_LIST),
+      body: params);
     if (response.statusCode == 200) {
       final responseJson = json.decode(response.body);
       return ProducerListResp.fromJson(responseJson);
